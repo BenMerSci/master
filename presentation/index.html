@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>index.utf8</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="assets/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/academicons-1.8.1/css/academicons.min.css">
+    <link rel="stylesheet" href="conf/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="conf/css/fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+class: middle, title-slide
+
+# Prediction of interaction strength within trophic networks of interactions
+
+## Research committee reunion &lt;br&gt; BIO700
+
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+
+### Benjamin Mercier, &lt;br&gt; .small[Master student in ecology]
+
+---
+
+class:
+# In context
+
+ 1. Climate change is affecting biodiversity in all its forms, including species interaction .tiny[(Estes et al. (2011), Lurgi et al. (2012), Purves et al. (2013))]
+&lt;br&gt;&lt;br&gt;
+ 2. Why is inference/prediction of interaction strength important?&lt;br&gt;
+  a. Community dynamics .tiny[(Paine (1988), and many others)]&lt;br&gt;&lt;br&gt;
+  b. Community stability .tiny[(Neutel (2002), Ruiter et al. (1995))]&lt;br&gt;&lt;br&gt;
+  c. Ecosystem functionning and services .tiny[(Duffy (2002), Montoya et al. (2003))]&lt;br&gt;&lt;br&gt;
+
+---
+
+# In context
+
+- Prediciton of network topology has been done quite a lot in contrast to interaction strength &lt;br&gt;&lt;br&gt;
+
+## Still it has been done:
+1. Lotka-Volterra framework with predator-prey body mass .tiny[Yodzis &amp; Innes (1992), Pawar (2015),Emmerson &amp; Raffaelli (2004)]
+2. Metabolic rates .tiny[(Berlow et al. (2009))]
+3. Foraging theory .tiny[(Brose et al. (2010))]
+
+---
+
+# In context
+
+- We also know that interaction depends on local trait distribution and abundances .tiny[(Poisot et al. (2015))]
+&lt;br&gt;&lt;br&gt;&lt;br&gt;
+.center[**Need a more mechanistic understanding of the distribution of interaction strength as energy fluxes in networks**]
+
+---
+
+# Prediction of interaction strength based on traits
+
+  1. Body mass
+  2. Body size
+  2. Metabolic theory (metabolic rates, metabolism type)
+  3. Foraging theory (Movemetn capacity, detection capacity)
+  4. Abundances and biomass
+
+---
+
+# Objectives
+### Project objective
+- Develop a mechanistic model that accurately explains the distribution of energy fluxes within trophic networks and validate it with empirically sampled quantiative networks
+- If the data allows it: explore how the distribution of energy fluxes vary agmonst different ecosystem/spatially
+&lt;br&gt;&lt;br&gt;
+
+### Personal objective
+- Being able to develop/construct a model, and better understanding of statistics in general
+---
+
+# Methodology
+- Model we will use are not yet defined.
+&lt;br&gt;&lt;br&gt;
+- Compare mechanistic model to a phenomenological one (Random Forest)
+&lt;br&gt;&lt;br&gt;
+- Use a more "black-box approach" like machine learning / likelyhood to understand which variable explains the distribution of energy fluxes
+&lt;br&gt;&lt;br&gt;
+- Need to find quantitative trophic food webs with energy fluxes, abundance or biomass and the more traits available the better
+
+---
+
+# Questions
+
+- Prediction of pairwise interaction and then build network, or prediction on the distribution of interaction strength on the whole network?
+&lt;br&gt;&lt;br&gt;
+- Are there important parameters/elements that we need to think of in a model like that?
+&lt;br&gt;&lt;br&gt;
+- Do we think of other characteristics the dataset should meet?
+
+---
+
+# Questions
+- Which other traits could be included?
+&lt;br&gt;&lt;br&gt;
+- Is there a way to diminish the effect of working with averaged measure of traits to the whole species?
+&lt;br&gt;&lt;br&gt;
+- Is there a way to include the effect of the environment (maybe a stochastic way?)?
+
+---
+#
+
+# Questions-
+- Would there be a different approach to predict the distribution of energy fluxes in trophic networks?
+&lt;br&gt;&lt;br&gt;
+- Consider seasonality? How?
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="conf/style-macros.js"></script>
+<script>var slideshow = remark.create();
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

@@ -1,0 +1,76 @@
+\documentclass[12pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[numbers]{natbib}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage[doublespacing]{setspace}
+\usepackage{geometry}
+
+
+\begin{document}
+
+\input{titlepage}
+
+
+\section{In context}
+Climate change and anthropic stressors are affecting biodiversity in all its forms \cite{Diaz-01SumPol}, including species interactions \cite{Estes2011TroDow, Purves2013TimMod, Woodward2010CliCha}. Research on prediction of network topology has been quite extensively studied in contrast to research on prediction of interaction strength. It goes without saying that prediction of interaction strength is also important as it could help better understand community dynamics \cite{Paine1992FooAna}, network stability \cite{Neutel2002StaRea, deRuiter1995EnePat} and ecosystem functionning and services \cite{Duffy2002Bioeco, Montoya2003FooWeb}. Interaction strength can be described in many different ways \cite{Berlow2004} but is usually reported as a frequency of interaction or a flow of biomass \cite{Heleno2014EcoNet}. Energy being the common currency linking all ecological level, reporting interaction strength as energy fluxes within network could possibly lead to an integration of food web theory into the Biodiversity-Ecosystem Functionning (BEF) framework \cite{Barnes2018EneFlu}.\\ 
+
+Prediction of interaction strengths has nonetheless already been explored, and within multiple different frameworks. Prediction of interaction strength using predator and prey body masses within the Lotka-Volterra framework revealed the importance of organisms body mass \cite{Yodzis1992BodSiz, Pawar2015RolBod,Emmerson2004PrePre}. \citet{Brown2004MetThe} developped a metabolic theory of ecology which scales body mass to metabolic rates and was used in the prediction of interaction strength by \citep{Berlow2009SimPre}. \citet{Brose2010BodCon} predicted interaction strength by linking body mass and foraging theory. It is also worth noting that the realisation of interactions is dependant on the local trait distributions and abundances \cite{Poisot2015SpeWhy}. The use of biomasses might be more appropriate to the prediction of energy fluxes than abundances, because abundances are more related to populational processes than biomass and are more likely to be prone to biases (can't find the reference).
+
+These different approaches revealed important parameters driving interaction strength, but for the most part weren't represented as flows of energy and the models were mostly theoric and not validated on empirically sampled quantified networks, or if they were validated, interaction strength was not represented as energy fluxes.
+
+\section{Objectives}
+The main objectives of the project are to :
+\begin{enumerate}
+    \item Develop a mechanistic model that accurately explains the distribution of energy fluxes within trophic networks
+    \item Validate it on empirically sampled quantiative networks 
+    \item If the data allows it, explore how the distribution of energy fluxes varies amongst different ecosystems/spatially
+\end{enumerate}
+
+\section{Methodology}
+The models we will explore are not yet defined, as I will need first to synthesize the empirical literature on predator-prey interaction strenght in order to propose a general model. In parallel, we will compare mechanistic models to a phenomenological one (e.g. random forest algorithm) to get an idea of how far we could go at predicting interactions with the available information (traits, abundances, taxonomy). \citet{Brose2019PreTra} suggested to do so while including more variables, in kind of a "black-box" approach to see what ends up being important in predicting interaction strength. Though from my little knowledge in statistics, what I imagined was to use a likelyhood approach in general, to see which model with which parameters fit better to the empirical networks we will work with, by adding/removing variables and see how much the model explains the energy fluxes.
+
+To do so we need to find quantitative food web datasets with information on energy fluxes, abundance or biomass, and other traits such as body mass, body size, metabolic rates, metablosim types, movement speed, detection capacity etc. Most of the other useful traits for prediction can be found in other databases. Because of the nature of data available, we will probably have to use traits average to the average species-level for example average adult body mass. 
+
+Next, I will have to formalize the theory about what is defining interactions between species to come up with hypotheses on what influences interaction strength. Different ideas that could be explored are for example, does a better trait-match between two species lead to a higher interaction strength? Does the interaction strength between two species depend on how much time a year they co-occur (seasonality)?
+
+\section{Own goals and expectations}
+Some of my personal objectives throughout my masters are (but not limited to):
+\begin{itemize}
+    \item Getting better at understanding/develop models
+    \item Understand more statistic distributions
+    \item Sharpen my scientific mind, in the sense of critical thinking and more easily coming up with scientific ideas
+\end{itemize}
+
+%Le style unsrtnat est bien adapté à Natbib et met la bibliographie en ordre d'apparition dans le texte et non en ordre alphabétique
+\pagebreak
+\bibliographystyle{unsrtnat}
+\bibliography{ref}
+
+\end{document}
+
+
+question:
+sur plan théorique, quels sont éléments qu'on s'attend à trouver dans un modèle comme ça
+quels caracs des jeux de données
+quel role du metabolisme
+quels autres traits pourraient être utilisés
+
+
+Note comité de réunion:
+
+- automatiser la reconstruction de modèles écopath
+- methode plus continue, different point dans l'espace de reconstruire les réseaux. ssuite de camille albouy, l'idée ici serait dele faire mais de maniere plus quantitative.
+- se rapproche de ce que laura a fait avec les foodwebs d'Europe
+- proposer une hypothese de comment les 
+- plupart des foodwebs sont des données saisonnières.
+- similatié entre ecosystem arctique et savanne africaine:trouvait des fonctionnements similaires. Comparer arctique et savanne. 
+- constrain statistical model with ecological sense, partitionning,
+- Modele de brose basé sur yodzis, utilise taille corpo comme predicteur de force d'interactions
+- Dom pense que besoin énergétique devrait prévaloir au foraging part.
+- variante écopath pour temps/espace --> ecospace ou ecoSim. Ecospace est spatiotemporelle.
+- 
+
+diagramme ou texte: À FAIRE : penser clé dichotomique, tu prends 2 animaux au hasard dans une foret, est-ce qui vont interagir entre eux et si oui a quel intensité?
+

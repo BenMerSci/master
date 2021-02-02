@@ -1,5 +1,17 @@
 # Folder to ignore
 obsidian_notes/
+paperasse/
+data_retrieval/tuesday_lake
+data_retrieval/chesapeake
+data_retrieval/benguela
 
 # Files to ignore
-propose/exercice_dom.md
+*.jpg
+*.pdf
+*.log
+*.blg
+*.bbl
+*.aux
+*.toc
+*.lot
+*.lof
