@@ -865,4 +865,4 @@ GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Snowy_owl"),"scien
 GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Brown_bear"),"scientific_name"] <- "Ursus horribilis"
 
 # Write the list as a .Rdata file
-
+saveRDS(GroupName, file = "data/list_names.RDS")
