@@ -1,12 +1,14 @@
 ---
+title: Talk template
 output:
   xaringan::moon_reader:
   #  self_contained: TRUE
     includes:
+      transiton: fade
       in_header: conf/style-header.html
     lib_dir: assets
     seal: false
-    css: ["conf/css/style.css", "conf/css/fonts.css"]
+    css: ["default", "conf/css/style.css", "conf/css/fonts.css"]
     nature:
       beforeInit: "conf/style-macros.js"
 ---
@@ -20,106 +22,64 @@ knitr::opts_chunk$set(
   message = FALSE,
   fig.width = 7,
   fig.height = 5.25,
-  fig.align = 'center'
+  fig.align = 'center',
+  fig.retina = 3
 )
+library(readr)
+library(kableExtra)
 mypar = list(mar = c(3,3,0.5,0.5), mgp = c(1.5, 0.3, 0), tck = -.008)
 ```
 
-class: middle, title-slide
+class:  middle, title-slide, 
 
-# Prediction of interaction strength within trophic networks of interactions
-
-## Research committee reunion <br> BIO700
-
-<br><br><br><br><br><br><br>
-
-### Benjamin Mercier, <br> .small[Master student in ecology]
-
----
-
-class:
-# In context
-
- 1. Climate change is affecting biodiversity in all its forms, including species interaction .tiny[(Estes et al. (2011), Lurgi et al. (2012), Purves et al. (2013))]
-<br><br>
- 2. Why is inference/prediction of interaction strength important?<br>
-  a. Community dynamics .tiny[(Paine (1988), and many others)]<br><br>
-  b. Community stability .tiny[(Neutel (2002), Ruiter et al. (1995))]<br><br>
-  c. Ecosystem functionning and services .tiny[(Duffy (2002), Montoya et al. (2003))]<br><br>
-
----
-
-# In context
-
-- Prediciton of network topology has been done quite a lot in contrast to interaction strength <br><br>
-
-## Still it has been done:
-1. Lotka-Volterra framework with predator-prey body mass .tiny[Yodzis & Innes (1992), Pawar (2015),Emmerson & Raffaelli (2004)]
-2. Metabolic rates .tiny[(Berlow et al. (2009))]
-3. Foraging theory .tiny[(Brose et al. (2010))]
-
----
-
-# In context
-
-- We also know that interaction depends on local trait distribution and abundances .tiny[(Poisot et al. (2015))]
+<div class="my-logo-left"></div>
 <br><br><br>
-.center[**Need a more mechanistic understanding of the distribution of interaction strength as energy fluxes in networks**]
+# Modèle mécaniste empiriquement validé de l'inférence de flux d'énergie en réseaux trophiques 
+<br>
+<hr width="45%" align="left" size="0.3" color="#FFFACD"></hr>
+<br>
+## Séminaire 1 <br> PBI700
+<br><br>
+## .font70[Benjamin Mercier, <br>.small[Étudiant à la maîtrise]]
 
 ---
 
-# Prediction of interaction strength based on traits
+# Mise en contexte
 
-  1. Body mass
-  2. Body size
-  2. Metabolic theory (metabolic rates, metabolism type)
-  3. Foraging theory (Movemetn capacity, detection capacity)
-  4. Abundances and biomass
+.center[![:scale 20%](images/climatechange.png)]
+&darr;
 
 ---
 
-# Objectives
-### Project objective
-- Develop a mechanistic model that accurately explains the distribution of energy fluxes within trophic networks and validate it with empirically sampled quantiative networks
-- If the data allows it: explore how the distribution of energy fluxes vary agmonst different ecosystem/spatially
-<br><br>
+# Mise en contexte (suite)
 
-### Personal objective
-- Being able to develop/construct a model, and better understanding of statistics in general
+.Large[&darr;]
 ---
 
-# Methodology
-- Model we will use are not yet defined.
-<br><br>
-- Compare mechanistic model to a phenomenological one (Random Forest)
-<br><br>
-- Use a more "black-box approach" like machine learning / likelyhood to understand which variable explains the distribution of energy fluxes
-<br><br>
-- Need to find quantitative trophic food webs with energy fluxes, abundance or biomass and the more traits available the better
+# Justification et importance
+
 
 ---
 
-# Questions
+# Remerciements
 
-- Prediction of pairwise interaction and then build network, or prediction on the distribution of interaction strength on the whole network?
-<br><br>
-- Are there important parameters/elements that we need to think of in a model like that?
-<br><br>
-- Do we think of other characteristics the dataset should meet?
+.pull-left1[
+
+.center[**Mon comité:**<br>
+  -Dominique Gravel<br>
+  -Guillaume Blanchet<br>
+  -Pierre Legagneux<br>
+  -Laura Pollock<br><br>
+**Les membres du laboratoire <br>d'écologie intégrative**<br>
+<br>
+<p class="box"><br>.center[**Nous remercions le Conseil de Recherches en Sciences Naturelles et Génie du Canada (CRSNG) de son soutien. Le programme BIOS2 est supporté par le CRSNG**]<br></p>
+]]
+.pull-right1[
+  <br>
+  ![:scale 200%](images/thanks2.png)]
 
 ---
 
-# Questions
-- Which other traits could be included?
-<br><br>
-- Is there a way to diminish the effect of working with averaged measure of traits to the whole species?
-<br><br>
-- Is there a way to include the effect of the environment (maybe a stochastic way?)?
+Icon attributions: <br>
+Earth: <div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
 
----
-#
-
-# Questions-
-- Would there be a different approach to predict the distribution of energy fluxes in trophic networks?
-<br><br>
-- Consider seasonality? How?
