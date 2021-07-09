@@ -146,7 +146,7 @@ a {
 
 /* background color of inverse slide */
 .inverse {
-    background-color: #587e76;
+    background-color: #23373B;
     color: #d6d6d6;
 }
 .inverse h1 {
@@ -155,22 +155,29 @@ a {
 }
 
 /* Column */
+  .pull-center {
+    float: center;
+    width: 20%
+  }
+
   .pull-left {
     float: left;
-    width: 47%;
+    width: 40%;
   }
   .pull-right {
     float: right;
-    width: 47%;
+    width: 40%;
   }
 
   .pull-left1 {
     float: left;
-    width: 57%;
+    width: 45%;
+    text-align: right;
   }
   .pull-right1 {
     float: right;
-    width: 37%;
+    width: 45%;
+    text-align: left;
   }
 
   .pull-left2 {
@@ -181,7 +188,10 @@ a {
     float: right;
     width: 27%;
   }
-
+  .pull-rightfin {
+    float:right;
+    width: 37%
+  }
 /* Font size */
   .code10 .remark-code {
     font-size: 10%;
@@ -299,14 +309,15 @@ a {
     font-size: 200%;
   }
 
-
-/* MathJax */
-  .mjx-chtml{
-    font-size: 105% !important;
-    float: left !important;
-    padding: 0em 0em 0em 4.5em !important;
+  .Large {
+    font-size: 1.5em;
   }
 
 .box {
  background-color:#FFFACD;
 }
+
+.box2 {
+ background-color: orange;
+}
+
