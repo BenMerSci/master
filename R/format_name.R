@@ -49,7 +49,7 @@ GroupName[[2]][which(GroupName[[2]][,"original_name"] == "Fitoplancton"),"scient
         
 # Web 4 - article OK
 GroupName[[4]][which(GroupName[[4]][,"original_name"] == "Lemuru"),"scientific_name"] <- "Sardinella lemuru"
-GroupName[[4]][which(GroupName[[4]][,"original_name"] == "Scads"),"scientific_name"] <- "Decapterus"
+#GroupName[[4]][which(GroupName[[4]][,"original_name"] == "Scads"),"scientific_name"] <- "Decapterus"
 GroupName[[4]][which(GroupName[[4]][,"original_name"] == "Zooplankton"),"scientific_name"] <- "Zooplankton"
 GroupName[[4]][which(GroupName[[4]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
 
@@ -68,8 +68,8 @@ GroupName[[6]][which(GroupName[[6]][,"original_name"] == "Phytoplankton"),"scien
 
 # Web 9 - article OK
 GroupName[[9]][which(GroupName[[9]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
-GroupName[[9]][which(GroupName[[9]][,"original_name"] == "Copepoda"),"scientific_name"] <- "Calanoid"
-GroupName[[9]][which(GroupName[[9]][,"original_name"] == "Worms"),"scientific_name"] <- "Nereidae"
+#GroupName[[9]][which(GroupName[[9]][,"original_name"] == "Copepoda"),"scientific_name"] <- "Calanoid"
+#GroupName[[9]][which(GroupName[[9]][,"original_name"] == "Worms"),"scientific_name"] <- "Nereidae"
 GroupName[[9]][which(GroupName[[9]][,"original_name"] == "O. chrysoptera"),"scientific_name"] <- "Orthopristis chrysoptera"
 GroupName[[9]][which(GroupName[[9]][,"original_name"] == "L. rhomboides"),"scientific_name"] <- "Lagodon rhomboides"
 GroupName[[9]][which(GroupName[[9]][,"original_name"] == "O. oglinum"),"scientific_name"] <- "Opisthonema oglinum"
@@ -116,7 +116,7 @@ GroupName[[14]][which(GroupName[[14]][,"original_name"] == "Bigeye"),"scientific
 GroupName[[14]][which(GroupName[[14]][,"original_name"] == "Swordfish"),"scientific_name"] <- "Xiphias gladius"
 
 # Web 15 - article OK
-GroupName[[15]][which(GroupName[[15]][,"original_name"] == "Sea lion"),"scientific_name"] <- "Sea lion"
+GroupName[[15]][which(GroupName[[15]][,"original_name"] == "Sea lion"),"scientific_name"] <- "Otaria flavescens"
 GroupName[[15]][which(GroupName[[15]][,"original_name"] == "Chilean hake (j)"),"scientific_name"] <- "Merluccius gayi" # age 0-3
 GroupName[[15]][which(GroupName[[15]][,"original_name"] == "Chilean hake (a)"),"scientific_name"] <- "Merluccius gayi" # age 0-3
 GroupName[[15]][which(GroupName[[15]][,"original_name"] == "Pilchard (j)"),"scientific_name"] <- "Strangomera bentincki" # age 0
@@ -132,9 +132,9 @@ GroupName[[15]][which(GroupName[[15]][,"original_name"] == "Rattail fish"),"scie
 GroupName[[15]][which(GroupName[[15]][,"original_name"] == "Big0eye flounder"),"scientific_name"] <- "Hipoglossina macrops"
 GroupName[[15]][which(GroupName[[15]][,"original_name"] == "Cardinal fish"),"scientific_name"] <- "Epigonus crassicaudus"
 GroupName[[15]][which(GroupName[[15]][,"original_name"] == "Pacific sand perch"),"scientific_name"] <- "Prolatilus jugularis"
-GroupName[[15]][which(GroupName[[15]][,"original_name"] == "Raja"),"scientific_name"] <- "Raja"
-GroupName[[15]][which(GroupName[[15]][,"original_name"] == "Copepods"),"scientific_name"] <- "Copepods"
-GroupName[[15]][which(GroupName[[15]][,"original_name"] == "Euphausiids"),"scientific_name"] <- "Euphausiids"
+#GroupName[[15]][which(GroupName[[15]][,"original_name"] == "Raja"),"scientific_name"] <- "Raja"
+#GroupName[[15]][which(GroupName[[15]][,"original_name"] == "Copepods"),"scientific_name"] <- "Copepods"
+#GroupName[[15]][which(GroupName[[15]][,"original_name"] == "Euphausiids"),"scientific_name"] <- "Euphausiids"
 GroupName[[15]][which(GroupName[[15]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
 
 # Web 16 - article OK
@@ -166,7 +166,7 @@ GroupName[[18]][which(GroupName[[18]][,"original_name"] == "Atl. croaker"),"scie
 GroupName[[18]][which(GroupName[[18]][,"original_name"] == "Menhaden YOY"),"scientific_name"] <- "Brevoortia tyrannus"
 GroupName[[18]][which(GroupName[[18]][,"original_name"] == "Menhaden adult"),"scientific_name"] <- "Brevoortia tyrannus"
 GroupName[[18]][which(GroupName[[18]][,"original_name"] == "black drum"),"scientific_name"] <- "Pogonius cromis"
-GroupName[[18]][which(GroupName[[18]][,"original_name"] == "Alewife and herring"),"scientific_name"] <- "Alosa"
+#GroupName[[18]][which(GroupName[[18]][,"original_name"] == "Alewife and herring"),"scientific_name"] <- "Alosa"
 GroupName[[18]][which(GroupName[[18]][,"original_name"] == "American eel"),"scientific_name"] <- "Anguilla rostrata"
 GroupName[[18]][which(GroupName[[18]][,"original_name"] == "American shad"),"scientific_name"] <- "Alosa sapidissima" # american/hickory shad?
 GroupName[[18]][which(GroupName[[18]][,"original_name"] == "bay anchovy"),"scientific_name"] <- "Anchoa mitchilli"
@@ -176,7 +176,7 @@ GroupName[[18]][which(GroupName[[18]][,"original_name"] == "gizzard shad"),"scie
 GroupName[[18]][which(GroupName[[18]][,"original_name"] == "blue catfish"),"scientific_name"] <- "Ictalurus furcatus"
 GroupName[[18]][which(GroupName[[18]][,"original_name"] == "sandbar shark"),"scientific_name"] <- "Carcharhinus plumbeus"
 GroupName[[18]][which(GroupName[[18]][,"original_name"] == "Hard clam"),"scientific_name"] <- "Mercenaria mercenaria"
-GroupName[[18]][which(GroupName[[18]][,"original_name"] == "ctenophores"),"scientific_name"] <- "Mnemiopsis"
+#GroupName[[18]][which(GroupName[[18]][,"original_name"] == "ctenophores"),"scientific_name"] <- "Mnemiopsis"
 GroupName[[18]][which(GroupName[[18]][,"original_name"] == "sea nettles"),"scientific_name"] <- "Chrysaora quinquecirrha"
 GroupName[[18]][which(GroupName[[18]][,"original_name"] == "Blue crab YOY"),"scientific_name"] <- "Callinectes sapidus"
 GroupName[[18]][which(GroupName[[18]][,"original_name"] == "Blue crab adult"),"scientific_name"] <- "Callinectes sapidus"
@@ -212,8 +212,8 @@ GroupName[[21]][which(GroupName[[21]][,"original_name"] == "Mesozooplankton"),"s
 
 # Web 22 - article OK
 GroupName[[22]][which(GroupName[[22]][,"original_name"] == "Anguille"),"scientific_name"] <- "Anguilla anguilla"
-GroupName[[22]][which(GroupName[[22]][,"original_name"] == "Adult mugilids"),"scientific_name"] <- "Muguilidae"
-GroupName[[22]][which(GroupName[[22]][,"original_name"] == "Atherinids"),"scientific_name"] <- "Atherinidae"
+#GroupName[[22]][which(GroupName[[22]][,"original_name"] == "Adult mugilids"),"scientific_name"] <- "Muguilidae"
+#GroupName[[22]][which(GroupName[[22]][,"original_name"] == "Atherinids"),"scientific_name"] <- "Atherinidae"
 GroupName[[22]][which(GroupName[[22]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
 GroupName[[22]][which(GroupName[[22]][,"original_name"] == "Zooplankton"),"scientific_name"] <- "Zooplankton"
 
@@ -281,7 +281,7 @@ GroupName[[34]][which(GroupName[[34]][,"original_name"] == "Callinectes"),"scien
 GroupName[[34]][which(GroupName[[34]][,"original_name"] == "Gerreidae"),"scientific_name"] <- "Diapterus peruvians"
 GroupName[[34]][which(GroupName[[34]][,"original_name"] == "Gobios"),"scientific_name"] <- "Dormitator latrifons"
 GroupName[[34]][which(GroupName[[34]][,"original_name"] == "Mugilidae"),"scientific_name"] <- "Mugil cephalus"
-GroupName[[34]][which(GroupName[[34]][,"original_name"] == "Palaemonidae"),"scientific_name"] <- "Macrobranchium"
+#GroupName[[34]][which(GroupName[[34]][,"original_name"] == "Palaemonidae"),"scientific_name"] <- "Macrobranchium"
 GroupName[[34]][which(GroupName[[34]][,"original_name"] == "Chanidae"),"scientific_name"] <- "Chanos chanos"
 GroupName[[34]][which(GroupName[[34]][,"original_name"] == "Fitoplancton"),"scientific_name"] <- "Phytoplankton"
 GroupName[[34]][which(GroupName[[34]][,"original_name"] == "Zooplancton"),"scientific_name"] <- "Zooplankton"
@@ -319,9 +319,9 @@ GroupName[[36]][which(GroupName[[36]][,"original_name"] == "Fitoplancton"),"scie
 # Web 39 - article OK
 GroupName[[39]][which(GroupName[[39]][,"original_name"] == "Phyt"),"scientific_name"] <- "Phytoplankton"
 GroupName[[39]][which(GroupName[[39]][,"original_name"] == "Bakt"),"scientific_name"] <- "Bakterioplankton"
-GroupName[[39]][which(GroupName[[39]][,"original_name"] == "Moff"),"scientific_name"] <- "Bivalvia"
+#GroupName[[39]][which(GroupName[[39]][,"original_name"] == "Moff"),"scientific_name"] <- "Bivalvia"
 GroupName[[39]][which(GroupName[[39]][,"original_name"] == "Zoopl"),"scientific_name"] <- "Zooplankton"
-GroupName[[39]][which(GroupName[[39]][,"original_name"] == "Momf"),"scientific_name"] <- "Actinia"
+#GroupName[[39]][which(GroupName[[39]][,"original_name"] == "Momf"),"scientific_name"] <- "Actinia"
 
 # Web 40 - article OK
  # Waiting on Mario Delos Reyes
@@ -375,8 +375,8 @@ GroupName[[47][which(GroupName[[47]][,"original_name"] == "Carn. zoop."),"scient
 GroupName[[48]][which(GroupName[[48]][,"original_name"] == "Kampango"),"scientific_name"] <- "Bagrus meridionalis"
 GroupName[[48]][which(GroupName[[48]][,"original_name"] == "Mpasa"),"scientific_name"] <- "Opsaridium microlepis"
 GroupName[[48]][which(GroupName[[48]][,"original_name"] == "Sanjika"),"scientific_name"] <- "Opsaridium microcephalus"
-GroupName[[48]][which(GroupName[[48]][,"original_name"] == "Mcheni"),"scientific_name"] <- "Ramphochromis"
-GroupName[[48]][which(GroupName[[48]][,"original_name"] == "Bombe"),"scientific_name"] <- "Bathyclarias"
+#GroupName[[48]][which(GroupName[[48]][,"original_name"] == "Mcheni"),"scientific_name"] <- "Ramphochromis"
+#GroupName[[48]][which(GroupName[[48]][,"original_name"] == "Bombe"),"scientific_name"] <- "Bathyclarias"
 GroupName[[48]][which(GroupName[[48]][,"original_name"] == "Usipa"),"scientific_name"] <- "Engraulicypris sardella"
 GroupName[[48]][which(GroupName[[48]][,"original_name"] == "Nkhungu"),"scientific_name"] <- "Chaoborus edulis"
 GroupName[[48]][which(GroupName[[48]][,"original_name"] == "Zooplankton"),"scientific_name"] <- "Zooplankton"
@@ -470,7 +470,6 @@ GroupName[[58]][which(GroupName[[58]][,"original_name"] == "Juvenile herring (1-
 GroupName[[58]][which(GroupName[[58]][,"original_name"] == "Prawns & shrimps"),"scientific_name"] <- "Pandalus borealis"
 GroupName[[58]][which(GroupName[[58]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
 GroupName[[58]][which(GroupName[[58]][,"original_name"] == "Zooplankton"),"scientific_name"] <- "Zooplankton"
-GroupName[[58]][which(GroupName[[58]][,"original_name"] == ""),"scientific_name"] <- ""
 
 # Web 59 - article OK
         # Only functionnal groups
@@ -519,7 +518,7 @@ GroupName[[66]][which(GroupName[[66]][,"original_name"] == "Sandlance"),"scienti
 GroupName[[66]][which(GroupName[[66]][,"original_name"] == "Arctic cod"),"scientific_name"] <- "Boreogadus saida"
 GroupName[[66]][which(GroupName[[66]][,"original_name"] == "Herring"),"scientific_name"] <- "Clupea harengus harengus"
 GroupName[[66]][which(GroupName[[66]][,"original_name"] == "Shortfinned squid"),"scientific_name"] <- "Illex illecebrosus"
-GroupName[[66]][which(GroupName[[66]][,"original_name"] == "Arctic Squid"),"scientific_name"] <- "Gonatus"
+#GroupName[[66]][which(GroupName[[66]][,"original_name"] == "Arctic Squid"),"scientific_name"] <- "Gonatus"
 GroupName[[66]][which(GroupName[[66]][,"original_name"] == "Lobster"),"scientific_name"] <- "Lomarus americanus"
 GroupName[[66]][which(GroupName[[66]][,"original_name"] == "L.Zooplankton"),"scientific_name"] <- "Large Zooplankton"
 GroupName[[66]][which(GroupName[[66]][,"original_name"] == "S.Zooplankton"),"scientific_name"] <- "Small Zooplankton"
@@ -534,7 +533,7 @@ GroupName[[67]][which(GroupName[[67]][,"original_name"] == "G.halibut>40cm"),"sc
 GroupName[[67]][which(GroupName[[67]][,"original_name"] == "G.halibut<=40cm"),"scientific_name"] <- "Reinhardtius hippoglossoides"
 GroupName[[67]][which(GroupName[[67]][,"original_name"] == "Aplaice>35cm"),"scientific_name"] <- "Hippoglossoides platessoides"
 GroupName[[67]][which(GroupName[[67]][,"original_name"] == "Aplaice<=35cm"),"scientific_name"] <- "Hippoglossoides platessoides"
-GroupName[[67]][which(GroupName[[67]][,"original_name"] == "Redfish"),"scientific_name"] <- "Sebastes"
+#GroupName[[67]][which(GroupName[[67]][,"original_name"] == "Redfish"),"scientific_name"] <- "Sebastes"
 GroupName[[67]][which(GroupName[[67]][,"original_name"] == "Capelin"),"scientific_name"] <- "Mallotus villosus"
 GroupName[[67]][which(GroupName[[67]][,"original_name"] == "Sandlance"),"scientific_name"] <- "Ammodytes dubius"
 GroupName[[67]][which(GroupName[[67]][,"original_name"] == "Arctic cod"),"scientific_name"] <- "Boreogadus saida"
@@ -565,7 +564,7 @@ GroupName[[68]][which(GroupName[[68]][,"original_name"] == "Sandlance"),"scienti
 GroupName[[68]][which(GroupName[[68]][,"original_name"] == "Arctic cod"),"scientific_name"] <- "Boreogadus saida"
 GroupName[[68]][which(GroupName[[68]][,"original_name"] == "Herring"),"scientific_name"] <- "Clupea harengus harengus"
 GroupName[[68]][which(GroupName[[68]][,"original_name"] == "Shortfinned squid"),"scientific_name"] <- "Illex illecebrosus"
-GroupName[[68]][which(GroupName[[68]][,"original_name"] == "Arctic Squid"),"scientific_name"] <- "Gonatus"
+#GroupName[[68]][which(GroupName[[68]][,"original_name"] == "Arctic Squid"),"scientific_name"] <- "Gonatus"
 GroupName[[68]][which(GroupName[[68]][,"original_name"] == "Lobster"),"scientific_name"] <- "Lomarus americanus"
 GroupName[[68]][which(GroupName[[68]][,"original_name"] == "L.Zooplankton"),"scientific_name"] <- "Large Zooplankton"
 GroupName[[68]][which(GroupName[[68]][,"original_name"] == "S.Zooplankton"),"scientific_name"] <- "Small Zooplankton"
@@ -594,7 +593,7 @@ GroupName[[69]][which(GroupName[[69]][,"original_name"] == "Sandlance"),"scienti
 GroupName[[69]][which(GroupName[[69]][,"original_name"] == "Arctic cod"),"scientific_name"] <- "Boreogadus saida"
 GroupName[[69]][which(GroupName[[69]][,"original_name"] == "Herring"),"scientific_name"] <- "Clupea harengus harengus"
 GroupName[[69]][which(GroupName[[69]][,"original_name"] == "Shortfinned squid"),"scientific_name"] <- "Illex illecebrosus"
-GroupName[[69]][which(GroupName[[69]][,"original_name"] == "Arctic Squid"),"scientific_name"] <- "Gonatus"
+#GroupName[[69]][which(GroupName[[69]][,"original_name"] == "Arctic Squid"),"scientific_name"] <- "Gonatus"
 GroupName[[69]][which(GroupName[[69]][,"original_name"] == "Lobster"),"scientific_name"] <- "Lomarus americanus"
 GroupName[[69]][which(GroupName[[69]][,"original_name"] == "L.Zooplankton"),"scientific_name"] <- "Large Zooplankton"
 GroupName[[69]][which(GroupName[[69]][,"original_name"] == "S.Zooplankton"),"scientific_name"] <- "Small Zooplankton"
@@ -725,7 +724,7 @@ GroupName[[81]][which(GroupName[[81]][,"original_name"] == "Phytoplankton"),"sci
 
 # Web 91 - article OK
 GroupName[[91]][which(GroupName[[91]][,"original_name"] == "E Fluviatilis"),"scientific_name"] <- "Ehirava fluviatilis"
-GroupName[[91]][which(GroupName[[91]][,"original_name"] == "Hemiramphus sp"),"scientific_name"] <- "Hemiramphus"
+#GroupName[[91]][which(GroupName[[91]][,"original_name"] == "Hemiramphus sp"),"scientific_name"] <- "Hemiramphus"
 GroupName[[91]][which(GroupName[[91]][,"original_name"] == "P.filamentosus"),"scientific_name"] <- "Puntius filamentosus"
 GroupName[[91]][which(GroupName[[91]][,"original_name"] == "O. mossambicus"),"scientific_name"] <- "Oreochromis mossambicus"
 GroupName[[91]][which(GroupName[[91]][,"original_name"] == "O. niloticus"),"scientific_name"] <- "Oreochromis niloticus"
@@ -738,7 +737,7 @@ GroupName[[92]][which(GroupName[[92]][,"original_name"] == "Dogfish"),"scientifi
 GroupName[[92]][which(GroupName[[92]][,"original_name"] == "Ad hake"),"scientific_name"] <- "Merluccius productus"
 GroupName[[92]][which(GroupName[[92]][,"original_name"] == "<juv hake"),"scientific_name"] <- "Merluccius productus" # juvenile hake
 GroupName[[92]][which(GroupName[[92]][,"original_name"] == "Ad Res coho"),"scientific_name"] <- "Oncorhynchus kisutch"
-GroupName[[92]][which(GroupName[[92]][,"original_name"] == "Juv Res coho"),"scientific_name"] <- ""
+GroupName[[92]][which(GroupName[[92]][,"original_name"] == "Juv Res coho"),"scientific_name"] <- "Oncorhynchus kisutch"
 GroupName[[92]][which(GroupName[[92]][,"original_name"] == "Ad Res chinook"),"scientific_name"] <- "Oncorhynchus tshawytsc"
 GroupName[[92]][which(GroupName[[92]][,"original_name"] == "Juv Res chinook"),"scientific_name"] <- "Oncorhynchus tshawytsc"
 GroupName[[92]][which(GroupName[[92]][,"original_name"] == "Eulachon"),"scientific_name"] <- "Thaleichthys pacificus"
@@ -770,8 +769,8 @@ GroupName[[95]][which(GroupName[[95]][,"original_name"] == "36+ Red Drum"),"scie
 GroupName[[95]][which(GroupName[[95]][,"original_name"] == "0-6 Mullet"),"scientific_name"] <- "Mugil cephalus"
 GroupName[[95]][which(GroupName[[95]][,"original_name"] == "6-18 Mullet"),"scientific_name"] <- "Mugil cephalus"
 GroupName[[95]][which(GroupName[[95]][,"original_name"] == "18+ Mullet"),"scientific_name"] <- "Mugil cephalus"
-GroupName[[95]][which(GroupName[[95]][,"original_name"] == "Mackrel 0-3"),"scientific_name"] <- "Scomberomorus"
-GroupName[[95]][which(GroupName[[95]][,"original_name"] == "Mackrel 3+"),"scientific_name"] <- "Scomberomorus"
+#GroupName[[95]][which(GroupName[[95]][,"original_name"] == "Mackrel 0-3"),"scientific_name"] <- "Scomberomorus"
+#GroupName[[95]][which(GroupName[[95]][,"original_name"] == "Mackrel 3+"),"scientific_name"] <- "Scomberomorus"
 GroupName[[95]][which(GroupName[[95]][,"original_name"] == "Ladyfish 0-10"),"scientific_name"] <- "Elops saurus"
 GroupName[[95]][which(GroupName[[95]][,"original_name"] == "Ladyfish 10+"),"scientific_name"] <- "Elops saurus"
 GroupName[[95]][which(GroupName[[95]][,"original_name"] == "Bay Anchovy"),"scientific_name"] <- "Anchoa mitchilli"
@@ -789,7 +788,7 @@ GroupName[[95]][which(GroupName[[95]][,"original_name"] == "Phytoplankton"),"sci
 # Web 96 - article OK
 GroupName[[96]][which(GroupName[[96]][,"original_name"] == "Snapper"),"scientific_name"] <- "Lutjanus griseus"
 GroupName[[96]][which(GroupName[[96]][,"original_name"] == "Toadfish"),"scientific_name"] <- "Opsanus beta"
-GroupName[[96]][which(GroupName[[96]][,"original_name"] == "Anchovy"),"scientific_name"] <- "Anchoa"
+#GroupName[[96]][which(GroupName[[96]][,"original_name"] == "Anchovy"),"scientific_name"] <- "Anchoa"
 GroupName[[96]][which(GroupName[[96]][,"original_name"] == "White mullet"),"scientific_name"] <- "Mugil curema"
 GroupName[[96]][which(GroupName[[96]][,"original_name"] == "Spadefish"),"scientific_name"] <- "Chaetodipterus faber"
 GroupName[[96]][which(GroupName[[96]][,"original_name"] == "Oyster"),"scientific_name"] <- "Crassostrea virginica"
@@ -807,7 +806,7 @@ GroupName[[96]][which(GroupName[[96]][,"original_name"] == "Phytoplankton"),"sci
 
 # Web 100 - article OK
 GroupName[[100]][which(GroupName[[100]][,"original_name"] == "P maculatus"),"scientific_name"] <- "Pimelodus maculatus"
-GroupName[[100]][which(GroupName[[100]][,"original_name"] == "Hypostomus spp"),"scientific_name"] <- "Hypostomus"
+#GroupName[[100]][which(GroupName[[100]][,"original_name"] == "Hypostomus spp"),"scientific_name"] <- "Hypostomus"
 GroupName[[100]][which(GroupName[[100]][,"original_name"] == "Schizodon borelii"),"scientific_name"] <- "Schizodon borelii"
 GroupName[[100]][which(GroupName[[100]][,"original_name"] == "Loricariichthys platymetopon"),"scientific_name"] <- "Loricariichthys platymetopon"
 GroupName[[100]][which(GroupName[[100]][,"original_name"] == "Prochilodus lineatus"),"scientific_name"] <- "Prochilodus lineatus"
@@ -843,8 +842,8 @@ GroupName[[102]][which(GroupName[[102]][,"original_name"] == "Cod 4+"),"scientif
 GroupName[[102]][which(GroupName[[102]][,"original_name"] == "Cod juv"),"scientific_name"] <- "Gadus morhua"
 GroupName[[102]][which(GroupName[[102]][,"original_name"] == "Grl. halibut 5+"),"scientific_name"] <- "Reinhardtius hippoglossoides"
 GroupName[[102]][which(GroupName[[102]][,"original_name"] == "Grl. halibut juv"),"scientific_name"] <- "Reinhardtius hippoglossoides"
-GroupName[[102]][which(GroupName[[102]][,"original_name"] == "Redfish larger than 14cm"),"scientific_name"] <- "Sebastes" # > 14cm
-GroupName[[102]][which(GroupName[[102]][,"original_name"] == "Redfish juv less 15cm"),"scientific_name"] <- "Sebastes" # < 15cm
+#GroupName[[102]][which(GroupName[[102]][,"original_name"] == "Redfish larger than 14cm"),"scientific_name"] <- "Sebastes" # > 14cm
+#GroupName[[102]][which(GroupName[[102]][,"original_name"] == "Redfish juv less 15cm"),"scientific_name"] <- "Sebastes" # < 15cm
 GroupName[[102]][which(GroupName[[102]][,"original_name"] == "Polar cod"),"scientific_name"] <- "Boreogadus saida"
 GroupName[[102]][which(GroupName[[102]][,"original_name"] == " Thorny ray"),"scientific_name"] <- "Raja radiata"
 GroupName[[102]][which(GroupName[[102]][,"original_name"] == "Long rough Dab"),"scientific_name"] <- "Hippoglossoides platessoides"
@@ -899,7 +898,7 @@ GroupName[[107]][which(GroupName[[107]][,"original_name"] == "Phytoplankton"),"s
 
 # Web 108 - article OK
 GroupName[[108]][which(GroupName[[108]][,"original_name"] == "Grl. Halibut"),"scientific_name"] <- "Reinhardtius hippoglossoides"
-GroupName[[108]][which(GroupName[[108]][,"original_name"] == "Red fish"),"scientific_name"] <- "Sebastes"
+#GroupName[[108]][which(GroupName[[108]][,"original_name"] == "Red fish"),"scientific_name"] <- "Sebastes"
 GroupName[[108]][which(GroupName[[108]][,"original_name"] == "Northern shrimp"),"scientific_name"] <- "Pandalus borealis"
 GroupName[[108]][which(GroupName[[108]][,"original_name"] == "Polar cod"),"scientific_name"] <- "Boreogadus suida"
 GroupName[[108]][which(GroupName[[108]][,"original_name"] == "Cod"),"scientific_name"] <- "Gadus morhua"
@@ -917,36 +916,36 @@ GroupName[[110]][which(GroupName[[110]][,"original_name"] == "Collared_lemming")
 GroupName[[110]][which(GroupName[[110]][,"original_name"] == "Reindeer"),"scientific_name"] <- "Rangifer tarandus"
 GroupName[[110]][which(GroupName[[110]][,"original_name"] == "Muskoxen"),"scientific_name"] <- "Ovibos moschatus"
 GroupName[[110]][which(GroupName[[110]][,"original_name"] == "Arctic_hare"),"scientific_name"] <- "Lepus arcticus"
-GroupName[[110]][which(GroupName[[110]][,"original_name"] == "Ptarmigan"),"scientific_name"] <- "Lagopus"
+#GroupName[[110]][which(GroupName[[110]][,"original_name"] == "Ptarmigan"),"scientific_name"] <- "Lagopus"
 GroupName[[110]][which(GroupName[[110]][,"original_name"] == "Snow_bunting"),"scientific_name"] <- "Plectrophenax nivalis"
 GroupName[[110]][which(GroupName[[110]][,"original_name"] == "Arctic_wolve"),"scientific_name"] <- "Canis lupus arctos"
-GroupName[[110]][which(GroupName[[110]][,"original_name"] == "Gulls"),"scientific_name"] <- "Larus"
+#GroupName[[110]][which(GroupName[[110]][,"original_name"] == "Gulls"),"scientific_name"] <- "Larus"
 GroupName[[110]][which(GroupName[[110]][,"original_name"] == "Long-tailed_jaeger"),"scientific_name"] <- "Stercorarius longicaudus"
 GroupName[[110]][which(GroupName[[110]][,"original_name"] == "Ermine"),"scientific_name"] <- "Mustela erminea"
 
 # Web 111 - article OK
 GroupName[[111]][which(GroupName[[111]][,"original_name"] == "Reindeer"),"scientific_name"] <- "Rangifer tarandus"
-GroupName[[111]][which(GroupName[[111]][,"original_name"] == "Gulls"),"scientific_name"] <- "Larus"
+#GroupName[[111]][which(GroupName[[111]][,"original_name"] == "Gulls"),"scientific_name"] <- "Larus"
 GroupName[[111]][which(GroupName[[111]][,"original_name"] == "Arctic_fox"),"scientific_name"] <- "Vulpes lagopus"
 
 # Web 112 - article OK
 GroupName[[112]][which(GroupName[[112]][,"original_name"] == "Reindeer"),"scientific_name"] <- "Rangifer tarandus"
 GroupName[[112]][which(GroupName[[112]][,"original_name"] == "Voles"),"scientific_name"] <- "Microtus oeconomus"
 GroupName[[112]][which(GroupName[[112]][,"original_name"] == "Arctic_hare"),"scientific_name"] <- "Lepus arcticus"
-GroupName[[112]][which(GroupName[[112]][,"original_name"] == "Ptarmigan"),"scientific_name"] <- "Lagopus"
+#GroupName[[112]][which(GroupName[[112]][,"original_name"] == "Ptarmigan"),"scientific_name"] <- "Lagopus"
 GroupName[[112]][which(GroupName[[112]][,"original_name"] == "Ermine"),"scientific_name"] <- "Mustela erminea"
 GroupName[[112]][which(GroupName[[112]][,"original_name"] == "Arctic_fox"),"scientific_name"] <- "Vulpes lagopus"
 GroupName[[112]][which(GroupName[[112]][,"original_name"] == "Red_fox"),"scientific_name"] <- "Vulpes vulpes"
-GroupName[[112]][which(GroupName[[112]][,"original_name"] == "Falcons"),"scientific_name"] <- "Falco"
+#GroupName[[112]][which(GroupName[[112]][,"original_name"] == "Falcons"),"scientific_name"] <- "Falco"
 GroupName[[112]][which(GroupName[[112]][,"original_name"] == "Rough-legged_hawk"),"scientific_name"] <- "Buteo lagopus"
 GroupName[[112]][which(GroupName[[112]][,"original_name"] == "Wolverine"),"scientific_name"] <- "Gulo gulo"
-GroupName[[112]][which(GroupName[[112]][,"original_name"] == "Gulls"),"scientific_name"] <- "Larus"
+#GroupName[[112]][which(GroupName[[112]][,"original_name"] == "Gulls"),"scientific_name"] <- "Larus"
 
 # Web 113 - article OK
 GroupName[[113]][which(GroupName[[113]][,"original_name"] == "Collared_lemming"),"scientific_name"] <- "Dicrostonyx groenlandicus"
 GroupName[[113]][which(GroupName[[113]][,"original_name"] == "Arctic_hare"),"scientific_name"] <- "Lepus arcticus"
 GroupName[[113]][which(GroupName[[113]][,"original_name"] == "Muskoxen"),"scientific_name"] <- "Ovibos moschatus"
-GroupName[[113]][which(GroupName[[113]][,"original_name"] == "Ptarmigan"),"scientific_name"] <- "Lagopus"
+#GroupName[[113]][which(GroupName[[113]][,"original_name"] == "Ptarmigan"),"scientific_name"] <- "Lagopus"
 GroupName[[113]][which(GroupName[[113]][,"original_name"] == "Snow_bunting"),"scientific_name"] <- "Plectrophenax nivalis"
 GroupName[[113]][which(GroupName[[113]][,"original_name"] == "Ermine"),"scientific_name"] <- "Mustela erminea"
 GroupName[[113]][which(GroupName[[113]][,"original_name"] == "Arctic_fox"),"scientific_name"] <- "Vulpes lagopus"
@@ -959,7 +958,7 @@ GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Muskoxen"),"scient
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Collared_lemming"),"scientific_name"] <- "Dicrostonyx groenlandicus"
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Brown_lemmings"),"scientific_name"] <- "Lemnus trimucronatus"
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Voles"),"scientific_name"] <- "Microtus oeconomus"
-GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Ptarmigan"),"scientific_name"] <- "Lagopus"
+#GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Ptarmigan"),"scientific_name"] <- "Lagopus"
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Ermine"),"scientific_name"] <- "Mustela erminea"
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Arctic_fox"),"scientific_name"] <- "Vulpes lagopus"
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Red_fox"),"scientific_name"] <- "Vulpes vulpes"
@@ -985,11 +984,11 @@ GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Peregrine_falcon")
 GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Voles"),"scientific_name"] <- "Microtus oeconomus"
 GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Reindeer"),"scientific_name"] <- "Rangifer tarandus"
 GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Arctic_hare"),"scientific_name"] <- "Lepus arcticus"
-GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Ptarmigan"),"scientific_name"] <- "Lagopus"
+#GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Ptarmigan"),"scientific_name"] <- "Lagopus"
 GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Ermine"),"scientific_name"] <- "Mustela erminea"
 GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Arctic_fox"),"scientific_name"] <- "Vulpes lagopus"
 GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Red_fox"),"scientific_name"] <- "Vulpes vulpes"
-GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Falcons"),"scientific_name"] <- "Falco"
+#GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Falcons"),"scientific_name"] <- "Falco"
 GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Rough-legged_hawk"),"scientific_name"] <- "Buteo lagopus"
 GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Snowy_owl"),"scientific_name"] <- "Bubo scandiacus"
 GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Brown_bear"),"scientific_name"] <- "Ursus horribilis"

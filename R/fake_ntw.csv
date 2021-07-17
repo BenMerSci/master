@@ -1,7 +1,0 @@
-pred;prey;flux
-poisson;invert1;15
-poisson;invert2;1
-invert1;res1;4
-invert1;res3;8
-invert2;res1;6
-invert2;res2;23
