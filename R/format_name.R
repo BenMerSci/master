@@ -32,7 +32,7 @@ GroupName <- lapply(GroupName, function(x) as.data.frame(x)) |>
         # Juvenile pacific herring < 18cm
 GroupName[[1]][which(GroupName[[1]][,"original_name"] == "Herring"),"scientific_name"] <- "Clupea pallasi"
 GroupName[[1]][which(GroupName[[1]][,"original_name"] == "Sea otters"),"scientific_name"] <- "Enhydra lutris"
-GroupName[[1]][which(GroupName[[1]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "phytoplankton"
+GroupName[[1]][which(GroupName[[1]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
 GroupName[[1]][which(GroupName[[1]][,"original_name"] == "Macrozooplankton"),"scientific_name"] <- "macrozooplankton"
 
 # Web 2 - article OK
@@ -42,7 +42,7 @@ GroupName[[2]][which(GroupName[[2]][,"original_name"] == "Lobo marino"),"scienti
 GroupName[[2]][which(GroupName[[2]][,"original_name"] == "C. de roca"),"scientific_name"] <- "Sicyonia penicillata"
 GroupName[[2]][which(GroupName[[2]][,"original_name"] == "C. cafe"),"scientific_name"] <- "Farfantepeneaeus californiensis"
 GroupName[[2]][which(GroupName[[2]][,"original_name"] == "C. azul"),"scientific_name"] <- "Litopenaeus stylirostris"
-GroupName[[2]][which(GroupName[[2]][,"original_name"] == "Zooplancton"),"scientific_name"] <- "Zooplancton"
+GroupName[[2]][which(GroupName[[2]][,"original_name"] == "Zooplancton"),"scientific_name"] <- "Zooplankton"
 GroupName[[2]][which(GroupName[[2]][,"original_name"] == "Fitoplancton"),"scientific_name"] <- "Phytoplancton"
 
 # Web 3 - article MISSING
@@ -150,7 +150,7 @@ GroupName[[17]][which(GroupName[[17]][,"original_name"] == "Albacore tuna"),"sci
 GroupName[[17]][which(GroupName[[17]][,"original_name"] == "Mahimahi"),"scientific_name"] <- "Coryphaena hippurus"
 GroupName[[17]][which(GroupName[[17]][,"original_name"] == "Skipjack tuna"),"scientific_name"] <- "Katsuwonus pelamis"
 GroupName[[17]][which(GroupName[[17]][,"original_name"] == "Lancetfish"),"scientific_name"] <- "Alepisaurus ferox"
-GroupName[[17]][which(GroupName[[17]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Alepisaurus ferox"
+GroupName[[17]][which(GroupName[[17]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
 
 # Web 18 - article OK
 GroupName[[18]][which(GroupName[[18]][,"original_name"] == "Spot"),"scientific_name"] <- "Leiostomus xanthurus"
@@ -335,9 +335,9 @@ GroupName[[39]][which(GroupName[[39]][,"original_name"] == "Zoopl"),"scientific_
 # Web 43 - article OK
 GroupName[[43]][which(GroupName[[43]][,"original_name"] == "Roach fry"),"scientific_name"] <- "Rutilus rutilus"
 GroupName[[43]][which(GroupName[[43]][,"original_name"] == "Roach adults"),"scientific_name"] <- "Rutilus rutilus"
-GroupName[[43]][which(GroupName[[43]][,"original_name"] == "phytoplankton"),"scientific_name"] <- "phytoplankton"
+GroupName[[43]][which(GroupName[[43]][,"original_name"] == "phytoplankton"),"scientific_name"] <- "Phytoplankton"
 GroupName[[43]][which(GroupName[[43]][,"original_name"] == "predatory zoo"),"scientific_name"] <- "predatory zooplankton"
-GroupName[[43]][which(GroupName[[43]][,"original_name"] == "herbivorous zoo"),"scientific_name"] <- "herbivorous zooplankton"
+GroupName[[43]][which(GroupName[[43]][,"original_name"] == "herbivorous zoo"),"scientific_name"] <- "Herbivorous zooplankton"
 
 # Web 44 - article OK
 GroupName[[44]][which(GroupName[[44]][,"original_name"] == "Sarotherodon"),"scientific_name"] <- "Sarotherodon galilaeus"
@@ -781,7 +781,7 @@ GroupName[[95]][which(GroupName[[95]][,"original_name"] == "Menidia (silverside)
 GroupName[[95]][which(GroupName[[95]][,"original_name"] == "Manhaden"),"scientific_name"] <- "Brevoortia patronus"
 GroupName[[95]][which(GroupName[[95]][,"original_name"] == "Blue Crab"),"scientific_name"] <- "Callinectes sapidus"
 GroupName[[95]][which(GroupName[[95]][,"original_name"] == "Pigfish"),"scientific_name"] <- "Orthopristis chrysoptera"
-GroupName[[95]][which(GroupName[[95]][,"original_name"] == "Macro Zooplankton"),"scientific_name"] <- "Macro Zooplankton"
+GroupName[[95]][which(GroupName[[95]][,"original_name"] == "Macro Zooplankton"),"scientific_name"] <- "Macrozooplankton"
 GroupName[[95]][which(GroupName[[95]][,"original_name"] == "Micro Zoolplankton"),"scientific_name"] <- "Micro Zoolplankton"
 GroupName[[95]][which(GroupName[[95]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
 
@@ -869,7 +869,7 @@ GroupName[[105]][which(GroupName[[105]][,"original_name"] == "Adult Herring"),"s
 GroupName[[105]][which(GroupName[[105]][,"original_name"] == "Juv. Herring"),"scientific_name"] <- "Clupea pallasii"
 GroupName[[105]][which(GroupName[[105]][,"original_name"] == "Eulachon"),"scientific_name"] <- "Thaleichthys pacificus"
 GroupName[[105]][which(GroupName[[105]][,"original_name"] == "Pink Shrimp"),"scientific_name"] <- "Pandalus jordani"
-GroupName[[105]][which(GroupName[[105]][,"original_name"] == "Herb. Zoolplankton"),"scientific_name"] <- "Herbivorous Zoolplankton"
+GroupName[[105]][which(GroupName[[105]][,"original_name"] == "Herb. Zoolplankton"),"scientific_name"] <- "Herbivorous zooplankton"
 GroupName[[105]][which(GroupName[[105]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
 
 # Web 106 - article OK
