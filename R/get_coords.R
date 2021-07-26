@@ -9,7 +9,7 @@ model_list <- plyr::ldply(XML::xmlToList(data),data.frame)
 # Merge it with the corresponding models
 name_match <- read.csv("data/name_match.csv") |>
 		dplyr::left_join(model_list, by = c("name_from_db" = "model.model_name")) |>
-		unique(
+		unique()
 
 # Load the interactions table
 inter_table <- readRDS("data/inter_table.RDS")
