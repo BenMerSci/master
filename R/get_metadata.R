@@ -20,3 +20,14 @@ inter_table <- readRDS("data/inter_table.RDS") |>
 				"model.geographic_extent","model.ecosystem_type","model.currency_units",
 				"model.model_year","model.depth_min","model.depth_max","model.currency_units_custom",
 				"model.depth_mean","model.temperature_mean","model.temperature_min","model.temperature_max"))
+
+# Add manually some missing informations
+inter_table[which(inter_table$model_name == "Arctic islands, Alert"), "model.model_year"] <- "2008"
+inter_table[which(inter_table$model_name == "Arctic islands, Erkuta"), "model.model_year"] <- "2008"
+inter_table[which(inter_table$model_name == "Arctic islands, Herschel"), "model.model_year"] <- "2008"
+inter_table[which(inter_table$model_name == "Arctic islands, Nenetsky"), "model.model_year"] <- "2008"
+inter_table[which(inter_table$model_name == "Arctic islands, Svalbard"), "model.model_year"] <- "2008"
+inter_table[which(inter_table$model_name == "Arctic islands, Zackenberg"), "model.model_year"] <- "2008"
+
+# Write the list as a .Rdata file
+saveRDS(inter_table, file = "data/inter_table.RDS")
