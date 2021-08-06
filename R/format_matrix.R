@@ -12,7 +12,8 @@ DIET <- lapply(DIET, function(x) {
 		dplyr::rename(species_from = "X")
 })
 
-# Conserve ntw 33, 57, 64, 89, 106, 
+# Conserve ntw 33, 57, 64, 89, 106, 110, 111, 112, 113, 114, 115, 116 because the column names were different
+# and the next actions will altered them, so I will just replace them with the original after 
 temp_list <- DIET[c(33,57,64,89,106,110,111,112,113,114,115,116)]
 
 # Remove the letters in some of the number IDs
@@ -23,7 +24,7 @@ DIET <- lapply(rapply(DIET, function(x) base::gsub("F", "", x), how = "list"), b
 DIET <- lapply(DIET, function(x) {
 	x$species_to <- (as.numeric(x$species_to)-1)
 	return(x)
-	})
+	}) # We get 12 warnings which are related to the 12 networks we previously saved in temp_list
 
 # Replace the previously save networks with their altered version
 DIET[c(33,57,64,89,106,110,111,112,113,114,115,116)] <- temp_list
@@ -36,12 +37,11 @@ DIET <- lapply(rapply(DIET, function(x) base::gsub("V", "", x), how = "list"), b
 
 # Loading the names to join them into the flow matrices
 GroupName <- readRDS("data/list_names.RDS") |>
-	lapply(function (x) { 
-	     base::as.data.frame(x) |>
-	     tibble::rownames_to_column("ID") |>
-	     #dplyr::select(c("ID","scientific_name")) |>
-	     na.omit()
-	})
+	     lapply(function (x) { 
+	     	base::as.data.frame(x) |>
+	     	tibble::rownames_to_column("ID") |>
+	     	na.omit()
+	     })
 
 GroupName_terrestrial <- GroupName[c(110,111,112,113,114,115,116)]
 
@@ -78,7 +78,7 @@ DIET <- lapply(DIET, function(x) {
 	return(x)
 })
 
-# Change names in the terrestrial network ntw 3 Voles
+# Change names in terrestrial networks
 GroupName_terrestrial[[5]] <- rbind(GroupName_terrestrial[[5]], data.frame(ID = c("11","19","24"), original_name = c("Tundra_voles","Wolverine","Peregrine_falcon"), scientific_name = c("Microtus oeconomus","Gulo gulo","Falco peregrinus")))
 GroupName_terrestrial[[6]] <- rbind(GroupName_terrestrial[[6]], data.frame(ID = c("7","11","12","13"), original_name = c("Brown_lemmings","Glaucus_gulls","Stoats", "Arctic_Foxes"), scientific_name = c("Lemnus trimucronatus","Larus hyperboreus","Mustela erminea","Vulpes lagopus")))
 
@@ -154,8 +154,8 @@ DIET <- purrr::map2(DIET, Ecopath_models, ~ cbind(.x, .y))
 # Unlist the dataframes to one dataframe
 # 1624 inter, 1594 unique inter
 inter_table <- do.call("rbind", DIET) |>
-		dplyr::rename(model_name = "Model name", habitat_type = "Habitat type") |>
-		dplyr::select("model_name", "species_from", "species_to", "energy_flow", "habitat_type")
+		dplyr::rename(model_name = "Model name") |>
+		dplyr::select("model_name", "species_from", "species_to", "energy_flow")
 
 # Write the list as a .Rdata file
 saveRDS(inter_table, file = "data/inter_table.RDS")
