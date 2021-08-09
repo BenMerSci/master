@@ -44,5 +44,14 @@ enviro_df <- merge(enviro_df, df_coords, by.x = "model_name", by.y = "model_name
 		dplyr::select(c("model_name","model_year","ecosystem_type","currency_units","habitat_type",
 		"lon","lat"))
 
+# Manually adding the coordinates of the Arctic networks
+enviro_df[which(enviro_df$model_name == "Arctic islands, Alert"), c("lon","lat")] <- c(-62.333333, 82.5)
+enviro_df[which(enviro_df$model_name == "Arctic islands, Erkuta"), c("lon","lat")] <- c(69.100000, 68.200000)
+enviro_df[which(enviro_df$model_name == "Arctic islands, Herschel"), c("lon","lat")] <- c(-138.916667, 69.583333)
+enviro_df[which(enviro_df$model_name == "Arctic islands, Nenetsky"), c("lon","lat")] <- c(53.300000, 68.333333)
+enviro_df[which(enviro_df$model_name == "Arctic islands, Svalbard"), c("lon","lat")] <- c(16.253873, 78.180778)
+enviro_df[which(enviro_df$model_name == "Arctic islands, Zackenberg"), c("lon","lat")] <- c(-21.000000, 74.500000)
+
 # Write the dataframe as .RDS file
 saveRDS(enviro_df, "data/enviro_df.RDS")
+
