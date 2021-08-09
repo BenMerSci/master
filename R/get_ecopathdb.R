@@ -19,15 +19,17 @@ ecopath_metadata <- readRDS("data/resolved_inter_table.RDS") |>
 		base::merge(name_match, by.x = "model_name", by.y = "model_name", all.x = TRUE) |>
 		dplyr::select(c("model_name","model.geographic_extent","model.model_year",
 		"model.ecosystem_type","model.currency_units")) |>
-		unique()
+		unique() |>
+		dplyr::rename(geographic_extent = "model.geographic_extent", model_year = "model.model_year",
+		ecosystem_type = "model.ecosystem_type", currency_units = "model.currency_units")
 
 # Add manually some missing informations
-ecopath_metadata[which(ecopath_metadata$model_name == "Arctic islands, Alert"), "model.model_year"] <- "2008"
-ecopath_metadata[which(ecopath_metadata$model_name == "Arctic islands, Erkuta"), "model.model_year"] <- "2008"
-ecopath_metadata[which(ecopath_metadata$model_name == "Arctic islands, Herschel"), "model.model_year"] <- "2008"
-ecopath_metadata[which(ecopath_metadata$model_name == "Arctic islands, Nenetsky"), "model.model_year"] <- "2008"
-ecopath_metadata[which(ecopath_metadata$model_name == "Arctic islands, Svalbard"), "model.model_year"] <- "2008"
-ecopath_metadata[which(ecopath_metadata$model_name == "Arctic islands, Zackenberg"), "model.model_year"] <- "2008"
+ecopath_metadata[which(ecopath_metadata$model_name == "Arctic islands, Alert"), "model_year"] <- "2008"
+ecopath_metadata[which(ecopath_metadata$model_name == "Arctic islands, Erkuta"), "model_year"] <- "2008"
+ecopath_metadata[which(ecopath_metadata$model_name == "Arctic islands, Herschel"), "model_year"] <- "2008"
+ecopath_metadata[which(ecopath_metadata$model_name == "Arctic islands, Nenetsky"), "model_year"] <- "2008"
+ecopath_metadata[which(ecopath_metadata$model_name == "Arctic islands, Svalbard"), "model_year"] <- "2008"
+ecopath_metadata[which(ecopath_metadata$model_name == "Arctic islands, Zackenberg"), "model_year"] <- "2008"
 
 # Write the list as a .Rdata file
 saveRDS(ecopath_metadata, file = "data/ecopath_metadata.RDS")
