@@ -30,6 +30,7 @@ ecopath_metadata[which(ecopath_metadata$model_name == "Arctic islands, Herschel"
 ecopath_metadata[which(ecopath_metadata$model_name == "Arctic islands, Nenetsky"), "model_year"] <- "2008"
 ecopath_metadata[which(ecopath_metadata$model_name == "Arctic islands, Svalbard"), "model_year"] <- "2008"
 ecopath_metadata[which(ecopath_metadata$model_name == "Arctic islands, Zackenberg"), "model_year"] <- "2008"
+ecopath_metadata[which(ecopath_metadata$model_name == "Alto Golfo De California"), "model_year"] <- "1985"
 
 # Write the list as a .Rdata file
 saveRDS(ecopath_metadata, file = "data/ecopath_metadata.RDS")
