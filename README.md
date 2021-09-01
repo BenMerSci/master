@@ -13,6 +13,7 @@
 
 4. get_ecopathdb.R
 	get the metadata associated with each Ecopath model
+	Year for Alto Golfo de California was set to 1985
 
 5. environment_traits.R
 	get the environment related data of every Ecopath model
