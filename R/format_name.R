@@ -90,7 +90,7 @@ GroupName[[11]][which(GroupName[[11]][,"original_name"] == "Phytoplankton"),"sci
 GroupName[[12]][which(GroupName[[12]][,"original_name"] == "Minke whales"),"scientific_name"] <- "Balaenoptera acutorostrata"
 GroupName[[12]][which(GroupName[[12]][,"original_name"] == "Fin whales"),"scientific_name"] <- "Balaenoptera physalus"
 GroupName[[12]][which(GroupName[[12]][,"original_name"] == "Humpback whales"),"scientific_name"] <- "Megaptera novaeangliae"
-GroupName[[12]][which(GroupName[[12]][,"original_name"] == "Brydes whales"),"scientific_name"] <- "Balaenoptera brydei"
+GroupName[[12]][which(GroupName[[12]][,"original_name"] == "Brydes whales"),"scientific_name"] <- "Balaenoptera edeni"
 GroupName[[12]][which(GroupName[[12]][,"original_name"] == "Sei whales"),"scientific_name"] <- "Balaenoptera borealis"
 GroupName[[12]][which(GroupName[[12]][,"original_name"] == "Blue whales"),"scientific_name"] <- "Balaenoptera musculus"
 GroupName[[12]][which(GroupName[[12]][,"original_name"] == "Zooplankton"),"scientific_name"] <- "Zooplankton"
@@ -484,14 +484,8 @@ GroupName[[60]][which(GroupName[[60]][,"original_name"] == "Phytoplankton"),"sci
 
 # Web 64 - article OK
         # Only functionnal groups
-
-# Web 65 - article OK
-        # Only functionnal groups
-
-# Web 66 - article OK
-GroupName[[66]][which(GroupName[[66]][,"original_name"] == "Walrus"),"scientific_name"] <- "Odobenus rosmarus"
-GroupName[[66]][which(GroupName[[66]][,"original_name"] == "Grey seals"),"scientific_name"] <- "Halichoerus grypus"
-GroupName[[66]][which(GroupName[[66]][,"original_name"] == "Harp Seals"),"scientific_name"] <- "Phoca groenlandica"
+fishbaseupName[[66]][,"original_name"] == "Grey seals"),"scientific_name"] <- "Halichoerus grypus"
+GroupName[[66]][which(GroupName[[66]][,"original_name"] == "Harp Seals"),"scientific_name"] <- "Pagophilus groenlandicus"
 GroupName[[66]][which(GroupName[[66]][,"original_name"] == "Hooded Seals"),"scientific_name"] <- "Cystophora cristata"
 GroupName[[66]][which(GroupName[[66]][,"original_name"] == "Cod + 40cm"),"scientific_name"] <- "Gadus morhua" # > 40cm
 GroupName[[66]][which(GroupName[[66]][,"original_name"] == "Cod  <40 cm"),"scientific_name"] <- "Gadus morhua" # < 40cm
@@ -519,7 +513,7 @@ GroupName[[66]][which(GroupName[[66]][,"original_name"] == "S.Zooplankton"),"sci
 GroupName[[66]][which(GroupName[[66]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
 
 # Web 67 - article OK
-GroupName[[67]][which(GroupName[[67]][,"original_name"] == "Harp Seals"),"scientific_name"] <- "Phoca groenlandica"
+GroupName[[67]][which(GroupName[[67]][,"original_name"] == "Harp Seals"),"scientific_name"] <- "Pagophilus groenlandicus"
 GroupName[[67]][which(GroupName[[67]][,"original_name"] == "Hooded Seals"),"scientific_name"] <- "Cystophora cristata"
 GroupName[[67]][which(GroupName[[67]][,"original_name"] == "Cod > 35cm"),"scientific_name"] <- "Gadus morhua"
 GroupName[[67]][which(GroupName[[67]][,"original_name"] == "Cod <= 35 cm"),"scientific_name"] <- "Gadus morhua"
@@ -537,7 +531,7 @@ GroupName[[67]][which(GroupName[[67]][,"original_name"] == "Phytoplankton"),"sci
 
 # Web 68 - article OK
 GroupName[[68]][which(GroupName[[68]][,"original_name"] == "Grey seals"),"scientific_name"] <- "Halichoerus grypus"
-GroupName[[68]][which(GroupName[[68]][,"original_name"] == "Harp Seals"),"scientific_name"] <- "Phoca groenlandica"
+GroupName[[68]][which(GroupName[[68]][,"original_name"] == "Harp Seals"),"scientific_name"] <- "Pagophilus groenlandicus"
 GroupName[[68]][which(GroupName[[68]][,"original_name"] == "Hooded Seals"),"scientific_name"] <- "Cystophora cristata"
 GroupName[[68]][which(GroupName[[68]][,"original_name"] == "Cod + 40cm"),"scientific_name"] <- "Gadus morhua" # > 40cm
 GroupName[[68]][which(GroupName[[68]][,"original_name"] == "Cod  <40 cm"),"scientific_name"] <- "Gadus morhua" # < 40cm
@@ -566,7 +560,7 @@ GroupName[[68]][which(GroupName[[68]][,"original_name"] == "Phytoplankton"),"sci
 
 # Web 69 - article OK
 GroupName[[69]][which(GroupName[[69]][,"original_name"] == "Grey seals"),"scientific_name"] <- "Halichoerus grypus"
-GroupName[[69]][which(GroupName[[69]][,"original_name"] == "Harp Seals"),"scientific_name"] <- "Phoca groenlandica"
+GroupName[[69]][which(GroupName[[69]][,"original_name"] == "Harp Seals"),"scientific_name"] <- "Pagophilus groenlandicus"
 GroupName[[69]][which(GroupName[[69]][,"original_name"] == "Hooded Seals"),"scientific_name"] <- "Cystophora cristata"
 GroupName[[69]][which(GroupName[[69]][,"original_name"] == "Cod + 40cm"),"scientific_name"] <- "Gadus morhua" # > 40cm
 GroupName[[69]][which(GroupName[[69]][,"original_name"] == "Cod  <40 cm"),"scientific_name"] <- "Gadus morhua" # < 40cm
@@ -615,7 +609,7 @@ GroupName[[71]][which(GroupName[[71]][,"original_name"] == "Phytoplankton"),"sci
 GroupName[[72]][which(GroupName[[72]][,"original_name"] == "Minke whales"),"scientific_name"] <- "Balaenoptera acutorostrata"
 GroupName[[72]][which(GroupName[[72]][,"original_name"] == "Fin whales"),"scientific_name"] <- "Balaenoptera physalus"
 GroupName[[72]][which(GroupName[[72]][,"original_name"] == "Humpback whales"),"scientific_name"] <- "Megaptera novaeangliae"
-GroupName[[72]][which(GroupName[[72]][,"original_name"] == "Brydes whales"),"scientific_name"] <- "Balaenoptera brydei"
+GroupName[[72]][which(GroupName[[72]][,"original_name"] == "Brydes whales"),"scientific_name"] <- "Balaenoptera edeni"
 GroupName[[72]][which(GroupName[[72]][,"original_name"] == "Sei whales"),"scientific_name"] <- "Balaenoptera borealis"
 GroupName[[72]][which(GroupName[[72]][,"original_name"] == "Sperm whales"),"scientific_name"] <- "Physeter macrocephalus"
 GroupName[[72]][which(GroupName[[72]][,"original_name"] == "Killer whales"),"scientific_name"] <- "Orcinus orca"
@@ -943,14 +937,14 @@ GroupName[[113]][which(GroupName[[113]][,"original_name"] == "Muskoxen"),"scient
 GroupName[[113]][which(GroupName[[113]][,"original_name"] == "Snow_bunting"),"scientific_name"] <- "Plectrophenax nivalis"
 GroupName[[113]][which(GroupName[[113]][,"original_name"] == "Ermine"),"scientific_name"] <- "Mustela erminea"
 GroupName[[113]][which(GroupName[[113]][,"original_name"] == "Arctic_fox"),"scientific_name"] <- "Vulpes lagopus"
-GroupName[[113]][which(GroupName[[113]][,"original_name"] == "Snowy_owl"),"scientific_name"] <- "Bubo scandiacus"
+GroupName[[113]][which(GroupName[[113]][,"original_name"] == "Snowy_owl"),"scientific_name"] <- "Bubo scandiaca"
 GroupName[[113]][which(GroupName[[113]][,"original_name"] == "Long-tailed_jaeger"),"scientific_name"] <- "Stercorarius longicaudus"
 
 # Web 114 - article OK
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Reindeer"),"scientific_name"] <- "Rangifer tarandus"
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Muskoxen"),"scientific_name"] <- "Ovibos moschatus"
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Collared_lemming"),"scientific_name"] <- "Dicrostonyx groenlandicus"
-GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Brown_lemmings"),"scientific_name"] <- "Lemnus trimucronatus"
+GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Brown_lemmings"),"scientific_name"] <- "Lemmus trimucronatus"
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Voles"),"scientific_name"] <- "Microtus oeconomus"
 #GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Ptarmigan"),"scientific_name"] <- "Lagopus"
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Ermine"),"scientific_name"] <- "Mustela erminea"
@@ -958,17 +952,17 @@ GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Arctic_fox"),"scie
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Red_fox"),"scientific_name"] <- "Vulpes vulpes"
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Wolverine"),"scientific_name"] <- "Gulo gulo"
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Grizzly_bear"),"scientific_name"] <- "Ursus horribilis"
-GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Snowy_owl"),"scientific_name"] <- "Bubo scandiacus"
+GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Snowy_owl"),"scientific_name"] <- "Bubo scandiaca"
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Long-tailed_jaeger"),"scientific_name"] <- "Stercorarius longicaudus"
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Rough-legged_hawk"),"scientific_name"] <- "Buteo lagopus"
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Peregrine_falcon"),"scientific_name"] <- "Falco peregrinus"
 
 # Web 115 - article OK
-GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Snow_goose"),"scientific_name"] <- "Anser caerulescens atlantica"
-GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Brown_lemmings"),"scientific_name"] <- "Lemnus trimucronatus"
+GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Snow_goose"),"scientific_name"] <- "Chen caerulescens"
+GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Brown_lemmings"),"scientific_name"] <- "Lemmus trimucronatus"
 GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Collared_lemming"),"scientific_name"] <- "Dicrostonyx groenlandicus"
 GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Arctic_fox"),"scientific_name"] <- "Vulpes lagopus"
-GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Snowy_owl"),"scientific_name"] <- "Bubo scandiacus"
+GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Snowy_owl"),"scientific_name"] <- "Bubo scandiaca"
 GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Rough-legged_hawk"),"scientific_name"] <- "Buteo lagopus"
 GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Long-tailed_jaeger"),"scientific_name"] <- "Stercorarius longicaudus"
 GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Parasitic_jaeger"),"scientific_name"] <- "Stercorarius parasiticus"
@@ -984,7 +978,7 @@ GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Arctic_fox"),"scie
 GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Red_fox"),"scientific_name"] <- "Vulpes vulpes"
 #GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Falcons"),"scientific_name"] <- "Falco"
 GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Rough-legged_hawk"),"scientific_name"] <- "Buteo lagopus"
-GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Snowy_owl"),"scientific_name"] <- "Bubo scandiacus"
+GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Snowy_owl"),"scientific_name"] <- "Bubo scandiaca"
 GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Brown_bear"),"scientific_name"] <- "Ursus horribilis"
 
 # Write the list as a .RDS file
