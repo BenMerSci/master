@@ -80,7 +80,7 @@ DIET <- lapply(DIET, function(x) {
 
 # Change names in terrestrial networks
 GroupName_terrestrial[[5]] <- rbind(GroupName_terrestrial[[5]], data.frame(ID = c("11","19","24"), original_name = c("Tundra_voles","Wolverine","Peregrine_falcon"), scientific_name = c("Microtus oeconomus","Gulo gulo","Falco peregrinus")))
-GroupName_terrestrial[[6]] <- rbind(GroupName_terrestrial[[6]], data.frame(ID = c("7","11","12","13"), original_name = c("Brown_lemmings","Glaucus_gulls","Stoats", "Arctic_Foxes"), scientific_name = c("Lemnus trimucronatus","Larus hyperboreus","Mustela erminea","Vulpes lagopus")))
+GroupName_terrestrial[[6]] <- rbind(GroupName_terrestrial[[6]], data.frame(ID = c("7","11","12","13"), original_name = c("Brown_lemmings","Glaucus_gulls","Stoats", "Arctic_Foxes"), scientific_name = c("Lemmus trimucronatus","Larus hyperboreus","Mustela erminea","Vulpes lagopus")))
 
 GroupName_terrestrial[1] <- lapply(rapply(GroupName_terrestrial[1], function(x) base::gsub("Long-tailed_jaeger", "Long-tailed Jaegers", x), how = "list"), base::as.data.frame)
 GroupName_terrestrial[1] <- lapply(rapply(GroupName_terrestrial[1], function(x) base::gsub("Arctic_wolve", "Arctic wolves", x), how = "list"), base::as.data.frame)
