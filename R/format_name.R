@@ -732,8 +732,8 @@ GroupName[[92]][which(GroupName[[92]][,"original_name"] == "Ad hake"),"scientifi
 GroupName[[92]][which(GroupName[[92]][,"original_name"] == "<juv hake"),"scientific_name"] <- "Merluccius productus" # juvenile hake
 GroupName[[92]][which(GroupName[[92]][,"original_name"] == "Ad Res coho"),"scientific_name"] <- "Oncorhynchus kisutch"
 GroupName[[92]][which(GroupName[[92]][,"original_name"] == "Juv Res coho"),"scientific_name"] <- "Oncorhynchus kisutch"
-GroupName[[92]][which(GroupName[[92]][,"original_name"] == "Ad Res chinook"),"scientific_name"] <- "Oncorhynchus tshawytsc"
-GroupName[[92]][which(GroupName[[92]][,"original_name"] == "Juv Res chinook"),"scientific_name"] <- "Oncorhynchus tshawytsc"
+GroupName[[92]][which(GroupName[[92]][,"original_name"] == "Ad Res chinook"),"scientific_name"] <- "Oncorhynchus tshawytscha"
+GroupName[[92]][which(GroupName[[92]][,"original_name"] == "Juv Res chinook"),"scientific_name"] <- "Oncorhynchus tshawytscha"
 GroupName[[92]][which(GroupName[[92]][,"original_name"] == "Eulachon"),"scientific_name"] <- "Thaleichthys pacificus"
 GroupName[[92]][which(GroupName[[92]][,"original_name"] == "Ad herring"),"scientific_name"] <- "Clupea pallasii"
 GroupName[[92]][which(GroupName[[92]][,"original_name"] == "Juv herring"),"scientific_name"] <- "Clupea pallasii"
