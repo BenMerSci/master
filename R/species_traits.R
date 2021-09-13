@@ -56,6 +56,7 @@ sealife_data <- as.data.frame(rfishbase::species(sealife$scientific_name, fields
 sealife_data <- merge(sealife, sealife_data, by.x = "scientific_name", by.y = "Species", all.x = TRUE) |>
 	subset(select = c("scientific_name", "gbif_id", "metabolic_class", "Weight")) |>
 	dplyr::rename(bodymass = "Weight")
+sealife_data$bodymass <- as.numeric(sealife_data$bodymass)
 
 ##### Mammals and birds #####
 # Data for mammals and birds are taken from the EltonTraits database 1.0
