@@ -101,4 +101,3 @@ species_traits <- rbind(fish_data, sealife_data, aves_data, mammalia_data, insec
 
 # Save the traits data_frame
 saveRDS(species_traits, "data/species_traits.RDS")
-s
