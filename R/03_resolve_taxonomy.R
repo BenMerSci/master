@@ -1,5 +1,5 @@
 # Load the interactions table
-inter_table <- readRDS("data/inter_table.RDS")
+inter_table <- readRDS("data/intermediate/inter_table.RDS")
 
 # Get a unique vector of the species names
 prelem_sp_list <- data.frame(unique(c(inter_table$species_from, inter_table$species_to))) |>
@@ -7,11 +7,11 @@ prelem_sp_list <- data.frame(unique(c(inter_table$species_from, inter_table$spec
 
 # Resolve the names
 # If file of resolved_names doesn't exist it creates it, otherwise it loads it
-if(!file.exists("data/resolved_names.RDS")) {
+if(!file.exists("data/intermediate/resolved_names.RDS")) {
 	resolved_names <- taxize::gnr_resolve(prelem_sp_list$original_name, canonical = TRUE, best_match_only = TRUE, cap_first = TRUE)
-	saveRDS(resolved_names, "data/resolved_names.RDS")
+	saveRDS(resolved_names, "data/intermediate/resolved_names.RDS")
 } else{
-	resolved_names <-  readRDS("data/resolved_names.RDS")
+	resolved_names <-  readRDS("data/intermediate/resolved_names.RDS")
 }
 
 # Get the unknown names and bind them back into the resolved data_frame
@@ -39,4 +39,4 @@ resolved_inter_table <- base::merge(inter_table, resolved_names, by.x = "species
 	dplyr::rename(species_to = "matched_name2")
 
 # Save it back into inter_table
-saveRDS(resolved_inter_table, file = "data/resolved_inter_table.RDS")
+saveRDS(resolved_inter_table, file = "data/intermediate/resolved_inter_table.RDS")
