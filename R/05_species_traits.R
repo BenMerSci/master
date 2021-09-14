@@ -1,5 +1,5 @@
 # Load the interaction table to make a unique species list
-resolved_inter_table <- readRDS("data/resolved_inter_table.RDS")
+resolved_inter_table <- readRDS("data/intermediate/resolved_inter_table.RDS")
 
 species_list <- data.frame(unique(c(resolved_inter_table$species_from, resolved_inter_table$species_to))) |>
 		dplyr::rename(scientific_name = "unique.c.resolved_inter_table.species_from..resolved_inter_table.species_to..")
@@ -20,10 +20,6 @@ species_list <- cbind(species_list, metabolic_class)
 
 # Uniformize it
 species_list[is.na(species_list$metabolic_class),"metabolic_class"] <- "Plankton"
-
-#Save the list
-saveRDS(species_list, "data/species_list.RDS")
-#species_list <- readRDS("data/species_list.RDS")
 
 # Separate the different type of organisms
 fish_alike <- species_list[which(species_list$metabolic_class %in% c("Actinopterygii", "Elasmobranchii", "Sarcopterygii")),]
@@ -61,8 +57,8 @@ sealife_data$bodymass <- as.numeric(sealife_data$bodymass)
 ##### Mammals and birds #####
 # Data for mammals and birds are taken from the EltonTraits database 1.0
 # BodyMass are in grams (g)
-birds_traits <- read.csv("data/traits/BirdFuncDat.txt", sep = "\t")
-mamm_traits <- read.csv("data/traits/MamFuncDat.txt", sep = "\t")
+birds_traits <- read.csv("data/raw/eltontraits/BirdFuncDat.txt", sep = "\t")
+mamm_traits <- read.csv("data/raw/eltontraits/MamFuncDat.txt", sep = "\t")
 
 aves_data <- merge(aves, birds_traits, by.x = "scientific_name", by.y = "Scientific", all.x = TRUE) |>
 	subset(select = c("scientific_name", "gbif_id", "metabolic_class", "BodyMass.Value")) |>
@@ -77,13 +73,11 @@ mammalia_data[which(mammalia_data$scientific_name == "Physeter macrocephalus"), 
 mammalia_data[which(mammalia_data$scientific_name == "Ursus horribilis"), "bodymass"] <- mamm_traits[which(mamm_traits$Scientific == "Ursus arctos"), "BodyMass.Value"]
 
 ##### Insecta #####
-rfishbase::species("Chaoborus edulis", fields = c("Species","Length", "Weight"), server = "sealifebase")
 insecta_data <- insecta
 insecta_data[,"bodymass"] <- NA
 
 ##### Plankton ##### 
 # Data from Yodzis 1998
-plankton
 plankton_data <- plankton
 plankton_data["bodymass"] <- NA
 plankton_data[which(plankton_data$scientific_name == "Phytoplankton"), "bodymass"] <- 0.0001
@@ -101,4 +95,4 @@ plankton_data[which(plankton_data$scientific_name == "Bakterioplankton"), "bodym
 species_traits <- rbind(fish_data, sealife_data, aves_data, mammalia_data, insecta_data, plankton_data)
 
 # Save the traits data_frame
-saveRDS(species_traits, "data/species_traits.RDS")
+saveRDS(species_traits, "data/intermediate/species_traits.RDS")
