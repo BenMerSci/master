@@ -2,7 +2,7 @@
 # Only keep the interactions that are between species in all the 116 networks
 
 # Load the name of each "species" in each 116 networks
-load("data_retrieval/ecopath/Data_ncomms12573/GroupName.Rdata") # GroupName, list of length 116 for 116 networks
+load("data/raw/ecopath/data/GroupName.Rdata") # GroupName, list of length 116 for 116 networks
 
 # Transform each list of names into a DataFrame
 # Add an empty column to each DataFrame
@@ -982,4 +982,4 @@ GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Snowy_owl"),"scien
 GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Brown_bear"),"scientific_name"] <- "Ursus horribilis"
 
 # Write the list as a .RDS file
-saveRDS(GroupName, file = "data/list_names.RDS")
+saveRDS(GroupName, file = "data/intermediate/GroupName.RDS")
