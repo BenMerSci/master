@@ -1,8 +1,8 @@
 # Script to format the matrices into a list of pairwise interactions
 
 # Load the matrices
-load("data_retrieval/ecopath/Data_ncomms12573/DIET.Rdata")
-load("data_retrieval/ecopath/Data_ncomms12573/Ecopath_models.Rdata")
+load("data/raw/ecopath/data/DIET.Rdata")
+load("data/raw/ecopath/data/Ecopath_models.Rdata")
 
 # Wide to long format
 DIET <- lapply(DIET, function(x) {
@@ -36,7 +36,7 @@ DIET <- lapply(rapply(DIET, function(x) base::gsub("V", "", x), how = "list"), b
 
 
 # Loading the names to join them into the flow matrices
-GroupName <- readRDS("data/list_names.RDS") |>
+GroupName <- readRDS("data/intermediate/GroupName.RDS") |>
 	     lapply(function (x) { 
 	     	base::as.data.frame(x) |>
 	     	tibble::rownames_to_column("ID") |>
@@ -158,4 +158,4 @@ inter_table <- do.call("rbind", DIET) |>
 		dplyr::select("model_name", "species_from", "species_to", "energy_flow")
 
 # Write the list as a .Rdata file
-saveRDS(inter_table, file = "data/inter_table.RDS")
+saveRDS(inter_table, file = "data/intermediate/inter_table.RDS")
