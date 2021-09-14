@@ -1,7 +1,7 @@
 # Folder to ignore
 obsidian_notes/
 paperasse/
-data_retrieval/
+empirical_web/
 presentation/recording_seminaire1
 propose/random_text
 data/
@@ -9,7 +9,6 @@ R/graveyard/
 
 # Files to ignore
 *.jpg
-*.pdf
 *.log
 *.blg
 *.bbl
