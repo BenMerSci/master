@@ -955,18 +955,20 @@ GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Grizzly_bear"),"sc
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Snowy_owl"),"scientific_name"] <- "Bubo scandiaca"
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Long-tailed_jaeger"),"scientific_name"] <- "Stercorarius longicaudus"
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Rough-legged_hawk"),"scientific_name"] <- "Buteo lagopus"
-GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Peregrine_falcon"),"scientific_name"] <- "Falco peregrinus"
+GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Peregrine_falco"),"scientific_name"] <- "Falco peregrinus"
 
 # Web 115 - article OK
 GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Snow_goose"),"scientific_name"] <- "Chen caerulescens"
 GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Brown_lemmings"),"scientific_name"] <- "Lemmus trimucronatus"
 GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Collared_lemming"),"scientific_name"] <- "Dicrostonyx groenlandicus"
-GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Arctic_fox"),"scientific_name"] <- "Vulpes lagopus"
+GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Arctic_Fox"),"scientific_name"] <- "Vulpes lagopus"
 GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Snowy_owl"),"scientific_name"] <- "Bubo scandiaca"
 GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Rough-legged_hawk"),"scientific_name"] <- "Buteo lagopus"
 GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Long-tailed_jaeger"),"scientific_name"] <- "Stercorarius longicaudus"
 GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Parasitic_jaeger"),"scientific_name"] <- "Stercorarius parasiticus"
 GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Peregrine_falcon"),"scientific_name"] <- "Falco peregrinus"
+GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Weasel"),"scientific_name"] <- "Mustela erminea"
+GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Gulls"),"scientific_name"] <- "Larus hyperboreus"
 
 # Web 116 - article OK
 GroupName[[116]][which(GroupName[[116]][,"original_name"] == "Voles"),"scientific_name"] <- "Microtus oeconomus"
