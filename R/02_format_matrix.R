@@ -3,6 +3,9 @@
 # Load the matrices
 load("data/raw/ecopath/data/DIET.Rdata")
 load("data/raw/ecopath/data/Ecopath_models.Rdata")
+GroupName <- readRDS("data/intermediate/GroupName.RDS")
+load("data/raw/ecopath/data/Q_vec.Rdata")
+
 
 # Wide to long format
 DIET <- lapply(DIET, function(x) {
@@ -12,7 +15,7 @@ DIET <- lapply(DIET, function(x) {
 		dplyr::rename(species_from = "X")
 })
 
-# Conserve ntw 33, 57, 64, 89, 106, 110, 111, 112, 113, 114, 115, 116 because the column names were different
+# Conserve networks 33, 57, 64, 89, 106, 110, 111, 112, 113, 114, 115, 116 because the column names were different
 # and the next actions will altered them, so I will just replace them with the original after 
 temp_list <- DIET[c(33,57,64,89,106,110,111,112,113,114,115,116)]
 
@@ -35,9 +38,17 @@ DIET <- lapply(rapply(DIET, function(x) base::gsub("X", "", x), how = "list"), b
 DIET <- lapply(rapply(DIET, function(x) base::gsub("V", "", x), how = "list"), base::as.data.frame)
 
 
+# Format the consumption table to match the names
+Q_vec <- lapply(Q_vec, function(x) base::as.data.frame(x))
+Q_vec <- purrr::map2(GroupName, Q_vec, ~cbind(.x, .y)) |>
+	 lapply(function(x) {
+	 dplyr::select(x, c("scientific_name","x")) |>
+	 dplyr::rename(consumption = "x") #|>
+	#na.omit()
+	 })
+
 # Loading the names to join them into the flow matrices
-GroupName <- readRDS("data/intermediate/GroupName.RDS") |>
-	     lapply(function (x) { 
+GroupName <- lapply(GroupName, function (x) { 
 	     	base::as.data.frame(x) |>
 	     	tibble::rownames_to_column("ID") |>
 	     	na.omit()
@@ -145,15 +156,28 @@ Ecopath_models <- split(Ecopath_models, seq(nrow(Ecopath_models)))
 # Only get the Ecopath_models information that relate to element of the DIET list that are not empty dataframes
 Ecopath_models <- Ecopath_models[sapply(DIET, nrow) > 0]
 
+# Only get the consumption data that relate to element of the DIET list that are not empty dataframes
+Q_vec <- Q_vec[sapply(DIET, nrow) > 0]
+
 # Only get the networks that are not empty
-DIET <- DIET[sapply(DIET, nrow) > 0]
+DIET <- DIET[sapply(DIET, nrow) > 0] |>
+	lapply(function(x) {
+		x$energy_flow <- as.numeric(x$energy_flow)
+		return(x)
+	})
 
 # Add the models name and habitat_type
 DIET <- purrr::map2(DIET, Ecopath_models, ~ cbind(.x, .y))
 
-# Unlist the dataframes to one dataframe
-# 1624 inter, 1594 unique inter
-inter_table <- do.call("rbind", DIET) |>
+# Section to transfer the % of diet into an actual biomass fux from Q_vec
+#test <- purrr::map2(Q_vec, DIET, ~ .x[.x$scientific_name %in% .y$species_to,]) |>
+inter_table <- purrr::map2(DIET, Q_vec, ~  merge(.x, .y, by.x = "species_to", by.y = "scientific_name", all.x = TRUE)) |>
+	 lapply(function(x) {
+		 x$energy_flow <- x$consumption*x$energy_flow
+		 return(x)
+	 })
+
+inter_table <- do.call("rbind", inter_table) |>
 		dplyr::rename(model_name = "Model name") |>
 		dplyr::select("model_name", "species_from", "species_to", "energy_flow")
 
