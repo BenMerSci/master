@@ -1,8 +1,8 @@
 # Load the ecopath metadata file
-ecopath_metadata <- readRDS("data/ecopath_metadata.RDS")
+ecopath_metadata <- readRDS("data/intermediate/ecopath_metadata.RDS")
 
 # Load ecopath_models to get the habitat type
-load("data_retrieval/ecopath/Data_ncomms12573/Ecopath_models.Rdata")
+load("data/raw/ecopath/data/Ecopath_models.Rdata")
 	
 # Merge them
 enviro_df <- merge(ecopath_metadata, Ecopath_models, by.x = "model_name", by.y = "Model name", all.y = FALSE) |>
@@ -58,54 +58,14 @@ enviro_df[which(is.na(enviro_df$ecosystem_type)),"ecosystem_type"] <- "terrestri
 #Transform the years into numeric
 enviro_df$model_year <- as.numeric(enviro_df$model_year)
 
-# Get temperature data
-get_temp <- function(enviro_df){
-
-options(timeout = 1800)
-needed_years <- sort(unique(enviro_df$model_year))
-
-df_1900_1969 <- enviro_df[which(enviro_df$model_year <= 1969),]
-
-
-
-test <- needed_years[which(needed_years <=1969)]
-needed_years[which(needed_years >= 1970) && which(needed_years <=1979)]
-for(i in needed_years)){
-  
-  if(1960 <= needed_year || needed_year >= 1969) year_gap <- "1960-1969"
-  if(1970 <= needed_year || needed_year >= 1979) year_gap <- "1970-1979"
-  if(1980 <= needed_year || needed_year >= 1989) year_gap <- "1980-1989"
-  if(1990 <= needed_year || needed_year >= 1999) year_gap <- "1990-1999"
-  if(2000 <= needed_year || needed_year >= 2010) year_gap <- "2000-2010"
-
-  # Download the data for the selected years
-  download.file(paste0("https://biogeo.ucdavis.edu/data/worldclim/v2.1/hist/wc2.1_2.5m_tmin_",year_gap,".zip"), paste0("data/worldclim/zipped/tmin",year_gap,".zip")) #tmin
-  download.file(paste0("https://biogeo.ucdavis.edu/data/worldclim/v2.1/hist/wc2.1_2.5m_tmax_",year_gap,".zip"), paste0("data/worldclim/zipped/tmax",year_gap,".zip")) #tmax
-  download.file(paste0("https://biogeo.ucdavis.edu/data/worldclim/v2.1/hist/wc2.1_2.5m_prec_",year_gap,".zip"), paste0("data/worldclim/zipped/prec",year_gap,".zip")) #prec
-  # Unzip the files
-  unzip("data/worldclim/zipped/tmin1960-1969.zip", exdir = "data/worldclim/unzipped")
-  unzip("data/worldclim/zipped/tmax1960-1969.zip", exdir = "data/worldclim/unzipped")
-  unzip("data/worldclim/zipped/prec1960-1969.zip", exdir = "data/worldclim/unzipped")
-
-  grep("1961",unzip("data/worldclim/zipped/tmin1960-1969.zip", list = TRUE)$Name)
-
-
-
-  temp <- enviro_df[which(enviro_df$model_year == i),]
-
-  bioclim <- dismo::biovars(prec = clim_data[["prec"]], tmin = clim_data[["tmin"]], tmax = clim_data[["tmax"]])
-
-
-  }
-
-  return(enviro_df)
-}
+saveRDS(enviro_df, "data/intermediate/enviro_traits.RDS")
 
 
 
 # Berkeley data
 library(ncdf4)
-ncfile <- nc_open("data/Land_and_Ocean_Alternate_LatLong1.nc")
+
+ncfile <- nc_open("data/raw/berkeleyearth/Land_and_Ocean_Alternate_LatLong1.nc")
     ## create variables for things needed to use data
 date <- ncvar_get(ncfile, "date_number")
 arr.anom <-ncvar_get(ncfile, "temperature")
@@ -123,6 +83,49 @@ nc_close(ncfile)
 
 
 
+
+
+
+# WolrdClim
+#get_temp <- function(enviro_df){
+#
+#options(timeout = 1800)
+#needed_years <- sort(unique(enviro_df$model_year))
+#
+#df_1900_1969 <- enviro_df[which(enviro_df$model_year <= 1969),]
+#
+#test <- needed_years[which(needed_years <=1969)]
+#needed_years[which(needed_years >= 1970) && which(needed_years <=1979)]
+#for(i in needed_years)){
+#  
+#  if(1960 <= needed_year || needed_year >= 1969) year_gap <- "1960-1969"
+#  if(1970 <= needed_year || needed_year >= 1979) year_gap <- "1970-1979"
+#  if(1980 <= needed_year || needed_year >= 1989) year_gap <- "1980-1989"
+#  if(1990 <= needed_year || needed_year >= 1999) year_gap <- "1990-1999"
+#  if(2000 <= needed_year || needed_year >= 2010) year_gap <- "2000-2010"
+#
+#  # Download the data for the selected years
+#  download.file(paste0("https://biogeo.ucdavis.edu/data/worldclim/v2.1/hist/wc2.1_2.5m_tmin_",year_gap,".zip"), paste0("data/worldclim/zipped/tmin",year_gap,".zip")) #tmin
+#  download.file(paste0("https://biogeo.ucdavis.edu/data/worldclim/v2.1/hist/wc2.1_2.5m_tmax_",year_gap,".zip"), paste0("data/worldclim/zipped/tmax",year_gap,".zip")) #tmax
+#  download.file(paste0("https://biogeo.ucdavis.edu/data/worldclim/v2.1/hist/wc2.1_2.5m_prec_",year_gap,".zip"), paste0("data/worldclim/zipped/prec",year_gap,".zip")) #prec
+#  # Unzip the files
+#  unzip("data/worldclim/zipped/tmin1960-1969.zip", exdir = "data/worldclim/unzipped")
+#  unzip("data/worldclim/zipped/tmax1960-1969.zip", exdir = "data/worldclim/unzipped")
+#  unzip("data/worldclim/zipped/prec1960-1969.zip", exdir = "data/worldclim/unzipped")
+#
+#  grep("1961",unzip("data/worldclim/zipped/tmin1960-1969.zip", list = TRUE)$Name)
+#
+#
+#
+#  temp <- enviro_df[which(enviro_df$model_year == i),]
+#
+#  bioclim <- dismo::biovars(prec = clim_data[["prec"]], tmin = clim_data[["tmin"]], tmax = clim_data[["tmax"]])
+#
+#
+#  }
+#
+#  return(enviro_df)
+#}
 
 
 #bioclim <- lapply(years, function(x) {
