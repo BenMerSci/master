@@ -5,7 +5,7 @@ load("data/raw/ecopath/data/DIET.Rdata")
 load("data/raw/ecopath/data/Ecopath_models.Rdata")
 GroupName <- readRDS("data/intermediate/GroupName.RDS")
 load("data/raw/ecopath/data/Q_vec.Rdata")
-
+load("data/raw/ecopath/data/B_vec.Rdata")
 
 # Wide to long format
 DIET <- lapply(DIET, function(x) {
@@ -44,6 +44,15 @@ Q_vec <- purrr::map2(GroupName, Q_vec, ~cbind(.x, .y)) |>
 	 lapply(function(x) {
 	 dplyr::select(x, c("scientific_name","x")) |>
 	 dplyr::rename(consumption = "x") #|>
+	#na.omit()
+	 })
+
+# Format the biomass table to match the names
+B_vec <- lapply(B_vec, function(x) base::as.data.frame(x))
+B_vec <- purrr::map2(GroupName, B_vec, ~cbind(.x, .y)) |>
+	 lapply(function(x) {
+	 dplyr::select(x, c("scientific_name","x")) |>
+	 dplyr::rename(biomass = "x") #|>
 	#na.omit()
 	 })
 
@@ -156,9 +165,9 @@ Ecopath_models <- split(Ecopath_models, seq(nrow(Ecopath_models)))
 # Only get the Ecopath_models information that relate to element of the DIET list that are not empty dataframes
 Ecopath_models <- Ecopath_models[sapply(DIET, nrow) > 0]
 
-# Only get the consumption data that relate to element of the DIET list that are not empty dataframes
+# Only get the consumption and biomass data that relate to element of the DIET list that are not empty dataframes
 Q_vec <- Q_vec[sapply(DIET, nrow) > 0]
-
+B_vec <- B_vec[sapply(DIET, nrow) > 0]
 # Only get the networks that are not empty
 DIET <- DIET[sapply(DIET, nrow) > 0] |>
 	lapply(function(x) {
@@ -177,9 +186,14 @@ inter_table <- purrr::map2(DIET, Q_vec, ~  merge(.x, .y, by.x = "species_to", by
 		 return(x)
 	 })
 
+inter_table <- purrr::map2(inter_table, B_vec, ~ merge(.x, .y, by.x = "species_to", by.y = "scientific_name", all.x = TRUE)) |>
+		lapply(function(x) dplyr::rename(x, biomass_prey = "biomass")) |>
+		purrr::map2(B_vec, ~ merge(., .y, by.x = "species_from", by.y = "scientific_name", all.x = TRUE)) |>
+		lapply(function(x) dplyr::rename(x, biomass_pred = "biomass"))
+
 inter_table <- do.call("rbind", inter_table) |>
 		dplyr::rename(model_name = "Model name") |>
-		dplyr::select("model_name", "species_from", "species_to", "energy_flow")
+		dplyr::select("model_name", "species_from", "species_to", "energy_flow","consumption","biomass_prey","biomass_pred")
 
 # Write the list as a .Rdata file
 saveRDS(inter_table, file = "data/intermediate/inter_table.RDS")
