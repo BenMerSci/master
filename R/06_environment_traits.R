@@ -58,27 +58,81 @@ enviro_df[which(is.na(enviro_df$ecosystem_type)),"ecosystem_type"] <- "terrestri
 #Transform the years into numeric
 enviro_df$model_year <- as.numeric(enviro_df$model_year)
 
+
+#### Climate data ####
+# Download BerkeleyEarth data
+# Temperature with water temp where there is water (surface water temp)
+if(!file.exists("data/raw/berkeleyearth/berkeley_climate_watersurf.nc")){
+	download.file(url = "http://berkeleyearth.lbl.gov/auto/Global/Gridded/Land_and_Ocean_Alternate_LatLong1.nc",
+	destfile = "data/raw/berkeleyearth/berkeley_climate_watersurf.nc")
+}
+# Temperature with air temp where there is water (surface air temp)
+if(!file.exists("data/raw/berkeleyearth/berkeley_climate_airsurf.nc")){
+	download.file(url = "http://berkeleyearth.lbl.gov/auto/Global/Gridded/Land_and_Ocean_LatLong1.nc",
+	destfile = "data/raw/berkeleyearth/berkeley_climate_airsurf.nc")
+}
+
+# Load the desired stack
+water_temp_stack <- raster::stack("data/raw/berkeleyearth/berkeley_climate_watersurf.nc", varname = "climatology")
+water_anom_stack <- raster::stack("data/raw/berkeleyearth/berkeley_climate_watersurf.nc", varname = "temperature")
+air_temp_stack <- raster::stack("data/raw/berkeleyearth/berkeley_climate_airsurf.nc", varname = "climatology")
+air_anom_stack <- raster::stack("data/raw/berkeleyearth/berkeley_climate_airsurf.nc", varname = "temperature")
+
+# Find a way to subset the anom_stack to get only desired years
+model_date <- as.character(unique(enviro_df$model_year))
+water_anom_date <- gsub(".[^.]*$", "", names(water_anom_stack))
+water_anom_date <- gsub("X", "", water_anom_date)
+air_anom_date <- gsub(".[^.]*$", "", names(air_anom_stack))
+air_anom_date <- gsub("X", "", air_anom_date)
+
+water_anom_stack <- raster::subset(water_anom_stack, names(water_anom_stack)[water_anom_date %in% model_date])
+air_anom_stack <- raster::subset(air_anom_stack, names(air_anom_stack)[air_anom_date %in% model_date])
+
+# Subset the desired years
+water_stack_list <- list()
+air_stack_list <- list()
+
+for (i in 0:((raster::nlayers(water_anom_stack)/12)-1)) {
+		temp <- water_anom_stack[[(1+12*i):(12+12*i)]]
+		water_stack_list[[i+1]] <- temp
+}
+
+for (i in 0:((raster::nlayers(air_anom_stack)/12)-1)) {
+		temp <- air_anom_stack[[(1+12*i):(12+12*i)]]
+		air_stack_list[[i+1]] <- temp
+}
+
+# Calculate the mean over the twelve months per year
+water_stack_list <- lapply(water_stack_list, function(x) raster::calc(x, mean))
+water_temp_stack <- raster::calc(water_temp_stack, mean)
+air_stack_list <- lapply(air_stack_list, function(x) raster::calc(x, mean))
+air_temp_stack <- raster::calc(air_temp_stack, mean)
+
+# Add the mean climatology to the mean anomalies
+water_final_stack <- list()
+air_final_stack <- list()
+
+for (i in 1:length(water_stack_list)) {
+	water_final_stack[[i]] <- water_stack_list[[i]] + water_temp_stack
+}
+
+for (i in 1:length(air_stack_list)) {
+	air_final_stack[[i]] <- air_stack_list[[i]] + air_temp_stack
+}
+
+# Change the name of each lists
+names(water_final_stack) <- sort(unique(enviro_df$model_year))
+names(air_final_stack) <- sort(unique(enviro_df$model_year))
+
+# Extract temperature per year and add it to enviro_df
+for (i in 1:nrow(enviro_df)) {
+	enviro_df[i,"water_temperature"] <- raster::extract(water_final_stack[[as.character(enviro_df[i,"model_year"])]], enviro_df[i,c("lon","lat")])
+	enviro_df[i,"air_temperature"] <- raster::extract(air_final_stack[[as.character(enviro_df[i,"model_year"])]], enviro_df[i,c("lon","lat")])
+}
+
 saveRDS(enviro_df, "data/intermediate/enviro_traits.RDS")
 
 
-
-# Berkeley data
-library(ncdf4)
-
-ncfile <- nc_open("data/raw/berkeleyearth/Land_and_Ocean_Alternate_LatLong1.nc")
-    ## create variables for things needed to use data
-date <- ncvar_get(ncfile, "date_number")
-arr.anom <-ncvar_get(ncfile, "temperature")
-arr.clim <- ncvar_get(ncfile, "climatology")
-
-lat <- ncvar_get(ncfile, "latitude")
-long <- ncvar_get(ncfile, "longitude")
-date <- ncvar_get(ncfile, "date_number")
-arr.anom <-ncvar_get(ncfile, "temperature")
-arr.clim <- ncvar_get(ncfile, "climatology")
-
-
-nc_close(ncfile)
 
 
 
@@ -155,4 +209,3 @@ nc_close(ncfile)
 #
 ## Mettre bioclim ensemble
 #bioclim <- raster::stack(bioclim)
-
