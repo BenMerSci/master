@@ -7,7 +7,7 @@ library("ggspatial")
 library("rnaturalearthhires")
 
 # Load the environment dataframe
-coords_habitat <- readRDS("data/enviro_df.RDS") |>
+coords_habitat <- readRDS("data/intermediate/enviro_traits.RDS") |>
 			dplyr::select(c("habitat_type","lon","lat")) |>
 			dplyr::group_by(habitat_type)
 
@@ -28,6 +28,6 @@ ggplot() + geom_map(data = world, map = world, aes(x = long, y = lat, map_id=reg
     	   theme()
 
 # Save it
-ggsave("manuscript/figures/network_map.pdf", width = 9, height = 5, dpi = "screen")
+ggsave("manuscript/figures/network_map.png", width = 9, height = 5, dpi = "screen")
 
 
