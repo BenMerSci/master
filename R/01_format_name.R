@@ -945,7 +945,7 @@ GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Reindeer"),"scient
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Muskoxen"),"scientific_name"] <- "Ovibos moschatus"
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Collared_lemming"),"scientific_name"] <- "Dicrostonyx groenlandicus"
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Brown_lemmings"),"scientific_name"] <- "Lemmus trimucronatus"
-GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Voles"),"scientific_name"] <- "Microtus oeconomus"
+GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Tundra_voles"),"scientific_name"] <- "Microtus oeconomus"
 #GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Ptarmigan"),"scientific_name"] <- "Lagopus"
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Ermine"),"scientific_name"] <- "Mustela erminea"
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Arctic_fox"),"scientific_name"] <- "Vulpes lagopus"
@@ -959,7 +959,7 @@ GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Peregrine_falco"),
 
 # Web 115 - article OK
 GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Snow_goose"),"scientific_name"] <- "Chen caerulescens"
-GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Brown_lemmings"),"scientific_name"] <- "Lemmus trimucronatus"
+GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Brown_lemming"),"scientific_name"] <- "Lemmus trimucronatus"
 GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Collared_lemming"),"scientific_name"] <- "Dicrostonyx groenlandicus"
 GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Arctic_Fox"),"scientific_name"] <- "Vulpes lagopus"
 GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Snowy_owl"),"scientific_name"] <- "Bubo scandiaca"
