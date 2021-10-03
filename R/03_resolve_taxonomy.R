@@ -2,8 +2,8 @@
 inter_table <- readRDS("data/intermediate/inter_table.RDS")
 
 # Get a unique vector of the species names
-prelem_sp_list <- data.frame(unique(c(inter_table$species_from, inter_table$species_to))) |>
-		dplyr::rename(original_name = "unique.c.inter_table.species_from..inter_table.species_to..")
+prelem_sp_list <- data.frame(unique(c(inter_table$prey, inter_table$predator))) |>
+		dplyr::rename(original_name = "unique.c.inter_table.prey..inter_table.predator..")
 
 # Resolve the names
 # If file of resolved_names doesn't exist it creates it, otherwise it loads it
@@ -31,12 +31,12 @@ resolved_names[which(is.na(resolved_names$matched_name2)),"matched_name2"] <- re
 resolved_names <- dplyr::select(resolved_names, c("user_supplied_name", "matched_name2"))
 
 # Merge back the corrected names into inter_table
-resolved_inter_table <- base::merge(inter_table, resolved_names, by.x = "species_from", by.y = "user_supplied_name", all.x = TRUE) |>
-	dplyr::select(c("model_name","matched_name2","species_to","energy_flow")) |>
-	dplyr::rename(species_from = "matched_name2") |>
-	base::merge(resolved_names, by.x = "species_to", by.y = "user_supplied_name", all.x = TRUE) |>
-	dplyr::select("model_name","species_from","matched_name2","energy_flow") |>
-	dplyr::rename(species_to = "matched_name2")
+resolved_inter_table <- base::merge(inter_table, resolved_names, by.x = "prey", by.y = "user_supplied_name", all.x = TRUE) |>
+	dplyr::select(c("model_name","matched_name2","predator","energy_flow","biomass_prey","biomass_pred")) |>
+	dplyr::rename(prey = "matched_name2") |>
+	base::merge(resolved_names, by.x = "predator", by.y = "user_supplied_name", all.x = TRUE) |>
+	dplyr::select("model_name","prey","matched_name2","energy_flow","biomass_prey","biomass_pred") |>
+	dplyr::rename(predator = "matched_name2")
 
 # Save it back into inter_table
 saveRDS(resolved_inter_table, file = "data/intermediate/resolved_inter_table.RDS")
