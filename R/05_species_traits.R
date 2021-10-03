@@ -1,8 +1,8 @@
 # Load the interaction table to make a unique species list
 resolved_inter_table <- readRDS("data/intermediate/resolved_inter_table.RDS")
 
-species_list <- data.frame(unique(c(resolved_inter_table$species_from, resolved_inter_table$species_to))) |>
-		dplyr::rename(scientific_name = "unique.c.resolved_inter_table.species_from..resolved_inter_table.species_to..")
+species_list <- data.frame(unique(c(resolved_inter_table$prey, resolved_inter_table$predator))) |>
+		dplyr::rename(scientific_name = "unique.c.resolved_inter_table.prey..resolved_inter_table.predator..")
 
 # Get the GBIF IDs for each species
 species_list$gbif_id <- apply(species_list, 1, function(x) taxize::get_gbifid(x, ask = TRUE, messages = TRUE)[1])
