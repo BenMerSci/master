@@ -24,7 +24,7 @@ GroupName <- lapply(GroupName, function(x) as.data.frame(x)) |>
 
 # Web 1 - article OK
         # Juvenile pacific herring < 18cm
-GroupName[[1]][which(GroupName[[1]][,"original_name"] == "Herring"),"scientific_name"] <- "Clupea pallasi"
+GroupName[[1]][which(GroupName[[1]][,"original_name"] == "Herring"),"scientific_name"] <- "Clupea pallasii"
 GroupName[[1]][which(GroupName[[1]][,"original_name"] == "Sea otters"),"scientific_name"] <- "Enhydra lutris"
 GroupName[[1]][which(GroupName[[1]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
 GroupName[[1]][which(GroupName[[1]][,"original_name"] == "Macrozooplankton"),"scientific_name"] <- "Macrozooplankton"
@@ -871,7 +871,7 @@ GroupName[[106]][which(GroupName[[106]][,"original_name"] == "Arrowtooth flounde
 GroupName[[106]][which(GroupName[[106]][,"original_name"] == "Greenland turbot"),"scientific_name"] <- "Reinhardtius hippoglossoides"
 GroupName[[106]][which(GroupName[[106]][,"original_name"] == "Tanner crab"),"scientific_name"] <- "Chionoecetes bairdi"
 GroupName[[106]][which(GroupName[[106]][,"original_name"] == "Snow crab"),"scientific_name"] <- "Chionoecetes opilio"
-GroupName[[106]][which(GroupName[[106]][,"original_name"] == "Pacific herring"),"scientific_name"] <- "Clupea pallasi"
+GroupName[[106]][which(GroupName[[106]][,"original_name"] == "Pacific herring"),"scientific_name"] <- "Clupea pallasii"
 GroupName[[106]][which(GroupName[[106]][,"original_name"] == "Jellyfish"),"scientific_name"] <- "Chrysaora melenaster" # most abundant
 GroupName[[106]][which(GroupName[[106]][,"original_name"] == "Large Zooplankton"),"scientific_name"] <- "Large Zooplankton"
 GroupName[[106]][which(GroupName[[106]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
