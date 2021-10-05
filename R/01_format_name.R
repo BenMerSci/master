@@ -379,7 +379,7 @@ GroupName[[48]][which(GroupName[[48]][,"original_name"] == "Phytoplankton"),"sci
 # Web 49 - article OK
 GroupName[[49]][which(GroupName[[49]][,"original_name"] == "Opsaridium"),"scientific_name"] <- "Opsaridium microcephalus"
 GroupName[[49]][which(GroupName[[49]][,"original_name"] == "Rhamphochromis"),"scientific_name"] <- "Rhamphochromis longiceps"
-GroupName[[49]][which(GroupName[[49]][,"original_name"] == "Diplotaxodon"),"scientific_name"] <- "Diplotaxodon pallidorsalis"
+#GroupName[[49]][which(GroupName[[49]][,"original_name"] == "Diplotaxodon"),"scientific_name"] <- "Diplotaxodon pallidorsalis"
 GroupName[[49]][which(GroupName[[49]][,"original_name"] == "Engraulicypris"),"scientific_name"] <- "Engraulicypris sardella"
 GroupName[[49]][which(GroupName[[49]][,"original_name"] == "Chaoborus"),"scientific_name"] <- "Chaoborus edulis"
 GroupName[[49]][which(GroupName[[49]][,"original_name"] == "Zooplankton"),"scientific_name"] <- "Zooplankton"
