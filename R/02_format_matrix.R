@@ -7,6 +7,10 @@ GroupName <- readRDS("data/intermediate/GroupName.RDS")
 load("data/raw/ecopath/data/Q_vec.Rdata")
 load("data/raw/ecopath/data/B_vec.Rdata")
 
+for(i in 1:length(DIET)){
+	DIET[[i]] <- DIET[[i]] %*% diag(Q_vec[[i]]) %*% diag(B_vec[[i]])
+}
+
 # Wide to long format
 DIET <- lapply(DIET, function(x) {
 		base::as.data.frame(x) |> 
@@ -24,10 +28,10 @@ DIET <- lapply(rapply(DIET, function(x) base::gsub("F", "", x), how = "list"), b
 
 # Changing the id number in DIET for predator, since their number started at 2 by defaut
 # Have to substract 1 to each of them to get them back to starting from 1
-DIET <- lapply(DIET, function(x) {
-	x$predator <- (as.numeric(x$predator)-1)
-	return(x)
-	}) # We get 12 warnings which are related to the 12 networks we previously saved in temp_list
+#DIET <- lapply(DIET, function(x) {
+#	x$predator <- (as.numeric(x$predator)-1)
+#	return(x)
+#	}) # We get 12 warnings which are related to the 12 networks we previously saved in temp_list
 
 # Replace the previously save networks with their altered version
 DIET[c(33,57,64,89,106,110,111,112,113,114,115,116)] <- temp_list
@@ -39,13 +43,13 @@ DIET <- lapply(rapply(DIET, function(x) base::gsub("V", "", x), how = "list"), b
 
 
 # Format the consumption table to match the names
-Q_vec <- lapply(Q_vec, function(x) base::as.data.frame(x))
-Q_vec <- purrr::map2(GroupName, Q_vec, ~cbind(.x, .y)) |>
-	 lapply(function(x) {
-	 dplyr::select(x, c("scientific_name","x")) |>
-	 dplyr::rename(consumption = "x") |>
-	na.omit()
-	 })
+#Q_vec <- lapply(Q_vec, function(x) base::as.data.frame(x))
+#Q_vec <- purrr::map2(GroupName, Q_vec, ~cbind(.x, .y)) |>
+#	 lapply(function(x) {
+#	 dplyr::select(x, c("scientific_name","x")) |>
+#	 dplyr::rename(consumption = "x") |>
+#	na.omit()
+#	 })
 
 # Format the biomass table to match the names
 B_vec <- lapply(B_vec, function(x) base::as.data.frame(x))
@@ -169,7 +173,7 @@ Ecopath_models <- split(Ecopath_models, seq(nrow(Ecopath_models)))
 Ecopath_models <- Ecopath_models[sapply(DIET, nrow) > 0]
 
 # Only get the consumption and biomass data that relate to element of the DIET list that are not empty dataframes
-Q_vec <- Q_vec[sapply(DIET, nrow) > 0]
+#Q_vec <- Q_vec[sapply(DIET, nrow) > 0]
 B_vec <- B_vec[sapply(DIET, nrow) > 0]
 # Only get the networks that are not empty
 DIET <- DIET[sapply(DIET, nrow) > 0] |>
@@ -183,15 +187,15 @@ DIET <- purrr::map2(DIET, Ecopath_models, ~ cbind(.x, .y))
 
 # Section to transfer the % of diet into an actual biomass fux from Q_vec
 #purrr::map2(DIET, Q_vec, ~ dplyr::left_join(.x, .y, by = c("predator" = "scientific_name"))) |>
-inter_table <- purrr::map2(DIET, Q_vec, ~  merge(.x, .y, by.x = "predator", by.y = "scientific_name", all.x = TRUE)) |>
-	 lapply(function(x) {
-		 x$energy_flow <- x$consumption*x$energy_flow
-		 return(x)
-	 })
+#inter_table <- purrr::map2(DIET, Q_vec, ~  merge(.x, .y, by.x = "predator", by.y = "scientific_name", all.x = TRUE)) |>
+#	 lapply(function(x) {
+#		 x$energy_flow <- x$consumption*x$energy_flow
+#		 return(x)
+#	 })
 
-inter_table <- purrr::map2(inter_table, B_vec, ~ merge(.x, .y, by.x = "predator", by.y = "scientific_name", all.x = TRUE)) |>
+inter_table <- purrr::map2(DIET, B_vec, ~ merge(.x, .y, by.x = "prey", by.y = "scientific_name", all.x = TRUE)) |>
 		lapply(function(x) dplyr::rename(x, biomass_prey = "biomass")) |>
-		purrr::map2(B_vec, ~ merge(., .y, by.x = "prey", by.y = "scientific_name", all.x = TRUE)) |>
+		purrr::map2(B_vec, ~ merge(., .y, by.x = "predator", by.y = "scientific_name", all.x = TRUE)) |>
 		lapply(function(x) dplyr::rename(x, biomass_pred = "biomass"))
 
 inter_table <- do.call("rbind", inter_table) |>
