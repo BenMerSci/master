@@ -33,51 +33,52 @@ plankton <- species_list[which(species_list$metabolic_class == "Plankton"),]
 ##### Fish #####
 # BodyMass are in grams (g)
 # Validate the fish names
-validated_fish <- rfishbase::validate_names(fish$scientific_name)
+validated_fish <- data.frame(cbind(fish$scientific_name, rfishbase::validate_names(fish$scientific_name))) |>
+			dplyr::rename(original = "X1", validated = "X2")
 
-LW_fish <- rfishbase::length_weight(validated_fish)
-LW_fish_ls <- base::split(LW, f = LW$Species)
-LW_fish_ls <- lapply(LW_fish_ls, function(x){ x$weight <- x$a*(x$LengthMax^x$b)
+fish_LW <- rfishbase::length_weight(validated_fish$validated)
+fish_LW_ls <- base::split(fish_LW, f = fish_LW$Species)
+fish_LW_ls <- lapply(fish_LW_ls, function(x){ x$weight <- x$a*(x$LengthMax^x$b)
 			return(x)})
-LW_fish_ls <- lapply(LW_fish_ls, function(x){ x$LengthMin <- as.numeric(x$LengthMin)
+fish_LW_ls <- lapply(fish_LW_ls, function(x){ x$LengthMin <- as.numeric(x$LengthMin)
 			x$weightMin <- x$a*(x$LengthMin^x$b)
 			return(x)})
-LW_fish_ls <- lapply(LW_fish_ls, function(x){ data.frame(cbind(unique(x$Species), mean(x$weightMin, na.rm = TRUE), mean(x$weight, na.rm = TRUE)))})
+fish_LW_ls <- lapply(fish_LW_ls, function(x){ data.frame(cbind(unique(x$Species), mean(x$weightMin, na.rm = TRUE), mean(x$weight, na.rm = TRUE)))})
 
+fish_LW_ls <- do.call("rbind", fish_LW_ls)
 
-LW_fish_ls <- do.call("rbind", LW_fish_ls)
+fish_speed <- rfishbase::speed(validated_fish$validated)
+fish_speed_ls <- base::split(fish_speed, f = fish_speed$Species)
 
-fish_speed <- rfishbase::speed(validated_fish)
-
-
-fish_data <- merge(fish, LW_fish_ls, by.x = "scientific_name", by.y = "X1", all.x = TRUE) |>
-	subset(select = c("scientific_name", "gbif_id", "metabolic_class", "X2", "X3")) |>
+fish_speed_ls <- lapply(fish_speed_ls, function(x){ data.frame(cbind(unique(x$Species), mean(x$Speedms, na.rm = TRUE)))})
+fish_speed_ls <- do.call("rbind", fish_speed_ls)
+ 
+fish_data <- merge(fish, fish_LW_ls, by.x = "scientific_name", by.y = "X1", all.x = TRUE) |>
 	dplyr::rename(bodymass = "X3", bodymass_min = "X2") |>
-	merge(fish_speed, by.x = "scientific_name", by.y = "Species", all.x = TRUE) |>
-	subset(select = c("scientific_name", "gbif_id", "metabolic_class", "bodymass", "bodymass_min", "Speedms")) |>
-	dplyr::rename(speed = "Speedms")
+	merge(fish_speed_ls, by.x = "scientific_name", by.y = "X1", all.x = TRUE) |>
+	subset(select = c("scientific_name", "gbif_id", "metabolic_class", "bodymass", "bodymass_min", "X2")) |>
+	dplyr::rename(speed = "X2")
 
 
 ##### Sealife #####
 # BodyMass are in grams (g)
 # Validate the malacostraca names
-validated_sealife <- rfishbase::validate_names(sealife$scientific_name, server = "sealifebase")
+validated_sealife <- data.frame(cbind(sealife$scientific_name, rfishbase::validate_names(sealife$scientific_name, server = "sealifebase"))) |>
+			dplyr::rename(original = "X1", validated = "X2")
 # Get their lenght and weight
-LW_sea <- rfishbase::length_weight(validated_sealife, server = "sealifebase")
-LW_sea_ls <- base::split(LW_sea, f = LW_sea$Species)
+sea_LW <- rfishbase::length_weight(validated_sealife$validated, server = "sealifebase")
+sea_LW_ls <- base::split(sea_LW, f = sea_LW$Species)
 
-LW_sea_ls <- lapply(LW_sea_ls, function(x){ x$weight <- x$a*(x$LengthMax^x$b)
+sea_LW_ls <- lapply(sea_LW_ls, function(x){ x$weight <- x$a*(x$LengthMax^x$b)
 			return(x)})
-LW_sea_ls <- lapply(LW_sea_ls, function(x){ x$LengthMin <- as.numeric(x$LengthMin)
+sea_LW_ls <- lapply(sea_LW_ls, function(x){ x$LengthMin <- as.numeric(x$LengthMin)
 			x$weightMin <- x$a*(x$LengthMin^x$b)
 			return(x)})
-LW_sea_ls <- lapply(LW_sea_ls, function(x){ data.frame(cbind(unique(x$Species), mean(x$weightMin, na.rm = TRUE), mean(x$weight, na.rm = TRUE)))})
+sea_LW_ls <- lapply(sea_LW_ls, function(x){ data.frame(cbind(unique(x$Species), mean(x$weightMin, na.rm = TRUE), mean(x$weight, na.rm = TRUE)))})
 
+sea_LW_ls <- do.call("rbind", sea_LW_ls)
 
-LW_sea_ls <- do.call("rbind", LW_sea_ls)
-
-
-sealife_data <- merge(sealife, LW_sea_ls, by.x = "scientific_name", by.y = "X1", all.x = TRUE) |>
+sealife_data <- merge(sealife, sea_LW_ls, by.x = "scientific_name", by.y = "X1", all.x = TRUE) |>
 	subset(select = c("scientific_name", "gbif_id", "metabolic_class", "X2","X3")) |>
 	dplyr::rename(bodymass = "X3", bodymass_min = "X2") |>
 	subset(select = c("scientific_name", "gbif_id", "metabolic_class", "bodymass", "bodymass_min")) 
@@ -92,13 +93,17 @@ aves_data <- merge(aves, birds_traits, by.x = "scientific_name", by.y = "Scienti
 	subset(select = c("scientific_name", "gbif_id", "metabolic_class", "BodyMass.Value")) |>
 	dplyr::rename(bodymass = "BodyMass.Value")
 
+aves_data[which(aves_data$scientific_name == "Bubo scandiacus"), "bodymass"] <- birds_traits[which(birds_traits$Scientific == "Bubo scandiaca"), "BodyMass.Value"]
+aves_data[which(aves_data$scientific_name == "Leucocarbo bougainvillii"), "bodymass"] <- birds_traits[which(birds_traits$Scientific == "Phalacrocorax bougainvillii"), "BodyMass.Value"]
+
+
 mammalia_data <- merge(mammalia, mamm_traits, by.x = "scientific_name", by.y = "Scientific", all.x = TRUE) |>
 	subset(select = c("scientific_name", "gbif_id", "metabolic_class", "BodyMass.Value")) |>
 	dplyr::rename(bodymass = "BodyMass.Value")
 
 mammalia_data[which(mammalia_data$scientific_name == "Canis lupus arctos"), "bodymass"] <- mamm_traits[which(mamm_traits$Scientific == "Canis lupus"), "BodyMass.Value"]
+mammalia_data[which(mammalia_data$scientific_name == "Otaria byronia"), "bodymass"] <- mamm_traits[which(mamm_traits$Scientific == "Otaria flavescens"), "BodyMass.Value"]
 mammalia_data[which(mammalia_data$scientific_name == "Physeter macrocephalus"), "bodymass"] <- mamm_traits[which(mamm_traits$Scientific == "Physeter catodon"), "BodyMass.Value"]
-mammalia_data[which(mammalia_data$scientific_name == "Ursus horribilis"), "bodymass"] <- mamm_traits[which(mamm_traits$Scientific == "Ursus arctos"), "BodyMass.Value"]
 
 ##### Insecta #####
 insecta_data <- insecta
@@ -121,7 +126,10 @@ plankton_data[which(plankton_data$scientific_name == "Bakterioplankton"), "bodym
 # Merge everything back into species_list
 # Have 147 bodymass of 240 species
 species_traits <- plyr::rbind.fill(fish_data, sealife_data, aves_data, mammalia_data, insecta_data, plankton_data)
-
+species_traits[which(species_traits$bodymass == NaN),]
+species_traits[which(species_traits$bodymass == NaN), "bodymass"] <- NA
+species_traits[which(species_traits$bodymass == NaN), "bodymass_min"] <- NA
+species_traits[which(species_traits$bodymass == NaN), "speed"] <- NA
 
 # Save the traits data_frame
 saveRDS(species_traits, "data/intermediate/species_traits.RDS")
