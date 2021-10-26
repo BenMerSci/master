@@ -44,6 +44,11 @@ class:  middle, title-slide,
 <i class="fa fa-github fa-2x" style="color:#FAFAFA"></i> [BenMerSci/master](https://github.com/BenMerSci/master)
 
 ---
+# Models discussed with Dominique
+$$
+  F = B * B
+$$
+---
 
 # Remerciements
 
