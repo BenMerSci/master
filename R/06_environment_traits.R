@@ -119,6 +119,67 @@ enviro_df[which(enviro_df$model_name == "Western Gulf of Mexico"), "flux_units"]
 enviro_df[which(enviro_df$model_name == "Yucatan shelf, Gulf of Mexico"), "flux_units"] <- "g/m2/yr, dry"
 enviro_df[which(enviro_df$ecosystem_type == "terrestrial"), "flux_units"] <- "kg/km2/yr, dry"
 
+# Getting seasonality for each model
+enviro_df[which(enviro_df$model_name == "Alaka Prince William Sound OM"), "seasonality"] <- TRUE
+enviro_df[which(enviro_df$model_name == "Alto Golfo De California"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "Bali Strait"), "seasonality"] <- TRUE
+enviro_df[which(enviro_df$model_name == "Bay Of Somme"), "seasonality"] <- TRUE
+enviro_df[which(enviro_df$model_name == "Campeche Bank, Golf of Mexico"), "seasonality"] <- TRUE
+enviro_df[which(enviro_df$model_name == "Cape Verde"), "seasonality"] <- TRUE
+enviro_df[which(enviro_df$model_name == "Caribbean"), "seasonality"] <- TRUE
+enviro_df[which(enviro_df$model_name == "Central Atlantic 50s"), "seasonality"] <- TRUE/FALSE
+enviro_df[which(enviro_df$model_name == "Central Chile 1992"), "seasonality"] <- FALSE
+enviro_df[which(enviro_df$model_name == "Central Pacific, sharks"), "seasonality"] <- FALSE
+enviro_df[which(enviro_df$model_name == "Chesapeake Present"), "seasonality"] <- TRUE
+enviro_df[which(enviro_df$model_name == "Eastern Tropical Pacific"), "seasonality"] <- TRUE
+enviro_df[which(enviro_df$model_name == "Etang de Thau, France"), "seasonality"] <- TRUE
+enviro_df[which(enviro_df$model_name == "Gulf of Salamanca, Upwelling"), "seasonality"] <- TRUE
+enviro_df[which(enviro_df$model_name == "High Barents Sea AllJuvs1990"), "seasonality"] <- TRUE
+enviro_df[which(enviro_df$model_name == "High Barents Sea Final 1990"), "seasonality"] <- TRUE
+enviro_df[which(enviro_df$model_name == "Huizache Caimanero, Mexico"), "seasonality"] <- TRUE
+enviro_df[which(enviro_df$model_name == "Iceland Fisheries"), "seasonality"] <- TRUE
+enviro_df[which(enviro_df$model_name == "Jalisco y Colima"), "seasonality"] <- TRUE/FALSE
+enviro_df[which(enviro_df$model_name == "Lagoon of Venice"), "seasonality"] <- FALSE # Model only based on summer data
+enviro_df[which(enviro_df$model_name == "Lake Aydat, France"), "seasonality"] <- TRUE/FALSE
+enviro_df[which(enviro_df$model_name == "Lake Chad, Africa"), "seasonality"] <- TRUE
+enviro_df[which(enviro_df$model_name == "Lake George, Uganda"), "seasonality"] <- FALSE
+enviro_df[which(enviro_df$model_name == "Lake Kariba, Africa"), "seasonality"] <- TRUE
+enviro_df[which(enviro_df$model_name == "Lake Kinneret, Israel"), "seasonality"] <- TRUE
+enviro_df[which(enviro_df$model_name == "Lake Malawi 2, Africa"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "Lake Malawi, Africa"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "Lake Tanganyka, Africa, 1975"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "Lake Tanganyka, Africa, 1981"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "Lake Turkana, Kenya, 1973"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "Lake Victoria, Africa, 1971"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "Lake Victoria, Africa, 1985"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "LakeTurkana, Kenya, 1987"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "Low Barents Sea 1995"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "Low Barents Sea Juvs 1995"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "Maputo Bay, Mozambique"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "Newfoundland Grand Banks 1900"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "Newfoundland Grand Banks mid-1980s"), "seasonality"] <-
+enviro_df[which(enviro_df$model_name == "Newfounland  Grand Banks mid-1990s"), "seasonality"] <-
+enviro_df[which(enviro_df$model_name == "North Atlantic 1950s"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "North Atlantic 1990s"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "Northwest Africa"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "Orbetello Lagoon"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "Peruvian upwelling system 1950s"), "seasonality"] <-
+enviro_df[which(enviro_df$model_name == "Peruvian upwelling system 1960s"), "seasonality"] <-
+enviro_df[which(enviro_df$model_name == "Ria Formosa"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "Seine Estuary"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "Strait Of Georgia"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "Tamiahua Lagoon, Golf of Mexico"), "seasonality"] <-
+enviro_df[which(enviro_df$model_name == "Tampa Bay"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "Tampamachoco Lagoon, Mexico"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "Upper Parana River Floodplain"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "West Coast of Greenland"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "West Coast of Vancouver Island"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "West Greenland, Shrimp Pound"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "Western Bering Sea"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "Western Gulf of Mexico"), "seasonality"] <- 
+enviro_df[which(enviro_df$model_name == "Yucatan shelf, Gulf of Mexico"), "seasonality"] <- 
+enviro_df[which(enviro_df$ecosystem_type == "terrestrial"), "seasonality"] <- TRUE
+
 #### Climate data ####
 # Download BerkeleyEarth data
 # Temperature with water temp where there is water (surface water temp)
