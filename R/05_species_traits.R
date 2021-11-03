@@ -122,7 +122,6 @@ plankton_data[which(plankton_data$scientific_name == "Large Zooplankton"), "body
 plankton_data[which(plankton_data$scientific_name == "Macrozooplankton"), "bodymass"] <- 1
 plankton_data[which(plankton_data$scientific_name == "Bakterioplankton"), "bodymass"] <- 0.00000001
 
-
 # Merge everything back into species_list
 # Have 147 bodymass of 240 species
 species_traits <- plyr::rbind.fill(fish_data, sealife_data, aves_data, mammalia_data, insecta_data, plankton_data)
@@ -130,6 +129,59 @@ species_traits[which(species_traits$bodymass == NaN),]
 species_traits[which(species_traits$bodymass == NaN), "bodymass"] <- NA
 species_traits[which(species_traits$bodymass == NaN), "bodymass_min"] <- NA
 species_traits[which(species_traits$bodymass == NaN), "speed"] <- NA
+
+
+# Locomotion from https://doi.org/10.1002/ecy.3114
+loco <- read.csv("data/raw/locomotion_ecology/Animal_Locomotion_Database_ecy0011-sup-0001-DataS1.txt", header  = TRUE, sep = "\t") |>
+	dplyr::select(c("Taxa_ID","SI_Mass","SI_Length","Trait_ID","Trait_Value","Temperature","Temp_Type","Thermy")) |>
+	dplyr::filter(Taxa_ID %in% species_traits$scientific_name) |>
+	(\(x)base::split(x, f = x$Taxa_ID))()
+
+temp_loco <- loco[c(8,12,28,32)]
+
+loco <- lapply(loco, function(x) tidyr::pivot_wider(x, names_from = "Trait_ID", values_from = "Trait_Value"))
+
+for(i in 1:length(temp_loco)){
+	temp <- temp_loco[[i]]
+	temp <- base::split(temp, temp$Trait_ID)
+	temp <- lapply(temp, function(x) data.frame(cbind(unique(x$Taxa_ID), mean(x$SI_Mass, na.rm = TRUE), mean(x$SI_Length, na.rm = TRUE), unique(x$Trait_ID), mean(x$Trait_Value, na.rm = TRUE), mean(x$Temperature, na.rm = TRUE), unique(x$Temp_Type), unique(x$Thermy))))
+	temp <- lapply(temp, function(x) dplyr::rename(x, Taxa_ID = "X1", SI_Mass = "X2", SI_Length = "X3", Trait_ID = "X4", Trait_Value = "X5", Temperature = "X6", Temp_Type = "X7", Thermy = "X8"))
+	temp <- do.call("rbind", temp)
+	temp <- tidyr::pivot_wider(temp, names_from = "Trait_ID", values_from = "Trait_Value")
+	temp_loco[[i]] <- temp
+
+}
+
+temp_loco[[1]] <- data.frame(cbind(unique(temp_loco[[1]]$Taxa_ID), mean(as.numeric(temp_loco[[1]]$SI_Mass)), mean(as.numeric(temp_loco[[1]]$SI_Length)), mean(as.numeric(temp_loco[[1]]$Temperature)), unique(temp_loco[[1]]$Temp_Type), unique(temp_loco[[1]]$Thermy), temp_loco[[1]][1,"Attack Velocity"], temp_loco[[1]][2,"Escape Velocity"]))
+temp_loco[[1]] <- dplyr::rename(temp_loco[[1]], Taxa_ID = "unique.temp_loco..1...Taxa_ID.", SI_Mass = "mean.as.numeric.temp_loco..1...SI_Mass..", SI_Length = "mean.as.numeric.temp_loco..1...SI_Length..", Temperature = "mean.as.numeric.temp_loco..1...Temperature..", Temp_Type = "unique.temp_loco..1...Temp_Type.", Thermy = "unique.temp_loco..1...Thermy.", `Attack Velocity` = "Attack.Velocity", `Escape Velocity`= "Escape.Velocity")
+temp_loco[[3]] <- data.frame(cbind(unique(temp_loco[[3]]$Taxa_ID), mean(as.numeric(temp_loco[[3]]$SI_Mass)), mean(as.numeric(temp_loco[[3]]$SI_Length)), mean(as.numeric(temp_loco[[3]]$Temperature)), unique(temp_loco[[3]]$Temp_Type), unique(temp_loco[[3]]$Thermy), temp_loco[[3]][1,"Acceleration"], temp_loco[[3]][1,"Escape Velocity"], temp_loco[[3]][2,"Turn Radius"]))
+temp_loco[[3]] <- dplyr::rename(temp_loco[[3]], Taxa_ID = "unique.temp_loco..3...Taxa_ID.", SI_Mass = "mean.as.numeric.temp_loco..3...SI_Mass..", SI_Length = "mean.as.numeric.temp_loco..3...SI_Length..", Temperature = "mean.as.numeric.temp_loco..3...Temperature..", Temp_Type = "unique.temp_loco..3...Temp_Type.", Thermy = "unique.temp_loco..3...Thermy.", Acceleration = "Acceleration", `Escape Velocity` = "Escape.Velocity", `Turn Radius` = "Turn.Radius")
+
+loco[c(8,12,28,32)] <- temp_loco[c(1,2,3,4)]
+
+loco_categorical <- lapply(loco, function(x) data.frame(cbind(unique(x$Taxa_ID), unique(x$Temp_Type), unique(x$Thermy))))
+
+loco_categorical[[10]] <- loco_categorical[[10]][1,]
+loco_categorical[[31]] <- loco_categorical[[31]][2,]
+loco_categorical <- plyr::rbind.fill(loco_categorical)
+loco_categorical <- dplyr::rename(loco_categorical, c(Taxa_ID = "X1", Temp_Type = "X2", Thermy = "X3"))
+loco_num <- lapply(loco, function(x) dplyr::select(x, -c("Taxa_ID","Temp_Type","Thermy")))
+
+loco_num <- lapply(loco_num, function(x) {
+				x <- as.data.frame(x)
+				get_col <- colnames(x)
+				x[get_col] <- sapply(x[get_col], as.numeric)
+				x <- t(data.frame(colMeans(x, na.rm = TRUE)))
+				x <- as.data.frame(x)
+				return(x)
+})
+
+loco_num <- plyr::rbind.fill(loco_num)
+loco <- cbind(loco_categorical, loco_num)
+loco <- dplyr::rename(loco, c(temp_type = "Temp_Type", thermy = "Thermy", si_mass = "SI_Mass", si_length = "SI_Length", temp_loco = "Temperature", acceleration = "Acceleration", attack_velocity = "Attack Velocity", voluntary_body_velocity = "Voluntary Body Velocity", escape_velocity = "Escape Velocity", turn_radius = "Turn Radius", angular_velocity = "Angular Velocity"))
+
+# Merge species_traits with locomotion data
+species_traits <- merge(species_traits, loco, by.x = "scientific_name", by.y = "Taxa_ID", all.x = TRUE)
 
 # Save the traits data_frame
 saveRDS(species_traits, "data/intermediate/species_traits.RDS")
