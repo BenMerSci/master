@@ -1,10 +1,10 @@
 r_packages:
-  - rmarkdown
   - knitr
+  - markdown
+  - rmarkdown
   - xaringan
-  - emo
-  - githubinstall
-  - RefManageR
-  - stringr
+  - DT
+  - pagedown
 r_github_packages:
   - hadley/emo
+  - gadenbuie/xaringanExtra

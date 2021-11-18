@@ -7,7 +7,7 @@ remark.macros.scale = function (percentage) {
 // Font-awesome icons (versio 4.7)
 remark.macros.faic = function (size = 2) {
   var name = this;
-  return '<i class="fa fa-'+ name + ' fa-'+ size + 'x" aria-hidden="true"></i>';
+  return '<i class="fab fa-'+ name + ' fa-'+ size + 'x" aria-hidden="true"></i>';
 };
 
 // Academicons
@@ -20,4 +20,14 @@ remark.macros.acic = function (size = 2) {
 remark.macros.upper = function () {
   // `this` is the value in the parenthesis, or undefined if left out
   return this.toUpperCase();
+};
+
+// Prevents the autoplaying of the animated Gifs
+window.onload = function() {
+  Gifffer();
+}
+
+remark.macros.giffer = function (percentage) {
+  var url = this;
+  return '<img data-gifffer="' + url + '" style="width: ' + percentage + '" />';
 };

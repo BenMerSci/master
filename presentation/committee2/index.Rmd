@@ -4,13 +4,14 @@ output:
   xaringan::moon_reader:
   #  self_contained: TRUE
     includes:
-      transiton: fade
       in_header: conf/style-header.html
     lib_dir: assets
     seal: false
     css: ["default", "conf/css/style.css", "conf/css/fonts.css"]
     nature:
-      beforeInit: "conf/style-macros.js"
+      highlightStyle: solarized-light
+      highlightLines: true
+      beforeInit: ["conf/js/gifffer.min.js", "conf/js/style-macros.js"]
 ---
 
 ```{r setup, echo = F}
@@ -25,11 +26,19 @@ knitr::opts_chunk$set(
   fig.align = 'center',
   fig.retina = 3
 )
-library(readr)
-library(kableExtra)
-mypar = list(mar = c(3,3,0.5,0.5), mgp = c(1.5, 0.3, 0), tck = -.008)
-```
 
+# base plot layout
+mypar = list(mar = c(3,3,0.5,0.5), mgp = c(1.5, 0.3, 0), tck = -.008)
+
+# xaringan Extra
+xaringanExtra::use_xaringan_extra(c("tile_view", "animate_css", "tachyons"))
+xaringanExtra::use_extra_styles(
+  hover_code_line = TRUE,         #<<
+  mute_unhighlighted_code = TRUE  #<<
+)
+xaringanExtra::use_editable(expires = 1)
+xaringanExtra::use_panelset()
+```
 class:  middle, title-slide, 
 
 <div class="my-logo-left"></div>
@@ -44,10 +53,15 @@ class:  middle, title-slide,
 <i class="fa fa-github fa-2x" style="color:#FAFAFA"></i> [BenMerSci/master](https://github.com/BenMerSci/master)
 
 ---
-# Models discussed with Dominique
+# Data
+- 
+---
+# Models
+##### Équation de base
 $$
-  F = B * B
+  F_{ij} = \alpha * B_i * B_j
 $$
+
 ---
 
 # Remerciements

@@ -4,14 +4,27 @@
     <title>Talk template</title>
     <meta charset="utf-8" />
     <link href="assets/remark-css-0.0.1/default.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <link href="assets/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="assets/tile-view-0.2.6/tile-view.js"></script>
+    <link href="assets/animate.css-3.7.2/animate.xaringan.css" rel="stylesheet" />
+    <link href="assets/tachyons-4.12.0/tachyons.min.css" rel="stylesheet" />
+    <link href="assets/xaringanExtra-extra-styles-0.2.6/xaringanExtra-extra-styles.css" rel="stylesheet" />
+    <script type="application/json" id="xaringanExtra-editable-docid">{"id":"fe4d6b4aab674b01893494b3de390565","expires":1}</script>
+    <script src="assets/himalaya-1.1.0/himalaya.js"></script>
+    <script src="assets/js-cookie-3.0.0/js.cookie.js"></script>
+    <link href="assets/editable-0.2.6/editable.css" rel="stylesheet" />
+    <script src="assets/editable-0.2.6/editable.js"></script>
+    <link href="assets/panelset-0.2.6/panelset.css" rel="stylesheet" />
+    <script src="assets/panelset-0.2.6/panelset.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.1/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.1/css/v4-shims.css">
     <link rel="stylesheet" href="https://cdn.rawgit.com/jpswalsh/academicons/master/css/academicons.min.css">
+    <!--hauisdhah087hbdu1h0781gd10gdasdgh0172gd1d8h0781dgiqubsdoqusgd9712gdqiudh917gdqiuhxb0182gd12gs9712g-->
     <link rel="stylesheet" href="conf/css/style.css" type="text/css" />
     <link rel="stylesheet" href="conf/css/fonts.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
-
 
 
 
@@ -27,6 +40,16 @@ class:  middle, title-slide,
 &lt;br&gt;
 ## .font70[Benjamin Mercier, &lt;br&gt;.small[Étudiant à la maîtrise]]&lt;br&gt;&lt;br&gt;
 &lt;i class="fa fa-github fa-2x" style="color:#FAFAFA"&gt;&lt;/i&gt; [BenMerSci/master](https://github.com/BenMerSci/master)
+
+---
+# Data
+- 
+---
+# Models
+##### Équation de base
+$$
+  F_{ij} = \alpha * B_i * B_j
+$$
 
 ---
 
@@ -49,8 +72,12 @@ class:  middle, title-slide,
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
-<script src="conf/style-macros.js"></script>
-<script>var slideshow = remark.create();
+<script src="conf/js/gifffer.min.js"></script>
+<script src="conf/js/style-macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "solarized-light",
+"highlightLines": true
+});
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
 });
@@ -115,7 +142,24 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
       links[i].target = '_blank';
     }
   }
-})();</script>
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
 
 <script>
 slideshow._releaseMath = function(el) {
