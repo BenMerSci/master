@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Talk template</title>
+    <meta charset="utf-8" />
+    <link href="assets/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.rawgit.com/jpswalsh/academicons/master/css/academicons.min.css">
+    <link rel="stylesheet" href="conf/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="conf/css/fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+class:  middle, title-slide, 
+
+&lt;div class="my-logo-left"&gt;&lt;/div&gt;
+&lt;br&gt;&lt;br&gt;&lt;br&gt;
+# Mécanisme de flux d'énergie en réseaux trophiques 
+&lt;br&gt;
+&lt;hr width="45%" align="left" size="0.3" color="orange"&gt;&lt;/hr&gt;
+&lt;br&gt;
+## Séminaire 1 &lt;br&gt; PBI700
+&lt;br&gt;
+## .font70[Benjamin Mercier, &lt;br&gt;.small[Étudiant à la maîtrise]]&lt;br&gt;&lt;br&gt;
+&lt;i class="fa fa-github fa-2x" style="color:#FAFAFA"&gt;&lt;/i&gt; [BenMerSci/master](https://github.com/BenMerSci/master)
+
+---
+
+# Mise en contexte
+
+.center[![:scale 80%](images/trend2.png)]
+
+---
+
+# Mise en contexte (suite)
+&lt;p class="box"&gt;&lt;br&gt;
+.center[**Altération du fonctionnement des écosystèmes et services écosystémiques associés**]
+&lt;br&gt;&lt;/p&gt;
+
+.center[![:scale 70%](images/ecoserv.png)]
+
+---
+
+# Justification et importance
+&lt;br&gt;
+&lt;p class="box"&gt;&lt;br&gt;
+.center[**Important de comprendre ce qui affecte les interactions entre espèces et comment elles prennent place**]
+&lt;br&gt;&lt;/p&gt;
+.center[.Large[&amp;darr;]]
+
+
+.center[**L'échantillonnage des interactions est complexe**]
+&lt;hr width="80%" align="center" size="3.0" color="#23373B"&gt;&lt;/hr&gt;
+
+.center[Temps]&lt;br&gt;
+.center[Éloignement]&lt;br&gt;
+.center[Biais]
+
+---
+
+# Justification et importance (suite)
+
+&lt;br&gt;
+&lt;p class="box"&gt;
+&lt;br&gt;
+.center[**Le développement de modèle d'inférence et de prédiction est crucial**]
+&lt;br&gt;&lt;/p&gt;
+&lt;br&gt;
+&lt;hr width="80%" align="center" size="3.0" color="#23373B"&gt;&lt;/hr&gt;
+.center[.Large[&amp;darr;]]
+
+.center[Plusieurs modèles pour reconstituer les réseaux d'interactions existent déjà]
+&lt;br&gt;
+.center[**mais...**]
+&lt;br&gt;
+.center[La majorité se concentre sur des réseaux qualitatifs]
+
+---
+
+# Réseaux qualitatifs et quantitatifs
+
+.pull-left[
+  .center[**Réseau qualitatif**&lt;br&gt;Topologie]
+  ![:scale 100%](images/network_topo.png)
+  ]
+.pull-right[
+  .center[**Réseau quantitatif**&lt;br&gt;Topologie + force]
+  ![:scale 100%](images/network_flux.png)
+  ]
+
+---
+
+# Réseaux qualitatifs et quantitatifs
+.pull-left[
+  .center[**Réseaux qualitatifs**&lt;br&gt;
+          **Format**]&lt;br&gt;
+          ![:scale 60%](images/matrixtopo.png)
+]
+
+.pull-right[
+  .center[**Réseaux quantitatifs**&lt;br&gt;
+          **Format**]&lt;br&gt;
+          ![:scale 60%](images/matrixstr.png)
+]
+
+---
+
+# Réseaux quantitatifs
+&lt;p class="box"&gt;&lt;br&gt;
+.center[**Important pour comprendre la dynamique et la stabilité des communautés**]
+&lt;br&gt;&lt;/p&gt;
+&lt;hr width="100%" align="center" size="3.0" color="#23373B"&gt;&lt;/hr&gt;
+.center[.Large[&amp;darr;]]&lt;br&gt;
+.center[Quelques modèles pour reconstituer les forces d'interactions existent déjà]
+&lt;br&gt;
+.center[**mais...**]
+&lt;br&gt;
+.center[- Définitions des forces d'interaction variées]
+.center[- Peu de modèles mécanistiques]
+.center[- Modèles peu ou pas validés]
+
+---
+
+# Flux d'énergie
+
+.center[**Énergie**&lt;br&gt;.font60[(biomasse de carbone/aire/temps)]
+]
+.center[![:scale 30%](images/transfert.png)]&lt;br&gt;
+.center[**Potentiel unificateur pour certains domaines de l'écologie**]
+&lt;hr width="80%" align="center" size="3.0" color="#23373B"&gt;&lt;/hr&gt;
+&lt;br&gt;
+.center[**Relié à certains traits de bases des organismes**]
+.center[- Masse corporelle]
+.center[- Demande métabolique]
+.center[- Abondance/Biomasse]
+
+---
+
+# Modèle mécanistique
+
+.center[**Mécanistique**![:scale 7%](images/mechanism.svg)]
+&lt;hr width="80%" align="center" size="3.0" color="#23373B"&gt;&lt;/hr&gt;
+
+.center[Description et représentation d'un processus selon ses composantes]
+.center[.Large[&amp;darr;]]
+&lt;br&gt;
+.center[Processus = les interactions]
+&lt;br&gt;
+.center[Composantes = traits des organismes et de l'environnement]
+&lt;br&gt;
+&lt;hr width="80%" align="center" size="3.0" color="#23373B"&gt;&lt;/hr&gt;
+
+.center[**Données relativement accessibles!**]
+
+---
+
+class: inverse
+
+# .center[Objectifs]
+&lt;br&gt;&lt;hr width="80%" align="center" size="2.0" color="orange"&gt;&lt;/hr&gt;
+
+.center[
+1. Développer un modèle mécanistique qui explique de manière précise la distribution des flux d'énergie en réseaux trophiques
+&lt;br&gt;&lt;br&gt;
+&lt;hr width="80%" align="center" size="2.0" color="orange"&gt;&lt;/hr&gt;
+&lt;br&gt;
+2. Valider le modèle sur des réseaux de référence (EcoPath) et le comparer à un modèle phénoménologique (RandomForest)
+&lt;br&gt;&lt;br&gt;
+&lt;hr width="80%" align="center" size="2.0" color="orange"&gt;&lt;/hr&gt;
+&lt;br&gt;
+3. Définir les paramètres clés par écosystèmes respectifs
+&lt;br&gt;&lt;br&gt;
+&lt;hr width="80%" align="center" size="2.0" color="orange"&gt;&lt;/hr&gt;
+
+]
+
+---
+
+# Méthodologie
+
+.center[![:scale 63.5%](images/metho.png)]
+
+---
+
+# Composantes d'interactions
+&lt;br&gt;
+.center[![:scale 100%](images/expred.png)]
+&lt;hr width="80%" align="center" size="3.0" color="#23373B"&gt;&lt;/hr&gt;
+.center[.Large[&amp;darr;]]
+&lt;br&gt;
+.center[![:scale 80%](images/inter_element.png)]
+
+---
+
+# Définir le modèle ![:scale 4%](images/energy.svg)![:scale 4%](images/mechanism.svg)
+.center[Flux d'énergie de l'espèce *i* à l'espèce *j*]
+&lt;hr width="80%" align="center" size="3.0" color="#23373B"&gt;&lt;/hr&gt;
+&lt;br&gt;
+.center[
+&lt;p class="box"&gt;
+&lt;br&gt;
+`\(F_{ij}=I_j*E_{ji}*B_i\)` 
+&lt;br&gt;&lt;br&gt;
+&lt;/p&gt;
+&lt;br&gt;&lt;br&gt;où
+]
+.center[
+  `\(I_j\)`: Demande métabolique du prédateur `\(_j\)`&lt;br&gt;
+  `\(E_{ji}\)`: Taux de consommation du prédateur `\(_j\)` sur la ressource `\(_i\)`&lt;br&gt;
+  `\(B_i\)`: Biomasse de la ressource (C/u²)
+]
+
+---
+
+# Réseaux de références
+
+.center[![:scale 60%](images/metho2.png)]
+&lt;hr width="90%" align="center" size="3.0" color="#23373B"&gt;&lt;/hr&gt;
+&lt;br&gt;
+.center[Réseaux trophiques empiriquement échantillonnés]
+.center[**...**]
+.center[.Large[&amp;darr;]]
+.center[**EcoPath**]
+.center[- Logiciel de modélisation de réseaux, statique et masse équilibré]
+
+---
+
+# Exemple EcoPath
+
+.center[![:scale 80%](images/ecopath.png)]
+&lt;hr width="90%" align="center" size="3.0" color="#23373B"&gt;&lt;/hr&gt;
+.center[**Modèle basé sur**]
+.center[Biomasse + Production + Consommation + Diète]
+.cite[Legagneux et al. 2012]
+
+
+---
+
+# Action préalable
+.center[![:scale 60%](images/metho2.png)]
+&lt;hr width="90%" align="center" size="3.0" color="#23373B"&gt;&lt;/hr&gt;
+&lt;br&gt;
+.center[Filtre taxonomique]
+&lt;br&gt;
+.center[+]
+&lt;br&gt;
+.center[Limiter la saisonnalité]
+
+---
+
+# Préalable à la validation
+
+.center[![:scale 60%](images/metho3.png)]
+.center[.font60[Au préalable]]
+&lt;hr width="90%" align="center" size="3.0" color="#23373B"&gt;&lt;/hr&gt;
+.center[**Récupérer les différents traits par réseau respectif**]
+.center[- Masse moyenne individu adulte]
+.center[- Type de métabolisme]
+.center[- Dimensionalité de l'interaction]
+.center[- Type ou vitesse de déplacement]
+
+---
+
+# Validation
+
+.center[![:scale 60%](images/metho3.png)]
+&lt;hr width="90%" align="center" size="3.0" color="#23373B"&gt;&lt;/hr&gt;
+.pull-left[
+  .center[Optimisation statistique des paramètres du modèle]&lt;br&gt;
+    &lt;hr width="80%" align="center" size="3.0" color="#23373B"&gt;&lt;/hr&gt;
+  .center[**Validation et prédiction**]&lt;br&gt;
+  .center[Approche *Bottom-up*&lt;br&gt; .font70[(réalisme écologique)]]&lt;br&gt;
+]
+.pull-right[![:scale 80%](images/bottomup.png)]
+
+---
+
+# Mécanistique vs phénoménologique
+
+.center[![:scale 60%](images/metho3.png)]
+&lt;hr width="90%" align="center" size="3.0" color="#23373B"&gt;&lt;/hr&gt;
+.center[![:scale 10%](images/mechanism.svg) vs ![:scale 10%](images/randomforest.png)]
+.center[.Large[&amp;darr;]]
+.center[**RandomForest**: Algorithme d'apprentissage machine de base]&lt;br&gt;
+.center["Boîte noire" qui classe les variables]
+---
+
+# Comparaison inter-écosystème
+.center[![:scale 50%](images/metho4.png)]
+&lt;hr width="90%" align="center" size="3.0" color="#23373B"&gt;&lt;/hr&gt;
+
+.center[Importance des différents paramètres selon l'écosystème:]&lt;br&gt;
+.center[ **Marin, aquatique, terrestre**]
+.center[.Large[&amp;darr;]]
+
+.center[Possibilité de raffiner le modèle par écosystème]
+
+---
+
+# Si le temps le permet
+.center[**Unification réseaux quantitatifs empiriques et théoriques**]
+&lt;hr width="90%" align="center" size="3.0" color="#23373B"&gt;&lt;/hr&gt;
+.center[.Large[&amp;darr;]]
+.center[- Peu de réseaux quantitatifs empiriques]
+.center[- Déconnection entre échantillonnage empirique et modèle théorique]
+.center[- Données de réseaux souvent regroupées]
+
+---
+
+# Remerciements
+
+.pull-left1[
+
+.center[**Mon comité:**&lt;br&gt;
+  Dominique Gravel&lt;br&gt;
+  Guillaume Blanchet&lt;br&gt;
+  Pierre Legagneux&lt;br&gt;
+  Laura Pollock&lt;br&gt;&lt;br&gt;
+**Les membres du laboratoire &lt;br&gt;d'écologie intégrative**&lt;br&gt;
+&lt;br&gt;
+&lt;p class="box"&gt;&lt;br&gt;.center[**Nous remercions le Conseil de Recherches en Sciences Naturelles et Génie du Canada (CRSNG) et le Fonds de recherche Nature et technologies pour leur soutien. En parallèle, le programme BIOS2 est supporté par le CRSNG.**]&lt;br&gt;&lt;/p&gt;
+]]
+.pull-rightfin[
+  &lt;br&gt;
+  ![:scale 200%](images/thanks2.png)]
+
+---
+
+# Icons and photos attributions
+
+**FlatIcons attributions:**&lt;br&gt;
+*Earth, Cloud, Thermometer, Waver, Bear, X, Forest, Calendar, Plant, Shoes, Chrono, Cell, Ecosystem, Energy, Mechanism:*
+&lt;div&gt;Icons made by &lt;a href="https://www.freepik.com" title="Freepik"&gt;Freepik&lt;/a&gt; from &lt;a href="https://www.flaticon.com/" title="Flaticon"&gt;www.flaticon.com&lt;/a&gt;&lt;/div&gt;
+&lt;br&gt;
+Locked, Season:&lt;br&gt;
+&lt;div&gt;Icons made by &lt;a href="https://www.flaticon.com/authors/eucalyp" title="Eucalyp"&gt;Eucalyp&lt;/a&gt; from &lt;a href="https://www.flaticon.com/" title="Flaticon"&gt;www.flaticon.com&lt;/a&gt;&lt;/div&gt;
+&lt;br&gt;
+Matrix:&lt;br&gt;
+&lt;div&gt;Icons made by &lt;a href="https://www.flaticon.com/authors/vitaly-gorbachev" title="Vitaly Gorbachev"&gt;Vitaly Gorbachev&lt;/a&gt; from &lt;a href="https://www.flaticon.com/" title="Flaticon"&gt;www.flaticon.com&lt;/a&gt;&lt;/div&gt;
+Model:&lt;br&gt;
+&lt;div&gt;Icons made by &lt;a href="https://www.flaticon.com/authors/becris" title="Becris"&gt;Becris&lt;/a&gt; from &lt;a href="https://www.flaticon.com/" title="Flaticon"&gt;www.flaticon.com&lt;/a&gt;&lt;/div&gt;
+Dimension:&lt;br&gt;
+&lt;div&gt;Icons made by &lt;a href="https://www.flaticon.com/authors/ultimatearm" title="ultimatearm"&gt;ultimatearm&lt;/a&gt; from &lt;a href="https://www.flaticon.com/" title="Flaticon"&gt;www.flaticon.com&lt;/a&gt;&lt;/div&gt;
+
+**Unsplash photos attributions:**&lt;br&gt;
+Forest fire: Landon Parenteau&lt;br&gt;
+Pollination: Alex West&lt;br&gt;
+Litter: Jesse Dodds &lt;br&gt;
+Montreal: Matthias Mullie&lt;br&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="conf/style-macros.js"></script>
+<script>var slideshow = remark.create();
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
