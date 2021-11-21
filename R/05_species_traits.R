@@ -222,5 +222,8 @@ species_traits <- species_traits[,c("scientific_name","gbif_id","organism_class"
 # Manually checking for species speed
 #miss_sp_speed <- species_traits[which(is.na(species_traits$speed)),c("scientific_name","speed")]
 
+species_traits[which(species_traits$bodymass == NaN), "bodymass"] <- NA
 # Save the traits data_frame
-saveRDS(species_traits, "data/intermediate/species_traits.RDS")
+saveRDS(species_traits, "data/intermediate/species_traits.RDS"
+species_traits <- readRDS("data/intermediate/species_traits.RDS")
+which(species_traits$bodymass == NaN)
