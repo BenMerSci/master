@@ -28,5 +28,5 @@ dataset$ppmr <- dataset$bodymass_pred/dataset$bodymass_prey
 dataset <- dataset[which(dataset$flux_units %in% c("t/km2/yr","g/m2/yr","g/m2/yr, dry","kg/km2/yr","kg/km2/yr, dry")),]
 
 # Save the dataset
-saveRDS(dataset, "data/clean/data.RDS")
+saveRDS(dataset, "data/clean/dataset.RDS")
 
