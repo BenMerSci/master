@@ -27,6 +27,10 @@ dataset$ppmr <- dataset$bodymass_pred/dataset$bodymass_prey
 # t/km2 is the same as g/m2
 dataset <- dataset[which(dataset$flux_units %in% c("t/km2/yr","g/m2/yr","g/m2/yr, dry","kg/km2/yr","kg/km2/yr, dry")),]
 
+# Remove interaction that are between plantkons
+# So we focus on interactions wich involves at least
+# one actual species
+dataset <- dataset[-which(grepl("plankt", dataset$prey) & grepl("plankt", dataset$predator)),]
 # Save the dataset
 saveRDS(dataset, "data/clean/dataset.RDS")
 
