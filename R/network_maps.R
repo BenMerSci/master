@@ -21,7 +21,7 @@ ggplot() + geom_map(data = world, map = world, aes(x = long, y = lat, map_id=reg
 	   geom_point(data=coords_habitat, aes(x=lon, y=lat, color=habitat_type)) +
 	   scale_color_manual(values= c("marine" = "deepskyblue3", "freshwater" = "sandybrown", "terrestrial" = "olivedrab")) +
 	   coord_map("rectangular", lat0=0, xlim=c(-180,180), ylim=c(-90, 90)) +
-	   labs(title="Global distribution of the Ecopath networks used", x="Longitude", y="Latitude") +
+	   labs(title="Global distribution of the 64 Ecopath networks used", x="Longitude", y="Latitude") +
 	   labs(color = "Habitat type") +
 	   scale_x_continuous(breaks = seq(-200, 200, 50)) +
 	   scale_y_continuous(breaks = seq(-90, 90, 30)) +
