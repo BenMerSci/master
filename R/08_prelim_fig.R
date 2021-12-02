@@ -26,7 +26,7 @@ geom_point()
 plot1 <- ggplot(data = terrestrial, aes(x = ppmr, y = energy_flow)) + 
 geom_point(color = "olivedrab") +
 theme(legend.position = "none") +
-scale_y_continuous("Flux de biomasse (t/km²/année)") +
+scale_y_continuous("Flux de biomasse (g/m²/année)") +
 ggtitle("Terrestre") +
 theme_bw()
 # freshwater
@@ -45,7 +45,7 @@ theme_bw()
 plot4 <- ggplot(data = terrestrial, aes(x = log(ppmr), y = log(energy_flow))) + 
 geom_point(color = "olivedrab") +
 theme(legend.position = "none") +
-scale_y_continuous("log(Flux de biomasse (t/km²/année))") +
+scale_y_continuous("log(Flux de biomasse (g/m²/année))") +
 theme_bw()
 # log-freshwater
 plot5 <- ggplot(data = freshwater, aes(x = log(ppmr), y = log(energy_flow))) + 
@@ -62,5 +62,5 @@ theme_bw()
 plots <- gridExtra::grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, nrow = 2, ncol=3)
 
 # Save
-ggsave("../master_talk/images/flux_ppmr.png",plot = plots, width = 9, height = 5, dpi = "retina")
+ggsave("../master_talk/images/flux_ppmr.png",plot = plots, width = 8, height = 8, dpi = "retina")
 ggsave("../manuscripts/ms_trophic_fluxes/figures/flux_ppmr.png", width = 9, height = 5, dpi = "retina")
