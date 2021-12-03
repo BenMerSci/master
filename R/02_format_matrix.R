@@ -6,28 +6,18 @@ GroupName <- readRDS("data/intermediate/GroupName.RDS")
 load("data/raw/ecopath/data/DIET.Rdata")
 load("data/raw/ecopath/data/Q_vec.Rdata")
 load("data/raw/ecopath/data/B_vec.Rdata")
-load("data/raw/ecopath/data/P_vec.Rdata")
+#load("data/raw/ecopath/data/P_vec.Rdata")
 
 flux_mat <- list()
-
+# Multiplying species consumption with their preys relative importance
+# to get the actual flow from the prey.
 for(i in 1:length(DIET)){
   
   D = DIET[[i]] # DIET matrix
-  B = as.numeric(B_vec[[i]]) # Species biomass (t/km^2)
-  P = as.numeric(P_vec[[i]]) # Species production (t/km^2)
   Q = as.numeric(Q_vec[[i]]) # Species consumption (t/km^2)
 
-  
-  # Resource conversion efficiency
-  e = P/Q 
-  e[e=="NaN"] = 0
-  e[e=="Inf"] = 0
-
-  # Outflows matrix (predation)
-  PRED <- -t(D%*%diag(Q)%*%diag(B))
-  
   # Inflows matrix (consumption)
-  flux_mat[[i]] <- -t(PRED*e)
+  flux_mat[[i]] <- D %*% diag(Q)
 }
 
 # Wide to long format
@@ -45,13 +35,6 @@ temp_list <- flux_mat[c(33,57,64,89,106,110,111,112,113,114,115,116)]
 # Remove the letters in some of the number IDs
 flux_mat <- lapply(rapply(flux_mat, function(x) base::gsub("F", "", x), how = "list"), base::as.data.frame)
 
-# Changing the id number in flux_mat for predator, since their number started at 2 by defaut
-# Have to substract 1 to each of them to get them back to starting from 1
-#flux_mat <- lapply(flux_mat, function(x) {
-#	x$predator <- (as.numeric(x$predator)-1)
-#	return(x)
-#	}) # We get 12 warnings which are related to the 12 networks we previously saved in temp_list
-
 # Replace the previously save networks with their altered version
 flux_mat[c(33,57,64,89,106,110,111,112,113,114,115,116)] <- temp_list
 
@@ -59,16 +42,6 @@ flux_mat[c(33,57,64,89,106,110,111,112,113,114,115,116)] <- temp_list
 # Done that after substracting 1 to the other networks, because the networks with X in the IDs were indexed starting from 1 and not from 2 like the previous one
 flux_mat <- lapply(rapply(flux_mat, function(x) base::gsub("X", "", x), how = "list"), base::as.data.frame)
 flux_mat <- lapply(rapply(flux_mat, function(x) base::gsub("V", "", x), how = "list"), base::as.data.frame)
-
-
-# Format the consumption table to match the names
-#Q_vec <- lapply(Q_vec, function(x) base::as.data.frame(x))
-#Q_vec <- purrr::map2(GroupName, Q_vec, ~cbind(.x, .y)) |>
-#	 lapply(function(x) {
-#	 dplyr::select(x, c("scientific_name","x")) |>
-#	 dplyr::rename(consumption = "x") |>
-#	na.omit()
-#	 })
 
 # Format the biomass table to match the names
 B_vec <- lapply(B_vec, function(x) base::as.data.frame(x))
@@ -203,14 +176,6 @@ flux_mat <- flux_mat[sapply(flux_mat, nrow) > 0] |>
 
 # Add the models name and habitat_type
 flux_mat <- purrr::map2(flux_mat, Ecopath_models, ~ cbind(.x, .y))
-
-# Section to transfer the % of flux_mat into an actual biomass fux from Q_vec
-#purrr::map2(flux_mat, Q_vec, ~ dplyr::left_join(.x, .y, by = c("predator" = "scientific_name"))) |>
-#inter_table <- purrr::map2(flux_mat, Q_vec, ~  merge(.x, .y, by.x = "predator", by.y = "scientific_name", all.x = TRUE)) |>
-#	 lapply(function(x) {
-#		 x$energy_flow <- x$consumption*x$energy_flow
-#		 return(x)
-#	 })
 
 inter_table <- purrr::map2(flux_mat, B_vec, ~ merge(.x, .y, by.x = "prey", by.y = "scientific_name", all.x = TRUE)) |>
 		lapply(function(x) dplyr::rename(x, biomass_prey = "biomass")) |>
