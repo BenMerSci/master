@@ -9,25 +9,32 @@ species_list$gbif_id <- apply(species_list, 1, function(x) taxize::get_gbifid(x,
 
 # Get hierarchy for each species from their gbif_id
 organism_class <- lapply(species_list[,"gbif_id"], function(x) taxize::classification(x, db = "gbif")) |>
-		lapply(function(x) data.frame(x[[1]])) |>
-		lapply(function(x) x[which(x$rank == "class"),"name"]) |>
-		lapply(function(x) ifelse(is.null(x), NA, x))
+		lapply(function(x) x[[1]]) |>
+		lapply(function(x) if(length(x) < 3) {
+							x <- data.frame(NA)
+						   } else{
+							   data.frame(matrix(x[which(x$rank %in% c("class","family")),"name"], nrow = 1, ncol = 2))
+						   })
 
-organism_class <- do.call("rbind", organism_class)
 
+organism_class <- do.call("rbind.fill", organism_class)
+organism_class <- dplyr::select(organism_class, c("X1","X2")) |>
+					dplyr::rename(class = "X1", family = "X2")
 # Bind the classes to the species list
 species_list <- cbind(species_list, organism_class)
 
 # Uniformize it
-species_list[is.na(species_list$organism_class),"organism_class"] <- "Plankton"
+species_list[is.na(species_list$class),"class"] <- "Plankton"
+species_list[is.na(species_list$family), "family"] <- "Plankton"
+
 
 # Separate the different type of organisms
-fish <- species_list[which(species_list$organism_class %in% c("Actinopterygii", "Elasmobranchii", "Sarcopterygii")),]
-mammalia <- species_list[which(species_list$organism_class == "Mammalia"),]
-aves <- species_list[which(species_list$organism_class == "Aves"),]
-sealife <- species_list[which(species_list$organism_class %in% c("Malacostraca", "Bivalvia", "Hexanauplia", "Scyphozoa", "Cephalopoda")),]
-insecta <- species_list[which(species_list$organism_class == "Insecta"),]
-plankton <- species_list[which(species_list$organism_class == "Plankton"),]
+fish <- species_list[which(species_list$class %in% c("Actinopterygii", "Elasmobranchii", "Sarcopterygii")),]
+mammalia <- species_list[which(species_list$class == "Mammalia"),]
+aves <- species_list[which(species_list$class == "Aves"),]
+sealife <- species_list[which(species_list$class %in% c("Malacostraca", "Bivalvia", "Hexanauplia", "Scyphozoa", "Cephalopoda")),]
+insecta <- species_list[which(species_list$class == "Insecta"),]
+plankton <- species_list[which(species_list$class == "Plankton"),]
 
 
 ##### Fish #####
@@ -58,7 +65,7 @@ fish_data <- merge(validated_fish, fish_LW_ls, by.x = "validated", by.y = "X1", 
 	merge(fish_speed_ls, by.x = "validated", by.y = "X1", all.x = TRUE) |>
 	dplyr::rename(speed = "X2") |>
 	merge(fish, by.x = "original", by.y = "scientific_name", all.x = TRUE) |>
-	subset(select = c("original", "gbif_id", "organism_class", "bodymass", "bodymass_min", "speed")) |>
+	subset(select = c("original", "gbif_id", "class", "family", "bodymass", "bodymass_min", "speed")) |>
 	dplyr::rename(scientific_name = "original")
 
 ##### Sealife #####
@@ -82,7 +89,7 @@ sea_LW_ls <- do.call("rbind", sea_LW_ls)
 sealife_data <- merge(validated_sealife, sea_LW_ls, by.x = "validated", by.y = "X1", all.x = TRUE) |>
 	dplyr::rename(bodymass = "X3", bodymass_min = "X2") |>
 	merge(sealife, by.x = "original", by.y = "scientific_name", all.x = TRUE) |>
-	subset(select = c("original", "gbif_id", "organism_class", "bodymass", "bodymass_min")) |>
+	subset(select = c("original", "gbif_id", "class", "family", "bodymass", "bodymass_min")) |>
 	dplyr::rename(scientific_name = "original")
 
 ##### Mammals and birds #####
@@ -92,7 +99,7 @@ birds_traits <- read.csv("data/raw/eltontraits/BirdFuncDat.txt", sep = "\t")
 mamm_traits <- read.csv("data/raw/eltontraits/MamFuncDat.txt", sep = "\t")
 
 aves_data <- merge(aves, birds_traits, by.x = "scientific_name", by.y = "Scientific", all.x = TRUE) |>
-	subset(select = c("scientific_name", "gbif_id", "organism_class", "BodyMass.Value")) |>
+	subset(select = c("scientific_name", "gbif_id", "class", "family", "BodyMass.Value")) |>
 	dplyr::rename(bodymass = "BodyMass.Value")
 
 aves_data[which(aves_data$scientific_name == "Bubo scandiacus"), "bodymass"] <- birds_traits[which(birds_traits$Scientific == "Bubo scandiaca"), "BodyMass.Value"]
@@ -100,7 +107,7 @@ aves_data[which(aves_data$scientific_name == "Leucocarbo bougainvillii"), "bodym
 
 
 mammalia_data <- merge(mammalia, mamm_traits, by.x = "scientific_name", by.y = "Scientific", all.x = TRUE) |>
-	subset(select = c("scientific_name", "gbif_id", "organism_class", "BodyMass.Value")) |>
+	subset(select = c("scientific_name", "gbif_id", "class", "family", "BodyMass.Value")) |>
 	dplyr::rename(bodymass = "BodyMass.Value")
 
 mammalia_data[which(mammalia_data$scientific_name == "Canis lupus arctos"), "bodymass"] <- mamm_traits[which(mamm_traits$Scientific == "Canis lupus"), "BodyMass.Value"]
@@ -136,7 +143,7 @@ species_traits[which(species_traits$speed == NaN), "speed"] <- NA
 # Getting missing length of remaining fish from the table `Species` from Fishbase
 # With this lengthMax, will apply the length_weight relationship from the length_weight table
 # Doing this because for these fish, in the length_weight table, there is no lengthMax, so have to take it from the Species table.
-miss_fish <- species_traits[which(is.na(species_traits$bodymass) & species_traits$organism_class %in% c("Actinopterygii", "Elasmobranchii", "Sarcopterygii")),]
+miss_fish <- species_traits[which(is.na(species_traits$bodymass) & species_traits$class %in% c("Actinopterygii", "Elasmobranchii", "Sarcopterygii")),]
 miss_fish_bm <- rfishbase::species(miss_fish$scientific_name) |>
 		dplyr::select(c("Species","Length"))
 
@@ -208,7 +215,7 @@ loco <- loco[which(loco$Taxa_ID %in% species_traits[which(species_traits$scienti
 	dplyr::rename(scientific_name = "Taxa_ID", speed = "voluntary_body_velocity")
 species_traits <- merge(species_traits, loco, by="scientific_name", all.x = TRUE)
 species_traits[which(is.na(species_traits$speed.x) & !is.na(species_traits$speed.y)),"speed.x"] <- species_traits[which(is.na(species_traits$speed.x) & !is.na(species_traits$speed.y)),"speed.y"] 
-species_traits <- species_traits[,c("scientific_name","gbif_id","organism_class","bodymass","bodymass_min","speed.x")] |>
+species_traits <- species_traits[,c("scientific_name","gbif_id","class","family","bodymass","bodymass_min","speed.x")] |>
 			dplyr::rename(speed = "speed.x")
 
 # Other species with missing bodymass
@@ -223,6 +230,12 @@ species_traits <- species_traits[,c("scientific_name","gbif_id","organism_class"
 #miss_sp_speed <- species_traits[which(is.na(species_traits$speed)),c("scientific_name","speed")]
 
 species_traits[which(species_traits$bodymass == NaN), "bodymass"] <- NA
+
+# Add species metabolic classes
+species_traits[which(species_traits$class %in% c("Aves", "Mammalia")), "metabolic_class"] <- "endotherm"
+species_traits[which(species_traits$family %in% c("Istiophoridae","Xiphiidae","Scombridae")), "metabolic_class"] <- "homeotherm"
+species_traits[which(is.na(species_traits$metabolic_class)),"metabolic_class"] <- "ectotherm"
+
 # Save the traits data_frame
 saveRDS(species_traits, "data/intermediate/species_traits.RDS")
 
