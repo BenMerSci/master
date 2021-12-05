@@ -6,18 +6,25 @@ GroupName <- readRDS("data/intermediate/GroupName.RDS")
 load("data/raw/ecopath/data/DIET.Rdata")
 load("data/raw/ecopath/data/Q_vec.Rdata")
 load("data/raw/ecopath/data/B_vec.Rdata")
-#load("data/raw/ecopath/data/P_vec.Rdata")
+load("data/raw/ecopath/data/P_vec.Rdata")
 
 flux_mat <- list()
 # Multiplying species consumption with their preys relative importance
 # to get the actual flow from the prey.
 for(i in 1:length(DIET)){
+    
+  D <- DIET[[i]] # Diet matrix
+  Q <- as.numeric(Q_vec[[i]]) # Species consumption (t/km^2)
   
-  D = DIET[[i]] # DIET matrix
-  Q = as.numeric(Q_vec[[i]]) # Species consumption (t/km^2)
-
-  # Inflows matrix (consumption)
   flux_mat[[i]] <- D %*% diag(Q)
+  
+  
+  #D = DIET[[i]] # DIET matrix
+  #Q = as.numeric(Q_vec[[i]]) # Species consumption (t/km^2)
+  #B = as.numeric(B_vec[[i]])
+  #
+  ## Inflows matrix (consumption)
+  #flux_mat[[i]] <- D %*% diag(cons)
 }
 
 # Wide to long format
