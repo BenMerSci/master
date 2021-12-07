@@ -1,7 +1,7 @@
 # Script to format the matrices into a list of pairwise interactions
 
 # Load the matrices
-load("data/raw/ecopath/data/Ecopath_models.Rdata")
+load("data/raw/ecopath/data/Ecopath_models_modif.Rdata")
 GroupName <- readRDS("data/intermediate/GroupName.RDS")
 load("data/raw/ecopath/data/DIET.Rdata")
 load("data/raw/ecopath/data/Q_vec.Rdata")
@@ -166,10 +166,10 @@ flux_mat[c(110,111,112,113,114,115,116)] <- terrestrial_ntw
 #flux_mat <- lapply(flux_mat, function(x) unique(x))
 
 # Get the networks metadata (ecosystem info) into a list
-Ecopath_models <- split(Ecopath_models, seq(nrow(Ecopath_models)))
+Ecopath_models_modif <- split(Ecopath_models_modif, seq(nrow(Ecopath_models_modif)))
 
-# Only get the Ecopath_models information that relate to element of the flux_mat list that are not empty dataframes
-Ecopath_models <- Ecopath_models[sapply(flux_mat, nrow) > 0]
+# Only get the Ecopath_models_modif information that relate to element of the flux_mat list that are not empty dataframes
+Ecopath_models_modif <- Ecopath_models_modif[sapply(flux_mat, nrow) > 0]
 
 # Only get the consumption and biomass data that relate to element of the flux_mat list that are not empty dataframes
 #Q_vec <- Q_vec[sapply(flux_mat, nrow) > 0]
@@ -182,7 +182,7 @@ flux_mat <- flux_mat[sapply(flux_mat, nrow) > 0] |>
 	})
 
 # Add the models name and habitat_type
-flux_mat <- purrr::map2(flux_mat, Ecopath_models, ~ cbind(.x, .y))
+flux_mat <- purrr::map2(flux_mat, Ecopath_models_modif, ~ cbind(.x, .y))
 
 inter_table <- purrr::map2(flux_mat, B_vec, ~ merge(.x, .y, by.x = "prey", by.y = "scientific_name", all.x = TRUE)) |>
 		lapply(function(x) dplyr::rename(x, biomass_prey = "biomass")) |>

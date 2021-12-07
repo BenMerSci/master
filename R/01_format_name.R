@@ -1,6 +1,19 @@
 # Script to format the 116 network data from Jacquet et al. 2019
 # Only keep the interactions that are between species in all the 116 networks
 
+# Modify the order of the models so they fit the data
+load("data/raw/ecopath/data/Ecopath_models.Rdata")
+temp <- Ecopath_models[c(110:116),]
+Ecopath_models[111,] <- temp[6,]
+Ecopath_models[112,] <- temp[3,]
+Ecopath_models[113,] <- temp[7,]
+Ecopath_models[114,] <- temp[4,]
+Ecopath_models[115,] <- temp[2,]
+Ecopath_models[116,] <- temp[5,]
+save(Ecopath_models, file = "data/raw/ecopath/data/Ecopath_models_modif.Rdata")
+
+
+
 # Load the name of each "species" in each 116 networks
 load("data/raw/ecopath/data/GroupName.Rdata") # GroupName, list of length 116 for 116 networks
 

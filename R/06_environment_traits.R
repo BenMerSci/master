@@ -1,11 +1,11 @@
 # Load the ecopath metadata file
 ecopath_metadata <- readRDS("data/intermediate/ecopath_metadata.RDS")
 
-# Load ecopath_models to get the habitat type
-load("data/raw/ecopath/data/Ecopath_models.Rdata")
+# Load Ecopath_models_modif to get the habitat type
+load("data/raw/ecopath/data/Ecopath_models_modif.Rdata")
 	
 # Merge them
-enviro_df <- merge(ecopath_metadata, Ecopath_models, by.x = "model_name", by.y = "Model name", all.y = FALSE) |>
+enviro_df <- merge(ecopath_metadata, Ecopath_models_modif, by.x = "model_name", by.y = "Model name", all.y = FALSE) |>
 	unique() |>
 	dplyr::rename(habitat_type = "Habitat type")
 
