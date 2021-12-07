@@ -12,8 +12,6 @@ Ecopath_models[115,] <- temp[2,]
 Ecopath_models[116,] <- temp[5,]
 save(Ecopath_models, file = "data/raw/ecopath/data/Ecopath_models_modif.Rdata")
 
-
-
 # Load the name of each "species" in each 116 networks
 load("data/raw/ecopath/data/GroupName.Rdata") # GroupName, list of length 116 for 116 networks
 
