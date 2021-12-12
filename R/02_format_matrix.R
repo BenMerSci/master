@@ -8,47 +8,48 @@ load("data/raw/ecopath/data/Q_vec.Rdata")
 load("data/raw/ecopath/data/B_vec.Rdata")
 load("data/raw/ecopath/data/P_vec.Rdata")
 
-flux_mat <- list()
+pred_mat <- list()
+cons_mat <- list()
+
 # Multiplying species consumption with their preys relative importance
 # to get the actual flow from the prey.
 for(i in 1:length(DIET)){
     
   D <- DIET[[i]] # Diet matrix
+  B <- as.numeric(B_vec[[i]]) # Species biomass (t/km^2)
+  P <- as.numeric(P_vec[[i]]) # Species production (t/km^2)
   Q <- as.numeric(Q_vec[[i]]) # Species consumption (t/km^2)
   
-  flux_mat[[i]] <- D %*% diag(Q)
-  
-  
-  #D = DIET[[i]] # DIET matrix
-  #Q = as.numeric(Q_vec[[i]]) # Species consumption (t/km^2)
-  #B = as.numeric(B_vec[[i]])
-  #
-  ## Inflows matrix (consumption)
-  #flux_mat[[i]] <- D %*% diag(cons)
+  e = P/Q 
+  e[e=="NaN"] = 0
+  e[e=="Inf"] = 0
+
+  # Outflows matrix (predation)
+  pred_mat[[i]] <- -t(D%*%diag(Q)%*%diag(B))
+  # Inflows matrix (consumption)
+  cons_mat[[i]] <- -t(pred_mat[[i]]*e)
+
+ pred_mat[[i]] <- -t(pred_mat[[i]])
 }
 
 # Wide to long format
-flux_mat <- lapply(flux_mat, function(x) {
+pred_mat <- lapply(pred_mat, function(x) {
 		base::as.data.frame(x) |> 
 		tibble::rownames_to_column("X") |>
-		tidyr::pivot_longer(!X, names_to = "predator", values_to = "energy_flow") |>
+		tidyr::pivot_longer(!X, names_to = "predator", values_to = "pred_flow") |>
+		dplyr::rename(prey = "X")
+})
+cons_mat <- lapply(cons_mat, function(x) {
+		base::as.data.frame(x) |> 
+		tibble::rownames_to_column("X") |>
+		tidyr::pivot_longer(!X, names_to = "predator", values_to = "cons_flow") |>
 		dplyr::rename(prey = "X")
 })
 
-# Conserve networks 33, 57, 64, 89, 106, 110, 111, 112, 113, 114, 115, 116 because the column names were different
-# and the next actions will altered them, so I will just replace them with the original after 
-temp_list <- flux_mat[c(33,57,64,89,106,110,111,112,113,114,115,116)]
-
-# Remove the letters in some of the number IDs
-flux_mat <- lapply(rapply(flux_mat, function(x) base::gsub("F", "", x), how = "list"), base::as.data.frame)
-
-# Replace the previously save networks with their altered version
-flux_mat[c(33,57,64,89,106,110,111,112,113,114,115,116)] <- temp_list
-
 # Remove the letter X in some of the number IDs
 # Done that after substracting 1 to the other networks, because the networks with X in the IDs were indexed starting from 1 and not from 2 like the previous one
-flux_mat <- lapply(rapply(flux_mat, function(x) base::gsub("X", "", x), how = "list"), base::as.data.frame)
-flux_mat <- lapply(rapply(flux_mat, function(x) base::gsub("V", "", x), how = "list"), base::as.data.frame)
+pred_mat <- lapply(rapply(pred_mat, function(x) base::gsub("V", "", x), how = "list"), base::as.data.frame)
+cons_mat <- lapply(rapply(cons_mat, function(x) base::gsub("V", "", x), how = "list"), base::as.data.frame)
 
 # Format the biomass table to match the names
 B_vec <- lapply(B_vec, function(x) base::as.data.frame(x))
@@ -71,44 +72,59 @@ GroupName_terrestrial <- GroupName[c(110,111,112,113,114,115,116)]
 GroupName <- lapply(GroupName, function(x) dplyr::select(x, c("ID", "scientific_name")))
 
 # Save the arctic terrestrial networks
-terrestrial_ntw <- flux_mat[c(110,111,112,113,114,115,116)]
+terrestrial_ntw_pred <- pred_mat[c(110,111,112,113,114,115,116)]
+terrestrial_ntw_cons <- cons_mat[c(110,111,112,113,114,115,116)]
 
 # Join the names by ID into the flow matrices for "prey"
 # Both next methods work, either with baseR or Tidyverse
 #flux_mat <- purrr::map2(flux_mat, GroupName, ~ dplyr::right_join(.x, .y, by = c("prey" = "ID")))
-flux_mat <- purrr::map2(flux_mat, GroupName, ~ merge(.x, .y, by.x = "prey", by.y = "ID", all.y = TRUE, sort = FALSE))
+pred_mat <- purrr::map2(pred_mat, GroupName, ~ merge(.x, .y, by.x = "prey", by.y = "ID", all.y = TRUE, sort = FALSE))
+cons_mat <- purrr::map2(cons_mat, GroupName, ~ merge(.x, .y, by.x = "prey", by.y = "ID", all.y = TRUE, sort = FALSE))
 
 # Reorder and rename the dataframes
-flux_mat <- lapply(flux_mat, function(x) {
+pred_mat <- lapply(pred_mat, function(x) {
 	as.data.frame(x) |>
-	dplyr::select(c("scientific_name","predator","energy_flow")) |>
+	dplyr::select(c("scientific_name","predator","pred_flow")) |>
 	dplyr::rename(prey = "scientific_name")
 })
-
+cons_mat <- lapply(cons_mat, function(x) {
+	as.data.frame(x) |>
+	dplyr::select(c("scientific_name","predator","cons_flow")) |>
+	dplyr::rename(prey = "scientific_name")
+})
 # Join again the names by ID into the flow matrices for "predator"
-flux_mat <- purrr::map2(flux_mat, GroupName, ~ merge(.x, .y, by.x = "predator", by.y = "ID", all = TRUE, sort = FALSE))
+pred_mat <- purrr::map2(pred_mat, GroupName, ~ merge(.x, .y, by.x = "predator", by.y = "ID", all = TRUE, sort = FALSE))
+cons_mat <- purrr::map2(cons_mat, GroupName, ~ merge(.x, .y, by.x = "predator", by.y = "ID", all = TRUE, sort = FALSE))
 
 # Reorder and rename the dataframes
-flux_mat <- lapply(flux_mat, function(x) {
-	dplyr::select(x, c("prey","scientific_name","energy_flow")) |>
+pred_mat <- lapply(pred_mat, function(x) {
+	dplyr::select(x, c("prey","scientific_name","pred_flow")) |>
 	dplyr::rename(predator = "scientific_name") |>
 	na.omit()
 })
-
+cons_mat <- lapply(cons_mat, function(x) {
+	dplyr::select(x, c("prey","scientific_name","cons_flow")) |>
+	dplyr::rename(predator = "scientific_name") |>
+	na.omit()
+})
 # Keep only the flow that are > 0
-flux_mat <- lapply(flux_mat, function(x) {
-	x <- x[which(x$energy_flow > 0),]
+pred_mat <- lapply(pred_mat, function(x) {
+	x <- x[which(x$pred_flow > 0),]
 	return(x)
 })
-
+cons_mat <- lapply(cons_mat, function(x) {
+	x <- x[which(x$cons_flow > 0),]
+	return(x)
+})
 # Change names in terrestrial networks
-GroupName_terrestrial[[5]] <- rbind(GroupName_terrestrial[[5]], data.frame(ID = c("11","19","24"), original_name = c("Tundra_voles","Wolverine","Peregrine_falcon"), scientific_name = c("Microtus oeconomus","Gulo gulo","Falco peregrinus")))
-GroupName_terrestrial[[6]] <- rbind(GroupName_terrestrial[[6]], data.frame(ID = c("7","11","12","13"), original_name = c("Brown_lemmings","Glaucus_gulls","Stoats", "Arctic_Foxes"), scientific_name = c("Lemmus trimucronatus","Larus hyperboreus","Mustela erminea","Vulpes lagopus")))
+#GroupName_terrestrial[[5]] <- rbind(GroupName_terrestrial[[5]], data.frame(ID = c("11","19","24"), original_name = c("Tundra_voles","Wolverine","Peregrine_falcon"), scientific_name = c("Microtus oeconomus","Gulo gulo","Falco peregrinus")))
+#GroupName_terrestrial[[6]] <- rbind(GroupName_terrestrial[[6]], data.frame(ID = c("7","11","12","13"), original_name = c("Brown_lemmings","Glaucus_gulls","Stoats", "Arctic_Foxes"), scientific_name = c("Lemmus trimucronatus","Larus hyperboreus","Mustela erminea","Vulpes lagopus")))
 
 GroupName_terrestrial[1] <- lapply(rapply(GroupName_terrestrial[1], function(x) base::gsub("Long-tailed_jaeger", "Long-tailed Jaegers", x), how = "list"), base::as.data.frame)
 GroupName_terrestrial[1] <- lapply(rapply(GroupName_terrestrial[1], function(x) base::gsub("Arctic_wolve", "Arctic wolves", x), how = "list"), base::as.data.frame)
 GroupName_terrestrial[1] <- lapply(rapply(GroupName_terrestrial[1], function(x) base::gsub("Arctic_hare", "Arctic hare", x), how = "list"), base::as.data.frame)
 GroupName_terrestrial[1] <- lapply(rapply(GroupName_terrestrial[1], function(x) base::gsub("Collared_lemming", "Collared lemmings", x), how = "list"), base::as.data.frame)
+GroupName_terrestrial[1] <- lapply(rapply(GroupName_terrestrial[1], function(x) base::gsub("Snow_bunting", "Passerines", x), how = "list"), base::as.data.frame)
 GroupName_terrestrial[2] <- lapply(rapply(GroupName_terrestrial[2], function(x) base::gsub("Arctic_fox", "Arctic Fox", x), how = "list"), base::as.data.frame)
 GroupName_terrestrial[3] <- lapply(rapply(GroupName_terrestrial[3], function(x) base::gsub("Rough-legged_hawk", "Rough legged hawk", x), how = "list"), base::as.data.frame)
 GroupName_terrestrial[3] <- lapply(rapply(GroupName_terrestrial[3], function(x) base::gsub("Red_fox", "Red fox", x), how = "list"), base::as.data.frame)
@@ -120,15 +136,17 @@ GroupName_terrestrial[4] <- lapply(rapply(GroupName_terrestrial[4], function(x) 
 GroupName_terrestrial[4] <- lapply(rapply(GroupName_terrestrial[4], function(x) base::gsub("Arctic_fox", "Arctic fox", x), how = "list"), base::as.data.frame)
 GroupName_terrestrial[4] <- lapply(rapply(GroupName_terrestrial[4], function(x) base::gsub("Arctic_hare", "Arctic hare", x), how = "list"), base::as.data.frame)
 GroupName_terrestrial[4] <- lapply(rapply(GroupName_terrestrial[4], function(x) base::gsub("Collared_lemming", "Lemmings", x), how = "list"), base::as.data.frame)
+GroupName_terrestrial[4] <- lapply(rapply(GroupName_terrestrial[4], function(x) base::gsub("Snow_bunting", "Passerines", x), how = "list"), base::as.data.frame)
 GroupName_terrestrial[5] <- lapply(rapply(GroupName_terrestrial[5], function(x) base::gsub("Rough-legged_hawk", "RLHA", x), how = "list"), base::as.data.frame)
 GroupName_terrestrial[5] <- lapply(rapply(GroupName_terrestrial[5], function(x) base::gsub("Long-tailed_jaeger", "LTJA", x), how = "list"), base::as.data.frame)
 GroupName_terrestrial[5] <- lapply(rapply(GroupName_terrestrial[5], function(x) base::gsub("Snowy_owl", "Snowy_Owl", x), how = "list"), base::as.data.frame)
 GroupName_terrestrial[5] <- lapply(rapply(GroupName_terrestrial[5], function(x) base::gsub("Grizzly_bear", "Grizzli_Bear", x), how = "list"), base::as.data.frame)
-GroupName_terrestrial[5] <- lapply(rapply(GroupName_terrestrial[5], function(x) base::gsub("Red_fox", "Red_fox", x), how = "list"), base::as.data.frame)
 GroupName_terrestrial[5] <- lapply(rapply(GroupName_terrestrial[5], function(x) base::gsub("Arctic_fox", "Arctic_Fox", x), how = "list"), base::as.data.frame)
 GroupName_terrestrial[5] <- lapply(rapply(GroupName_terrestrial[5], function(x) base::gsub("Ermine", "Weasels", x), how = "list"), base::as.data.frame)
 GroupName_terrestrial[5] <- lapply(rapply(GroupName_terrestrial[5], function(x) base::gsub("Collared_lemming", "Collared_lemmings", x), how = "list"), base::as.data.frame)
 GroupName_terrestrial[5] <- lapply(rapply(GroupName_terrestrial[5], function(x) base::gsub("Brown_lemmings", "Brown_lemming", x), how = "list"), base::as.data.frame)
+GroupName_terrestrial[5] <- lapply(rapply(GroupName_terrestrial[5], function(x) base::gsub("Muskoxen", "Muskox", x), how = "list"), base::as.data.frame)
+GroupName_terrestrial[5] <- lapply(rapply(GroupName_terrestrial[5], function(x) base::gsub("Peregrine_falco", "Peregrine_falcon", x), how = "list"), base::as.data.frame)
 GroupName_terrestrial[6] <- lapply(rapply(GroupName_terrestrial[6], function(x) base::gsub("Peregrine_falcon", "Peregrine_falcon", x), how = "list"), base::as.data.frame)
 GroupName_terrestrial[6] <- lapply(rapply(GroupName_terrestrial[6], function(x) base::gsub("Parasitic_jaeger", "Parasitic_jaegers", x), how = "list"), base::as.data.frame)
 GroupName_terrestrial[6] <- lapply(rapply(GroupName_terrestrial[6], function(x) base::gsub("Long-tailed_jaeger", "Long_tailed_jaegers", x), how = "list"), base::as.data.frame)
@@ -136,50 +154,86 @@ GroupName_terrestrial[6] <- lapply(rapply(GroupName_terrestrial[6], function(x) 
 GroupName_terrestrial[6] <- lapply(rapply(GroupName_terrestrial[6], function(x) base::gsub("Snowy_owl", "Snowy_owls", x), how = "list"), base::as.data.frame)
 GroupName_terrestrial[6] <- lapply(rapply(GroupName_terrestrial[6], function(x) base::gsub("Collared_lemming", "Collared_lemmings", x), how = "list"), base::as.data.frame)
 GroupName_terrestrial[6] <- lapply(rapply(GroupName_terrestrial[6], function(x) base::gsub("Snow_goose", "Snow_geese", x), how = "list"), base::as.data.frame)
+GroupName_terrestrial[6] <- lapply(rapply(GroupName_terrestrial[6], function(x) base::gsub("Brown_lemming", "Brown_lemmings", x), how = "list"), base::as.data.frame)
+GroupName_terrestrial[6] <- lapply(rapply(GroupName_terrestrial[6], function(x) base::gsub("Gulls", "Glaucus_gulls", x), how = "list"), base::as.data.frame)
+GroupName_terrestrial[6] <- lapply(rapply(GroupName_terrestrial[6], function(x) base::gsub("Weasel", "Stoats", x), how = "list"), base::as.data.frame)
+GroupName_terrestrial[6] <- lapply(rapply(GroupName_terrestrial[6], function(x) base::gsub("Arctic_Fox", "Arctic_Foxes", x), how = "list"), base::as.data.frame)
+GroupName_terrestrial[7] <- lapply(rapply(GroupName_terrestrial[7], function(x) base::gsub("Voles", "oles", x), how = "list"), base::as.data.frame)
+GroupName_terrestrial[7] <- lapply(rapply(GroupName_terrestrial[7], function(x) base::gsub("Arctic_hare", "Arctic hare", x), how = "list"), base::as.data.frame)
+GroupName_terrestrial[7] <- lapply(rapply(GroupName_terrestrial[7], function(x) base::gsub("Arctic_fox", "Arctic Fox", x), how = "list"), base::as.data.frame)
+GroupName_terrestrial[7] <- lapply(rapply(GroupName_terrestrial[7], function(x) base::gsub("Red_fox", "Red fox", x), how = "list"), base::as.data.frame)
+GroupName_terrestrial[7] <- lapply(rapply(GroupName_terrestrial[7], function(x) base::gsub("Rough-legged_hawk", "Rough legged hawk", x), how = "list"), base::as.data.frame)
+GroupName_terrestrial[7] <- lapply(rapply(GroupName_terrestrial[7], function(x) base::gsub("Snowy_owl", "Snowy owl", x), how = "list"), base::as.data.frame)
+GroupName_terrestrial[7] <- lapply(rapply(GroupName_terrestrial[7], function(x) base::gsub("Brown_bear", "Brown bears", x), how = "list"), base::as.data.frame)
 
 # Same operations on terrestrial networks
-terrestrial_ntw <- purrr::map2(terrestrial_ntw, GroupName_terrestrial, ~ merge(.x , .y, by.x = "prey", by.y = "original_name", all.y = TRUE, sort = FALSE))
+terrestrial_ntw_pred <- purrr::map2(terrestrial_ntw_pred, GroupName_terrestrial, ~ merge(.x , .y, by.x = "prey", by.y = "original_name", all.y = TRUE, sort = FALSE))
+terrestrial_ntw_cons <- purrr::map2(terrestrial_ntw_cons, GroupName_terrestrial, ~ merge(.x , .y, by.x = "prey", by.y = "original_name", all.y = TRUE, sort = FALSE))
 
 # Reorder and rename the dataframes
-terrestrial_ntw <- lapply(terrestrial_ntw, function(x) {
+terrestrial_ntw_pred <- lapply(terrestrial_ntw_pred, function(x) {
 	 	   as.data.frame(x) |>
-		   dplyr::select(c("scientific_name", "predator", "energy_flow")) |>
+		   dplyr::select(c("scientific_name", "predator", "pred_flow")) |>
+		   dplyr::rename(prey = "scientific_name")
+})
+terrestrial_ntw_cons <- lapply(terrestrial_ntw_cons, function(x) {
+	 	   as.data.frame(x) |>
+		   dplyr::select(c("scientific_name", "predator", "cons_flow")) |>
 		   dplyr::rename(prey = "scientific_name")
 })
 
-terrestrial_ntw <- purrr::map2(terrestrial_ntw, GroupName_terrestrial, ~ merge(.x, .y, by.x = "predator", by.y = "ID", all = TRUE, sort = FALSE))
+terrestrial_ntw_pred <- purrr::map2(terrestrial_ntw_pred, GroupName_terrestrial, ~ merge(.x, .y, by.x = "predator", by.y = "ID", all = TRUE, sort = FALSE))
+terrestrial_ntw_cons <- purrr::map2(terrestrial_ntw_cons, GroupName_terrestrial, ~ merge(.x, .y, by.x = "predator", by.y = "ID", all = TRUE, sort = FALSE))
 
-terrestrial_ntw <- lapply(terrestrial_ntw, function(x) {
-		   dplyr::select(x, c("prey", "scientific_name", "energy_flow")) |>
+terrestrial_ntw_pred <- lapply(terrestrial_ntw_pred, function(x) {
+		   dplyr::select(x, c("prey", "scientific_name", "pred_flow")) |>
+		   dplyr::rename(predator = "scientific_name") |>
+		   na.omit()
+})
+terrestrial_ntw_cons <- lapply(terrestrial_ntw_cons, function(x) {
+		   dplyr::select(x, c("prey", "scientific_name", "cons_flow")) |>
 		   dplyr::rename(predator = "scientific_name") |>
 		   na.omit()
 })
 
-terrestrial_ntw <- lapply(terrestrial_ntw, function(x) {
-		   x <- x[which(x$energy_flow > 0),]
+terrestrial_ntw_pred <- lapply(terrestrial_ntw_pred, function(x) {
+		   x <- x[which(x$pred_flow > 0),]
+		   return(x)
+}) 
+terrestrial_ntw_cons <- lapply(terrestrial_ntw_cons, function(x) {
+		   x <- x[which(x$cons_flow > 0),]
 		   return(x)
 }) 
 
-flux_mat[c(110,111,112,113,114,115,116)] <- terrestrial_ntw
 
-# Unique each dataframe, some interactions are duplicated
-#flux_mat <- lapply(flux_mat, function(x) unique(x))
+pred_mat[c(110,111,112,113,114,115,116)] <- terrestrial_ntw_pred
+cons_mat[c(110,111,112,113,114,115,116)] <- terrestrial_ntw_cons
 
 # Get the networks metadata (ecosystem info) into a list
 Ecopath_models <- split(Ecopath_models, seq(nrow(Ecopath_models)))
 
 # Only get the Ecopath_models information that relate to element of the flux_mat list that are not empty dataframes
-Ecopath_models <- Ecopath_models[sapply(flux_mat, nrow) > 0]
+Ecopath_models <- Ecopath_models[sapply(pred_mat, nrow) > 0]
 
 # Only get the consumption and biomass data that relate to element of the flux_mat list that are not empty dataframes
 #Q_vec <- Q_vec[sapply(flux_mat, nrow) > 0]
-B_vec <- B_vec[sapply(flux_mat, nrow) > 0]
+B_vec <- B_vec[sapply(pred_mat, nrow) > 0]
 # Only get the networks that are not empty
-flux_mat <- flux_mat[sapply(flux_mat, nrow) > 0] |>
+pred_mat <- pred_mat[sapply(pred_mat, nrow) > 0] |>
 	lapply(function(x) {
-		x$energy_flow <- as.numeric(x$energy_flow)
+		x$pred_flow <- as.numeric(x$pred_flow)
 		return(x)
 	})
+cons_mat <- cons_mat[sapply(cons_mat, nrow) > 0] |>
+	lapply(function(x) {
+		x$cons_flow <- as.numeric(x$cons_flow)
+		x <- x[,"cons_flow"]
+		return(x)
+	})
+
+# Bind the two flow matrices together
+flux_mat <- purrr::map2(pred_mat, cons_mat, ~ cbind(.x, .y))
+flux_mat <- lapply(flux_mat, function(x) dplyr::rename(x, cons_flow = ".y"))
 
 # Add the models name and habitat_type
 flux_mat <- purrr::map2(flux_mat, Ecopath_models, ~ cbind(.x, .y))
@@ -191,7 +245,7 @@ inter_table <- purrr::map2(flux_mat, B_vec, ~ merge(.x, .y, by.x = "prey", by.y 
 
 inter_table <- do.call("rbind", inter_table) |>
 		dplyr::rename(model_name = "Model name") |>
-		dplyr::select("model_name", "prey", "predator", "energy_flow","biomass_prey","biomass_pred")
+		dplyr::select("model_name", "prey", "predator", "pred_flow", "cons_flow", "biomass_prey","biomass_pred")
 
 
 # Write the list as a .Rdata file
