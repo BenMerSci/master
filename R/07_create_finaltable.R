@@ -7,14 +7,14 @@ enviro <- readRDS("data/intermediate/enviro_traits.RDS")
 
 # Merge the tables together
 dataset <- merge(interactions, traits, by.x = "prey", by.y = "scientific_name", all.x = TRUE) |>
-	dplyr::rename(class_prey = "class", family_prey = "family", bodymass_prey = "bodymass", speed_prey = "speed") |>
+	dplyr::rename(class_prey = "class", family_prey = "family", bodymass_prey = "bodymass") |>
 	dplyr::select(-"gbif_id") |>
 	merge(traits, by.x = "predator", by.y = "scientific_name", all.x = TRUE) |>
-	dplyr::rename(class_pred = "class", family_pred = "family", bodymass_pred = "bodymass", speed_pred = "speed") |>
+	dplyr::rename(class_pred = "class", family_pred = "family", bodymass_pred = "bodymass") |>
 	dplyr::select(-"gbif_id") |>
 	merge(enviro, by.x = "model_name", by.y = "model_name", all.x = TRUE) |>
-	dplyr::select("prey","predator","energy_flow","flux_units","biomass_prey","bodymass_prey",
-	"class_prey", "family_prey","speed_prey","biomass_pred","bodymass_pred","class_pred","family_pred","speed_pred",
+	dplyr::select("prey","predator","pred_flow","cons_flow","flux_units","biomass_prey","bodymass_prey",
+	"class_prey", "family_prey","biomass_pred","bodymass_pred","class_pred","family_pred",
 	"model_name","model_year","ecosystem_type","habitat_type",
 	"water_temperature","air_temperature")
 
@@ -22,12 +22,14 @@ dataset <- merge(interactions, traits, by.x = "prey", by.y = "scientific_name", 
 dataset$bodymass_prey <- as.numeric(dataset$bodymass_prey)
 dataset$bodymass_pred <- as.numeric(dataset$bodymass_pred)
 dataset$ppmr <- dataset$bodymass_pred/dataset$bodymass_prey
+dataset$abund_prey <- dataset$biomass_prey/dataset$bodymass_prey
+dataset$abund_pred <- dataset$biomass_pred/dataset$bodymass_pred
 
 # Only get the interactions in the same fluxes units
 # t/km2 is the same as g/m2
 dataset <- dataset[which(dataset$flux_units %in% c("t/km2/yr","g/m2/yr","g/m2/yr, dry","kg/km2/yr","kg/km2/yr, dry")),]
 # Convert the ones in kg/km2/yr to t/km2/yr
-dataset[which(dataset$flux_units %in% c("kg/km2/yr","kg/km2/yr, dry")),"energy_flow"] <- (dataset[which(dataset$flux_units %in% c("kg/km2/yr","kg/km2/yr, dry")), "energy_flow"])/1000
+#dataset[which(dataset$flux_units %in% c("kg/km2/yr","kg/km2/yr, dry")),"energy_flow"] <- (dataset[which(dataset$flux_units %in% c("kg/km2/yr","kg/km2/yr, dry")), "energy_flow"])/1000
 
 # Remove interaction that are between plantkons
 # So we focus on interactions wich involves at least
@@ -54,6 +56,12 @@ dataset[which(dataset$class_pred == "Aves" & dataset$habitat_type == "marine"),"
 # Remaining interaction in 3d
 dataset[which(is.na(dataset$dimensionality)),"dimensionality"] <- "3d"
 
+# Final touches
+dataset <- na.omit(dataset)
+
 # Save the dataset
 saveRDS(dataset, "data/clean/dataset.RDS")
+
+
+
 
