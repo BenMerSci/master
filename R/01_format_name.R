@@ -967,6 +967,18 @@ GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Rough-legged_hawk"
 GroupName[[114]][which(GroupName[[114]][,"original_name"] == "Peregrine_falco"),"scientific_name"] <- "Falco peregrinus"
 
 # Web 115 - article OK
+temp <- GroupName[[115]]
+GroupName[[115]][9,] <- temp[10,]
+GroupName[[115]][10,] <- temp[9,]
+GroupName[[115]][11,] <- temp[15,]
+GroupName[[115]][12,] <- temp[11,]
+GroupName[[115]][13,] <- temp[12,]
+GroupName[[115]][14,] <- temp[13,]
+GroupName[[115]][15,] <- temp[16,]
+GroupName[[115]][16,] <- temp[17,]
+GroupName[[115]][17,] <- temp[14,]
+
+
 GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Snow_goose"),"scientific_name"] <- "Chen caerulescens"
 GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Brown_lemming"),"scientific_name"] <- "Lemmus trimucronatus"
 GroupName[[115]][which(GroupName[[115]][,"original_name"] == "Collared_lemming"),"scientific_name"] <- "Dicrostonyx groenlandicus"
