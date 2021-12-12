@@ -27,10 +27,10 @@ resolved_names <- cbind(resolved_names["verbatimScientificName"], resolved_names
 
 # Merge back the corrected names into inter_table
 resolved_inter_table <- base::merge(inter_table, resolved_names, by.x = "prey", by.y = "original", all.x = TRUE) |>
-	dplyr::select(c("model_name","resolved","predator","energy_flow","biomass_prey","biomass_pred")) |>
+	dplyr::select(c("model_name","resolved","predator","pred_flow", "cons_flow", "biomass_prey","biomass_pred")) |>
 	dplyr::rename(prey = "resolved") |>
 	base::merge(resolved_names, by.x = "predator", by.y = "original", all.x = TRUE) |>
-	dplyr::select("model_name","prey","resolved","energy_flow","biomass_prey","biomass_pred") |>
+	dplyr::select("model_name","prey","resolved","pred_flow", "cons_flow", "biomass_prey","biomass_pred") |>
 	dplyr::rename(predator = "resolved")
 
 # Save it back into inter_table
