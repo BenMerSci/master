@@ -25,7 +25,7 @@ ggplot() + geom_map(data = world, map = world, aes(x = long, y = lat, map_id=reg
 	   labs(color = "Habitat type") +
 	   scale_x_continuous(breaks = seq(-200, 200, 50)) +
 	   scale_y_continuous(breaks = seq(-90, 90, 30)) +
-    	   theme()
+    	   theme_bw()
 
 # Save it
 ggsave("../master_talk/images/network_map.png", width = 9, height = 5, dpi = "retina")
