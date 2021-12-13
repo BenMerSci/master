@@ -7,15 +7,15 @@ enviro <- readRDS("data/intermediate/enviro_traits.RDS")
 
 # Merge the tables together
 dataset <- merge(interactions, traits, by.x = "prey", by.y = "scientific_name", all.x = TRUE) |>
-	dplyr::rename(class_prey = "class", family_prey = "family", bodymass_prey = "bodymass") |>
+	dplyr::rename(class_prey = "class", family_prey = "family", bodymass_prey = "bodymass", metabolism_prey = metabolic_class) |>
 	dplyr::select(-"gbif_id") |>
 	merge(traits, by.x = "predator", by.y = "scientific_name", all.x = TRUE) |>
-	dplyr::rename(class_pred = "class", family_pred = "family", bodymass_pred = "bodymass") |>
+	dplyr::rename(class_pred = "class", family_pred = "family", bodymass_pred = "bodymass", metabolism_pred = metabolic_class) |>
 	dplyr::select(-"gbif_id") |>
 	merge(enviro, by.x = "model_name", by.y = "model_name", all.x = TRUE) |>
 	dplyr::select("prey","predator","pred_flow","cons_flow","flux_units","biomass_prey","bodymass_prey",
-	"class_prey", "family_prey","biomass_pred","bodymass_pred","class_pred","family_pred",
-	"model_name","model_year","ecosystem_type","habitat_type",
+	"class_prey", "family_prey","metabolism_prey","biomass_pred","bodymass_pred","class_pred","family_pred",
+	"metabolism_pred","model_name","model_year","ecosystem_type","habitat_type",
 	"water_temperature","air_temperature")
 
 # Compute predator-prey mass ratio
