@@ -258,7 +258,7 @@ inter_table <- purrr::map2(flux_mat, B_vec, ~ merge(.x, .y, by.x = "prey", by.y 
 
 inter_table <- do.call("rbind", inter_table) |>
 		dplyr::rename(model_name = "Model name") |>
-		dplyr::select("model_name", "prey", "predator", "pred_flow", "cons_flow", "biomass_prey","biomass_pred")
+		dplyr::select("model_name", "prey", "predator", "pred_flow", "cons_flow", "biomass_prey","biomass_pred","degrees")
 
 
 # Write the list as a .Rdata file
