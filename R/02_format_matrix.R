@@ -32,6 +32,16 @@ for(i in 1:length(DIET)){
  pred_mat[[i]] <- -t(pred_mat[[i]])
 }
 
+# Compute degrees of each predators
+pred_degrees <- lapply(pred_mat, function(x) {
+								 apply(x, 2, function(x) sum(x > 0)) |>
+								 data.frame(x) |>
+								 dplyr::rename(degrees = "apply.x..2..function.x..sum.x...0..") |>
+								 dplyr::select(degrees)
+								 })
+
+pred_degrees <- lapply(pred_degrees, function(x) tibble::rownames_to_column(x))
+
 # Wide to long format
 pred_mat <- lapply(pred_mat, function(x) {
 		base::as.data.frame(x) |> 
@@ -50,6 +60,9 @@ cons_mat <- lapply(cons_mat, function(x) {
 # Done that after substracting 1 to the other networks, because the networks with X in the IDs were indexed starting from 1 and not from 2 like the previous one
 pred_mat <- lapply(rapply(pred_mat, function(x) base::gsub("V", "", x), how = "list"), base::as.data.frame)
 cons_mat <- lapply(rapply(cons_mat, function(x) base::gsub("V", "", x), how = "list"), base::as.data.frame)
+
+# Match the predator degrees
+test <- purrr::map2(pred_mat, pred_degrees, ~ merge(.x, .y, by.x = "prey", by.y = "ID", all.y = TRUE, sort = FALSE))
 
 # Format the biomass table to match the names
 B_vec <- lapply(B_vec, function(x) base::as.data.frame(x))
