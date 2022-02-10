@@ -21,6 +21,10 @@ dataset <- merge(interactions, traits, by.x = "prey", by.y = "scientific_name", 
 # Compute predator-prey mass ratio
 dataset$bodymass_prey <- as.numeric(dataset$bodymass_prey)
 dataset$bodymass_pred <- as.numeric(dataset$bodymass_pred)
+# Change species mass from grams to tons
+dataset$bodymass_prey <- dataset$bodymass_prey*0.000001
+dataset$bodymass_pred <- dataset$bodymass_pred*0.000001
+#
 dataset$ppmr <- dataset$bodymass_pred/dataset$bodymass_prey
 dataset$abund_prey <- dataset$biomass_prey/dataset$bodymass_prey
 dataset$abund_pred <- dataset$biomass_pred/dataset$bodymass_pred
