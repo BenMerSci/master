@@ -39,6 +39,7 @@ dataset <- dataset[which(dataset$flux_units %in% c("t/km2/yr","g/m2/yr","g/m2/yr
 # So we focus on interactions wich involves at least
 # one actual species
 dataset <- dataset[-which(grepl("plankton", dataset$prey) & grepl("plankton", dataset$predator)),]
+dataset <- dataset[-which(grepl("plankton", dataset$prey)), ]
 
 # Dimensionality
 #  Fish eating fish classified as 3d because of the environment
@@ -65,7 +66,3 @@ dataset <- na.omit(dataset)
 
 # Save the dataset
 saveRDS(dataset, "data/clean/dataset.RDS")
-
-
-
-
