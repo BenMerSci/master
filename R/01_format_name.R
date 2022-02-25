@@ -372,9 +372,9 @@ GroupName[[46]][which(GroupName[[46]][,"original_name"] == "Phytoplankton"),"sci
 GroupName[[47]][which(GroupName[[47]][,"original_name"] == "Lavnun"),"scientific_name"] <- "Mirogrex terraesanctae"
 GroupName[[47]][which(GroupName[[47]][,"original_name"] == "Silver carp"),"scientific_name"] <- "Hypophtalmichthys molitrix"
 GroupName[[47]][which(GroupName[[47]][,"original_name"] == "Piscivores"),"scientific_name"] <- "Clarias lazera"
-GroupName[[47][which(GroupName[[47]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
-GroupName[[47][which(GroupName[[47]][,"original_name"] == "Herb. zoop."),"scientific_name"] <- "Herbivorous zooplankton"
-GroupName[[47][which(GroupName[[47]][,"original_name"] == "Carn. zoop."),"scientific_name"] <- "Carnivorous zooplankton"
+GroupName[[47]][which(GroupName[[47]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
+GroupName[[47]][which(GroupName[[47]][,"original_name"] == "Herb. zoop."),"scientific_name"] <- "Herbivorous zooplankton"
+GroupName[[47]][which(GroupName[[47]][,"original_name"] == "Carn. zoop."),"scientific_name"] <- "Carnivorous zooplankton"
 
 # Web 48 - article OK
 GroupName[[48]][which(GroupName[[48]][,"original_name"] == "Kampango"),"scientific_name"] <- "Bagrus meridionalis"
