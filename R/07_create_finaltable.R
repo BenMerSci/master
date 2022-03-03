@@ -64,5 +64,9 @@ dataset[which(is.na(dataset$dimensionality)),"dimensionality"] <- "3d"
 # Final touches
 dataset <- na.omit(dataset)
 
+# Generate unique IDs for each predator
+dataset <- dplyr::left_join(dataset, tibble::rownames_to_column(as.data.frame(unique(dataset$predator))), by = c("predator" = "unique(dataset$predator)")) |>
+	dplyr::rename(pred_id = "rowname")
+
 # Save the dataset
 saveRDS(dataset, "data/clean/dataset.RDS")
