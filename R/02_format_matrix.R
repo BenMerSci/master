@@ -40,7 +40,31 @@ pred_degrees <- lapply(pred_mat, function(x) {
 								 dplyr::select(degrees)
 								 })
 
-pred_degrees <- lapply(pred_degrees, function(x) tibble::rownames_to_column(x))
+pred_degrees <- lapply(pred_degrees, function(x) {tibble::rownames_to_column(x) |>
+												  dplyr::rename(ID = "rowname")
+}) 
+
+pred_degrees[110:116] <- lapply(pred_degrees[110:116], function(x) {tibble::rownames_to_column(x) |>
+																	dplyr::select(c(rowname,degrees)) |>
+																	dplyr::rename(ID = "rowname")
+})
+
+# Compute total flux for each predator
+pred_total_flux <- lapply(pred_mat, function(x) {
+								 apply(x, 2, function(x) sum(x)) |>
+								 data.frame(x) |>
+								 dplyr::rename(total_flux = "apply.x..2..function.x..sum.x..") |>
+								 dplyr::select(total_flux)
+								 })
+
+pred_total_flux <- lapply(pred_total_flux, function(x) {tibble::rownames_to_column(x) |>
+														dplyr::rename(ID = "rowname")
+})
+
+pred_total_flux[110:116] <- lapply(pred_total_flux[110:116], function(x) {tibble::rownames_to_column(x) |>
+																 dplyr::select(c(rowname,total_flux)) |>
+																 dplyr::rename(ID = "rowname")
+})
 
 # Wide to long format
 pred_mat <- lapply(pred_mat, function(x) {
@@ -62,7 +86,8 @@ pred_mat <- lapply(rapply(pred_mat, function(x) base::gsub("V", "", x), how = "l
 cons_mat <- lapply(rapply(cons_mat, function(x) base::gsub("V", "", x), how = "list"), base::as.data.frame)
 
 # Match the predator degrees
-test <- purrr::map2(pred_mat, pred_degrees, ~ merge(.x, .y, by.x = "prey", by.y = "ID", all.y = TRUE, sort = FALSE))
+pred_mat <- purrr::map2(pred_mat, pred_degrees, ~ merge(.x, .y, by.x = "predator", by.y = "ID", all.y = TRUE, sort = FALSE))
+pred_mat <- purrr::map2(pred_mat, pred_total_flux, ~ merge(.x, .y, by.x = "predator", by.y = "ID", all.y = TRUE, sort = FALSE))
 
 # Format the biomass table to match the names
 B_vec <- lapply(B_vec, function(x) base::as.data.frame(x))
@@ -97,7 +122,7 @@ cons_mat <- purrr::map2(cons_mat, GroupName, ~ merge(.x, .y, by.x = "prey", by.y
 # Reorder and rename the dataframes
 pred_mat <- lapply(pred_mat, function(x) {
 	as.data.frame(x) |>
-	dplyr::select(c("scientific_name","predator","pred_flow")) |>
+	dplyr::select(c("scientific_name","predator","pred_flow","degrees","total_flux")) |>
 	dplyr::rename(prey = "scientific_name")
 })
 cons_mat <- lapply(cons_mat, function(x) {
@@ -111,7 +136,7 @@ cons_mat <- purrr::map2(cons_mat, GroupName, ~ merge(.x, .y, by.x = "predator", 
 
 # Reorder and rename the dataframes
 pred_mat <- lapply(pred_mat, function(x) {
-	dplyr::select(x, c("prey","scientific_name","pred_flow")) |>
+	dplyr::select(x, c("prey","scientific_name","pred_flow","degrees","total_flux")) |>
 	dplyr::rename(predator = "scientific_name") |>
 	na.omit()
 })
@@ -129,6 +154,7 @@ cons_mat <- lapply(cons_mat, function(x) {
 	x <- x[which(x$cons_flow > 0),]
 	return(x)
 })
+
 # Change names in terrestrial networks
 #GroupName_terrestrial[[5]] <- rbind(GroupName_terrestrial[[5]], data.frame(ID = c("11","19","24"), original_name = c("Tundra_voles","Wolverine","Peregrine_falcon"), scientific_name = c("Microtus oeconomus","Gulo gulo","Falco peregrinus")))
 #GroupName_terrestrial[[6]] <- rbind(GroupName_terrestrial[[6]], data.frame(ID = c("7","11","12","13"), original_name = c("Brown_lemmings","Glaucus_gulls","Stoats", "Arctic_Foxes"), scientific_name = c("Lemmus trimucronatus","Larus hyperboreus","Mustela erminea","Vulpes lagopus")))
@@ -186,7 +212,7 @@ terrestrial_ntw_cons <- purrr::map2(terrestrial_ntw_cons, GroupName_terrestrial,
 # Reorder and rename the dataframes
 terrestrial_ntw_pred <- lapply(terrestrial_ntw_pred, function(x) {
 	 	   as.data.frame(x) |>
-		   dplyr::select(c("scientific_name", "predator", "pred_flow")) |>
+		   dplyr::select(c("scientific_name", "predator", "pred_flow","degrees","total_flux")) |>
 		   dplyr::rename(prey = "scientific_name")
 })
 terrestrial_ntw_cons <- lapply(terrestrial_ntw_cons, function(x) {
@@ -199,7 +225,7 @@ terrestrial_ntw_pred <- purrr::map2(terrestrial_ntw_pred, GroupName_terrestrial,
 terrestrial_ntw_cons <- purrr::map2(terrestrial_ntw_cons, GroupName_terrestrial, ~ merge(.x, .y, by.x = "predator", by.y = "ID", all = TRUE, sort = FALSE))
 
 terrestrial_ntw_pred <- lapply(terrestrial_ntw_pred, function(x) {
-		   dplyr::select(x, c("prey", "scientific_name", "pred_flow")) |>
+		   dplyr::select(x, c("prey", "scientific_name", "pred_flow","degrees","total_flux")) |>
 		   dplyr::rename(predator = "scientific_name") |>
 		   na.omit()
 })
@@ -258,7 +284,7 @@ inter_table <- purrr::map2(flux_mat, B_vec, ~ merge(.x, .y, by.x = "prey", by.y 
 
 inter_table <- do.call("rbind", inter_table) |>
 		dplyr::rename(model_name = "Model name") |>
-		dplyr::select("model_name", "prey", "predator", "pred_flow", "cons_flow", "biomass_prey","biomass_pred","degrees")
+		dplyr::select("model_name", "prey", "predator", "pred_flow", "cons_flow", "degrees", "total_flux", "biomass_prey","biomass_pred")
 
 
 # Write the list as a .Rdata file
