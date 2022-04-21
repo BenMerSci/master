@@ -11,7 +11,7 @@ options(mc.cores = parallel::detectCores())
 
 # Load the dataset
 dataset <- readRDS("data/clean/dataset.RDS")
-dataset_sub <- subset(dataset, select = c("pred_flow","abund_prey","abund_pred","bodymass_prey","predator","model_name"))
+dataset_sub <- subset(dataset, select = c("pred_flow","abund_prey","abund_pred","bodymass_prey","predator"))
 
 ###################
 # Lognormal model #
