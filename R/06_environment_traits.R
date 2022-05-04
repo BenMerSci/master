@@ -5,9 +5,10 @@ ecopath_metadata <- readRDS("data/intermediate/ecopath_metadata.RDS")
 load("data/raw/ecopath/data/Ecopath_models_modif.Rdata")
 	
 # Merge them
-enviro_df <- merge(ecopath_metadata, Ecopath_models, by.x = "model_name", by.y = "Model name", all.y = FALSE) |>
-	unique() |>
-	dplyr::rename(habitat_type = "Habitat type")
+enviro_df <- merge(ecopath_metadata, Ecopath_models,
+              by.x = "model_name", by.y = "Model name", all.y = FALSE) |>
+             unique() |>
+             dplyr::rename(habitat_type = "Habitat type")
 
 ##### Coordinates section #####
 # Convert the BOX() models to lat/lon
@@ -18,23 +19,28 @@ df_coords <- gsub(" ", ",", df_coords)
 
 # Transform into a dataframe
 df_coords <- strsplit(df_coords, ",") |>
- 	  lapply(function(x) data.frame(t(x)))
+             lapply(function(x) data.frame(t(x)))
 
-# Get the model name associated with the bounding box coordinates from Ecopath and keep only the desired columns
+# Get the model name associated with the bounding box coordinates
+# from Ecopath and keep only the desired columns
 df_coords <- as.data.frame(data.table::rbindlist(df_coords, fill = TRUE)) |>
-	  cbind(enviro_df$model_name) |>
-	  dplyr::select(c("enviro_df$model_name","X1","X3","X2","X4")) |>
-	  dplyr::rename(model_name = "enviro_df$model_name")
+             cbind(enviro_df$model_name) |>
+             dplyr::select(c("enviro_df$model_name", "X1", "X3", "X2", "X4")) |>
+             dplyr::rename(model_name = "enviro_df$model_name")
 
-df_coords[,c(2:5)] <- apply(df_coords[,c(2:5)], 2, function(x) as.numeric(x))
+df_coords[, c(2:5)] <- apply(df_coords[, c(2:5)], 2, function(x) as.numeric(x))
 
-# Removes the rows with NA and 
+# Removes the rows with NA and
 df_coords <- unique(na.omit(df_coords))
 
 # Get the centroid of the bounding box coordinates
-# First it gets the extent of based on the bbox coordinates, then cast it as a polygon and then gets its centroid
-centroids <- t(apply(df_coords, 1, function(x) raster::coordinates(as(raster::extent(as.numeric(x[c("X1","X3","X2","X4")])), "SpatialPolygons"))))
-
+# First it gets the extent of based on the bbox coordinates,
+# then cast it as a polygon and then gets its centroid
+centroids <- t(apply(df_coords, 1, function(x) {
+	         raster::coordinates(as(raster::extent(as.numeric(x[c("X1", "X3", "X2", "X4")])),
+              "SpatialPolygons")))
+             })
+             
 # Bind the coordinates back to the dataframe
 df_coords <- cbind(df_coords, centroids) |>
 		dplyr::select(c("model_name", "1", "2")) |>
