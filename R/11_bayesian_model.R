@@ -13,9 +13,14 @@ degrees <- dataset$degrees
 
 # Store the info in a list for each model
 lst_score_data0 <- list(y = obs, N = length(obs))
-lst_score_data1 <- list(y = obs, N = length(obs), abund_prey = abund_prey, abund_pred = abund_pred, mass_prey = mass_prey)
-lst_score_data2 <- list(y = obs, N = length(obs), npred = npred, abund_prey = abund_prey, abund_pred = abund_pred, mass_prey = mass_prey, pred_id = pred_id)
-lst_score_data3 <- list(y = obs, N = length(obs), npred = npred, abund_prey = abund_prey, abund_pred = abund_pred, mass_prey = mass_prey, pred_id = pred_id, degrees = degrees)
+lst_score_data1 <- list(y = obs, N = length(obs), abund_prey = abund_prey,
+  abund_pred = abund_pred, mass_prey = mass_prey)
+lst_score_data2 <- list(y = obs, N = length(obs), npred = npred,
+  abund_prey = abund_prey, abund_pred = abund_pred, mass_prey = mass_prey,
+  pred_id = pred_id)
+lst_score_data3 <- list(y = obs, N = length(obs), npred = npred,
+  abund_prey = abund_prey, abund_pred = abund_pred, mass_prey = mass_prey,
+  pred_id = pred_id, degrees = degrees)
 
 # Fit the models
 # Model0
@@ -47,11 +52,11 @@ fit_score2 <- stan(
   cores = 3,
   data = lst_score_data2
 )
-bayesplot::mcmc_areas(as.matrix(fit_score2), pars = paste0("alpha[",1:107,"]"))
+bayesplot::mcmc_areas(as.matrix(fit_score2), pars = paste0("alpha[", 1:107, "]"))
 
-post_sd <- c(summary(fit_score)$summary[,"sd"])
+post_sd <- c(summary(fit_score)$summary[, "sd"])
 post_sd <- post_sd[1:107]
-df_pred <- dataset[,c("prey","predator","pred_id")]
+df_pred <- dataset[, c("prey", "predator", "pred_id")]
 df_pred$pred_id <- as.numeric(df_pred$pred_id)
 df_pred <- df_pred[order(df_pred$pred_id), ]
 df_pred <- split(df_pred, f = df_pred$pred_id)
@@ -67,4 +72,4 @@ fit_score3 <- stan(
   cores = 3,
   data = lst_score_data3
 )
-bayesplot::mcmc_areas(as.matrix(fit_score3), pars = paste0("alpha[",1:107,"]"))
+bayesplot::mcmc_areas(as.matrix(fit_score3), pars = paste0("alpha[", 1:107, "]"))
