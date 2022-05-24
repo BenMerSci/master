@@ -43,3 +43,5 @@ ggplot() + geom_map(data = world, map = world, aes(x = long, y = lat, map_id=reg
 #height <- 5
 
 ggsave("../manuscripts/ms_trophic_fluxes/figures/network_map.png", width = 9, height = 5, dpi = "retina")
+ggsave("thesis/figs/chapitre1/network_map.pdf", width = 9, height = 5, dpi = "retina")
+
