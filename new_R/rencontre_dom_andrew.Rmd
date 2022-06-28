@@ -1,0 +1,49 @@
+---
+title: "Meeting Dom & Andrew"
+author: "Ben"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+# Modèle 5
+
+Idéalement le modèle 5 était initialement:
+\begin{align}
+F_{ij}^{real} = \frac{F_{ij}^{theoretical}}{1+h_j * \sum{F_{ij}^{theoretical}}} && F_{ij}^{theoretical} &= \alpha_{ij} * N_i * N_j * M_i \\ 
+&& \alpha_{ij} &= \frac{\phi_{ij}}{D_j}
+\end{align}
+
+Pour introduire un effet de saturation de type II:
+
+\begin{align}
+y = \frac{\alpha * x}{1+ h * \alpha * x}
+\end{align}
+
+\\
+
+Mais puisque toutes les espèces n'étaient pas taxonomiquement résolues, nous ne pouvions faire la $\sum_{1} ^{i} F_{ij}^{theoretical}$ au dénominateur.
+On avait donc proposé d'utiliser la somme des flux "réels" pour le prédateur donné (soit la somme de sa colonne dans la matrice d'interaction), donc:
+
+\begin{align}
+F_{ij}^{real} = \frac{F_{ij}^{theoretical}}{1+h_j * \sum{F_{j}^{real}}} && F_{ij}^{theoretical} &= \alpha_{ij} * N_i * N_j * M_i \\ 
+&& \alpha_{ij} &= \frac{\phi_{ij}}{D_j}
+\end{align}
+
+Cependant, comme le numérateur $F_{ij}^{theoretical} = \alpha_{ij} * N_i * N_j * M_i$ ne se retrouve pas dans la partie du dénominateur $\sum{F_{j}^{réel}}$, on observe pas l'effet de saturation, mais une droite.
+
+De là, Andrew m'a donc proposé, pourquoi ne pas utiliser toutes les données (pour un prédateur qui a aumoins une interaction taxonomiquement résolue, ainsi que lui-même, utiliser toutes ses proies, même celles non taxonomiquement résolues, pour calculer la $\sum{F_{ij}^{theoretical}}$, et ainsi observer l'effet de saturation.) D'autant plus que les nodes qui ne sont pas résolus à l'espèce dans chacun des réseaux ne le sont sans doute pas d'une manière aléatoire. Il y a probablement un biais.
+
+Pour utiliser toutes les espèces, il serait possible de passer de cette équation:
+
+
+\begin{align}
+F_{ij}^{real} = \frac{\alpha_{ij} * N_i * N_j * M_i}{1 + h_j \sum_{n=1} ^{i}\alpha_{ij} * N_i * N_j * M_i}
+\end{align}
+
+à 
+
+\begin{align}
+F_{ij}^{real} = \frac{\phi_{ij} * B_i * B_j}{M_j * D_j + h_j \sum_{n=1} ^{i} \phi_{ij} * B_i * B_j}
+\end{align}
+
+se faisant, on a réellement besoin que de la masse du prédateur, et non de celle des proies non taxonomiquement résolues pour lesquelles il est "impossible" d'obtenir une valeur moyenne de bodymass.
