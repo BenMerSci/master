@@ -21,15 +21,18 @@ organism_class <- lapply(tibble::deframe(species_list[, "gbif_id"]), function(x)
                           data.frame(matrix(x[which(x$rank %in%
                           c("class", "family")), "name"], nrow = 1, ncol = 2))
                   })
-
 organism_class <- do.call(plyr::"rbind.fill", organism_class)
 organism_class <- dplyr::select(organism_class, c("X1", "X2")) |>
                   dplyr::rename(class = "X1", family = "X2")
 
 # Bind the classes to the species list
 species_list <- cbind(species_list, organism_class) |>
-                dplyr::mutate(bodymass_min = NA, bodymass_max = NA)
-
+                dplyr::mutate(bodymass_min = NA, bodymass_max = NA,
+                 bodymass_mean = NA)
+species_list <- dplyr::mutate(species_list, length_min = NA, length_mean = NA,
+                 length_max = NA, a_min = NA, a_mean = NA, a_max = NA,
+                 b_min = NA, b_mean = NA, b_max = NA, bodymass_min = NA,
+                 bodymass_mean = NA, bodymass_max = NA)
 # Find species/groups with missing class/family info
 #missing <- species_list[which(is.na(species_list$class)), ]
 species_list[grep("plankton", species_list$scientific_name), c("class","family")] <- "Plankton"
@@ -88,28 +91,233 @@ fish_LW_ls <- purrr::map(fish_LW_ls, ~ dplyr::mutate(., LengthMin = as.numeric(.
                         )
 
 fish_LW_ls <- do.call("rbind", fish_LW_ls)
-species_list$bodymass_min <- fish_LW_ls$bodymass_min[match(species_list$scientific_name,fish_LW_ls$Species)]
-species_list$bodymass_max <- fish_LW_ls$bodymass_max[match(species_list$scientific_name,fish_LW_ls$Species)]
+#species_list$bodymass_min <- fish_LW_ls$bodymass_min[match(species_list$scientific_name,fish_LW_ls$Species)]
+#species_list$bodymass_max <- fish_LW_ls$bodymass_max[match(species_list$scientific_name,fish_LW_ls$Species)]
 
 # Check which species are NAs for bodymass
-missing_mass <- species_list[which(is.na(species_list$bodymass_min & species_list$bodymass_max)),]
+#missing_mass <- species_list[which(is.na(species_list$bodymass_min & species_list$bodymass_max)),]
 
 ################################
 ## Manual entry of bodymasses ##
 ################################
+# IMPORTANT: for fish without common length, I take the middle between min and max length.
+# For every fish, where possible, the data were taken from Fishbase with the Bayesian LW,
+# since this is the relationship which is most available
+# (The Bayesian L-W relationships can be found at the bottom of the Fishbase page for a species),
+# bodymass_min are computed using the smallest length found with the lower bounds for a and b
+# bodymass_max are computed using the largest length found with the highest bounds for a and b
+# bodymass_mean are computed using common length if available, if not found somewhere else with source and using the average a and b values
+# For some species, bodymass_max is the max reported in litterature from the fishbase page (will be specified if the case)
+# Did that because some of them didn't really make sense
+species_list[which(species_list$scientific_name == ""), c("bodymass_min","bodymass_max","bodymass_mean")] <-
 
-# Other fish1
-species_list[which(species_list$scientific_name == "Other fish1"), c("bodymass_min","bodymass_max")] <- rfishbase::length_weight(c("Trisopterus luscus","Pleuronectes platessa","Clupea harengus","Sprattus sprattus","Solea solea","Pomatoschistus microps"), server = "fishbase") |>
-               dplyr::select(c("Species","LengthMin","LengthMax","a","b")) |>
-               dplyr::mutate(LengthMin = as.numeric(LengthMin), LengthMax = as.numeric(LengthMax)) |>
-               dplyr::mutate(bodymass_min = a * LengthMin^b, bodymass_max = a * LengthMax^b) |>
-               dplyr::select(c("bodymass_min", "bodymass_max")) |>
-               colMeans(na.rm = TRUE)
+# Acanthostracion quadricornis (https://fishbase.in/summary/Acanthostracion-quadricornis.html)
+species_list[which(species_list$scientific_name == "Acanthostracion quadricornis"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(17,20,55,0.02370,0.04074,0.07002,2.54,2.70,2.86)
 
-# Mollusca
+# Archosargus rhomboidalis (https://fishbase.in/summary/Archosargus-rhomboidalis.html)
+species_list[which(species_list$scientific_name == "Archosargus rhomboidalis"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(8,20,33,0.01729,0.02042,0.02411,2.93,2.98,3.03)
+
+# Bagrus docmak0.00933 (https://fishbase.in/summary/Bagrus-docmak.html)
+species_list[which(species_list$scientific_name == "Bagrus docmak"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(20,62,127,0.00730,0.00933,0.01193,2.94,3.00,3.06)
+
+# Bairdiella chrysoura (https://fishbase.in/summary/Bairdiella-chrysoura.html)
+species_list[which(species_list$scientific_name == "Bairdiella chrysoura"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(9.3,20,30,0.00768,0.01148,0.01716,2.96,3.08,3.20)
+
+# Carcharhinus melanopterus (https://fishbase.in/summary/Carcharhinus-melanopterus.html)
+species_list[which(species_list$scientific_name == "Carcharhinus melanopterus"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(91,120,200,0.00252,0.00468,0.00868,2.88,3.03,3.18)
+
+# Chaetodipterus faber (https://fishbase.in/summary/Chaetodipterus-faber.html) max weight reported
+species_list[which(species_list$scientific_name == "Chaetodipterus faber"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max","bodymass_max")] <-
+                                   c(12,50,91,0.02599,0.03388,0.04418,2.86,2.94,3.02,9000)
+
+# Citharichthys spilopterus (https://fishbase.in/summary/Citharichthys-spilopterus.html)
+species_list[which(species_list$scientific_name == "Citharichthys spilopterus"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(NA,15,21,0.00501,0.00617,0.00758,3.08,3.13,3.18)
+
+# Clarias gariepinus (https://fishbase.in/summary/Clarias-gariepinus.html)
+species_list[which(species_list$scientific_name == "Clarias gariepinus"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(30.8,90,170,0.00671,0.00813,0.00985,2.93,2.98,3.03)
+
+# Copadichromis azureus (https://fishbase.in/summary/Copadichromis-azureus.html)
+# length_min is the mean length at maturity for species of same genus (https://fishbase.in/Reproduction/MaturityList_genus.php)
+# length_max is the length_max of Copadichromis azureus
+species_list[which(species_list$scientific_name == "Copadichromis azureus"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(mean(c(10.3,10.6,13.0)),NA,14.6,0.00687,0.01479,0.03186,2.79,2.97,3.15)
+
+# Dicentrarchus labrax (https://fishbase.in/summary/Dicentrarchus-labrax.html)
+species_list[which(species_list$scientific_name == "Dicentrarchus labrax"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(23,50,103,0.00767,0.00933,0.01136,2.96,3.02,3.08)
+
+# Engraulicypris sardella (https://fishbase.in/summary/Engraulicypris-sardella.html)
+species_list[which(species_list$scientific_name == "Engraulicypris sardella"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(NA,10,13,0.00254,0.00447,0.00785,2.85,3.01,3.17)
+
+# Haemulon plumierii (https://fishbase.in/summary/Haemulon-plumierii.html)
+species_list[which(species_list$scientific_name == "Haemulon plumierii"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(11,30,53,0.01168,0.01413,0.01709,2.95,2.99,3.03)
+                            
+# Haplochromis angustifrons (https://fishbase.in/summary/Haplochromis-angustifrons.html)
+species_list[which(species_list$scientific_name == "Haplochromis angustifrons"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(NA,NA,9,0.00244,0.01000,0.04107,2.81,3.04,3.27)
+
+# Haplochromis nigripinnis (https://fishbase.in/summary/Haplochromis-nigripinnis.html)
+species_list[which(species_list$scientific_name == "Haplochromis nigripinnis"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(NA,NA,6.8,0.00708,0.01445,0.02949,2.80,2.97,3.14)
+
+# Haplochromis squamipinnis (https://fishbase.in/summary/Haplochromis-squamipinnis.html)
+species_list[which(species_list$scientific_name == "Haplochromis squamipinnis"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(NA,NA,20.2,0.00687,0.01479,0.03186,2.79,2.97,3.15)
+
+# Harengula jaguana (https://fishbase.in/summary/Harengula-jaguana.html)
+species_list[which(species_list$scientific_name == "Harengula jaguana"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(8,12,21.2,0.00766,0.00891,0.01037,3.02,3.06,3.10)
+
+# Hydrocynus forskahlii (https://fishbase.in/summary/Hydrocynus-forskahlii.html)
+species_list[which(species_list$scientific_name == "Hydrocynus forskahlii"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(20,NA,78,0.00384,0.00759,0.01500,2.97,3.15,3.33)
+
+# Hydrocynus vittatus (https://fishbase.in/summary/Hydrocynus-vittatus.html)
+species_list[which(species_list$scientific_name == "Hydrocynus vittatus"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(39.8,74,105,0.00870,0.01096,0.01382,2.95,3.01,3.07)
+
+# Lagodon rhomboides (https://fishbase.in/summary/Lagodon-rhomboides.html)
+species_list[which(species_list$scientific_name == "Lagodon rhomboides"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(9,18,40,0.01189,0.01349,0.01530,3.01,3.04,3.07)
+
+# Lates niloticus (https://fishbase.in/summary/Lates-niloticus.html)
+species_list[which(species_list$scientific_name == "Lates niloticus"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(53,100,200,0.00761,0.00977,0.01254,2.93,3.00,3.07)
+
+# Lates stappersii (https://fishbase.in/summary/Lates-stappersii.html)
+species_list[which(species_list$scientific_name == "Lates stappersii"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(19.3,27,45,0.00628,0.00813,0.01053,2.92,2.99,3.06)
+
+# Limnothrissa miodon (https://fishbase.in/summary/Limnothrissa-miodon.html)
+species_list[which(species_list$scientific_name == "Limnothrissa miodon"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(6.8,10,17,0.00405,0.00724,0.01297,2.84,2.99, 3.14)
+
+# Lutjanus griseus (https://fishbase.in/summary/Lutjanus-griseus.html)
+species_list[which(species_list$scientific_name == "Lutjanus griseus"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(21,40,89,0.01296,0.01479,0.01687,2.95,2.98,3.01)
+
+# Mugil curema
+species_list[which(species_list$scientific_name == "Mugil curema"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(21,30,91,0.00981,0.01148,0.01343,2.92,2.95,2.98)
+
+# Opisthonema oglinum (https://fishbase.in/summary/Opisthonema-oglinum.html)
+species_list[which(species_list$scientific_name == "Opisthonema oglinum"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(11,20,38,0.00729,0.00832,0.00949,3.00,3.04,3.08)
+
+# Opsanus beta (https://fishbase.in/summary/Opsanus-beta.html)
+species_list[which(species_list$scientific_name == "Opsanus beta"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(10,20,30,0.00795,0.01288,0.02088,2.92,3.06,3.20)
+
+# Opsaridium microcephalum (https://fishbase.in/summary/Opsaridium-microcephalum.html)
+species_list[which(species_list$scientific_name == "Opsaridium microcephalum"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(23.7,28.85,34,0.00313,0.00708,0.01602,2.86,3.05,3.24)
+
+# Oreochromis leucostictus (https://fishbase.in/summary/Oreochromis-leucostictus.html)
+species_list[which(species_list$scientific_name == "Oreochromis leucostictus"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(6,22,36.3,0.00737,0.01349,0.02470,2.83,2.98,3.13)
+
+# Oreochromis niloticus (https://fishbase.in/summary/Oreochromis-niloticus.html)
+species_list[which(species_list$scientific_name == "Oreochromis niloticus"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(6,28,60,0.01586,0.01905,0.02290,2.93,2.97,3.01)
+
+# Orthopristis chrysoptera (https://fishbase.in/summary/Orthopristis-chrysoptera.html)
+# length_min (maturity) from  Orthopristis rubra (samge genus)
+species_list[which(species_list$scientific_name == "Orthopristis chrysoptera"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(15.6,30,46,0.01122,0.01778,0.02818,2.87,3.01,3.15)
+
+# Platichthys flesus (https://fishbase.in/summary/Platichthys-flesus.html)
+species_list[which(species_list$scientific_name == "Platichthys flesus"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(14,50,60,0.00701,0.00794,0.00901,3.02,3.06,3.10)
+
+# Pomatoschistus microps (https://fishbase.in/summary/Pomatoschistus-microps.html)
+species_list[which(species_list$scientific_name == "Pomatoschistus microps"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(3,6,9,0.00407,0.00776,0.01480,2.91,3.07,3.23)
+
+# Protopterus aethiopicus (https://fishbase.in/summary/Protopterus-aethiopicus.html)
+species_list[which(species_list$scientific_name == "Protopterus aethiopicus"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(70,130,200,0.00156,0.00389,0.00972,2.88,3.10,3.32)
+
+# Rastrineobola argentea (https://www.fishbase.de/summary/Rastrineobola-argentea.html)
+species_list[which(species_list$scientific_name == "Rastrineobola argentea"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(4.4,6.2,8,0.00337,0.00676,0.01355,2.88,3.06,3.24)
+
+# Rhamphochromis longiceps (https://www.fishbase.de/summary/Rhamphochromis-longiceps.html)
+species_list[which(species_list$scientific_name == "Rhamphochromis longiceps"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(13,20.5,28,0.00244,0.01000,0.04107,2.81,3.04,3.27)
+
+# Stolothrissa tanganicae (https://www.fishbase.de/summary/Stolothrissa-tanganicae.html)
+species_list[which(species_list$scientific_name == "Stolothrissa tanganicae"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(6.5,7,10,0.00230,0.00550,0.01313,2.90,3.11,3.32)
+
+# Synodontis schall (https://www.fishbase.de/summary/Synodontis-schall.html)
+species_list[which(species_list$scientific_name == "Synodontis schall"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(12,24.5,37,0.01143,0.01445,0.01829,2.89,2.95,3.01)
+                                   
+# Other fish1 -> 
+# Trisopterus luscus","Pleuronectes platessa","Clupea harengus","Sprattus sprattus","Solea solea","Pomatoschistus microps
+# smallest parameters is for Pomatoschistus microps
+# Averaged some of them for the mean
+# max parameters is for 
+species_list[which(species_list$scientific_name == "Other fish1"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(3,35,100,0.00407,0.00759,0.00903,2.91,3.06,3.10)
+#rfishbase::length_weight(c("Trisopterus luscus","Pleuronectes platessa","Clupea harengus","Sprattus sprattus","Solea solea","Pomatoschistus microps"), server = "fishbase") |>
+#               dplyr::select(c("Species","LengthMin","LengthMax","a","b")) |>
+#               dplyr::mutate(LengthMin = as.numeric(LengthMin), LengthMax = as.numeric(LengthMax)) |>
+#               dplyr::mutate(bodymass_min = a * LengthMin^b, bodymass_max = a * LengthMax^b) |>
+#               dplyr::select(c("bodymass_min", "bodymass_max")) |>
+#               colMeans(na.rm = TRUE)
+
+# Mollusca -> arbitrary
 species_list[which(species_list$scientific_name == "Mollusca"), c("bodymass_min","bodymass_max")] <- c(0.5,50)
 
-# Microcrustacean
+# Microcrustacean -> arbitrary
 species_list[which(species_list$scientific_name == "Microcrustacean"), c("bodymass_min","bodymass_max")] <- c(0.5, 25)
 
 # Decapoda -> Penaeidae & brachyura
@@ -126,9 +334,14 @@ decapoda <- rbind(shrimps,crabs) |>
 species_list[which(species_list$scientific_name == "Decapoda"), c("bodymass_min","bodymass_max")] <- decapoda
             
 # Nereidae, based on (doi:10.1017/S0025315409991408)
-species_list[which(species_list$scientific_name == "Nereidae"), c("bodymass_min","bodymass_max")] <- c(0.01,3.31)
+# bodymass_mean was computed with the inbetween of length_max and length_min
+species_list[which(species_list$scientific_name == "Nereidae"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] #<- TO DO
+                                   #c(1.12,3.79,4.91,NA,)
+
 
 # Benthic producer -> arbitrary decision (only small benthic prod, seagrass, macrophytes)
+# arbitrary
 species_list[which(species_list$scientific_name == "Benthic producer"), c("bodymass_min","bodymass_max")] <- c(0.05,1) 
 
 # Zooplankton
@@ -150,24 +363,37 @@ species_list[which(species_list$scientific_name == "Mosses"), c("bodymass_min","
 species_list[which(species_list$scientific_name == "Grasses"), c("bodymass_min","bodymass_max")] <- c(0.5,1)
 
 # Eucinostomus
-species_list[which(species_list$scientific_name == "Eucinostomus"), c("bodymass_min","bodymass_max")] <- rfishbase::length_weight(c("Eucinostomus gula", "Eucinostomus argenteus")) |>
-               dplyr::select(c("Species","LengthMin","LengthMax","a","b")) |>
-               dplyr::mutate(LengthMin = as.numeric(LengthMin), LengthMax = as.numeric(LengthMax)) |>
-               dplyr::mutate(bodymass_min = a * LengthMin^b, bodymass_max = a * LengthMax^b) |>
-               dplyr::select(c("bodymass_min", "bodymass_max")) |>
-               colMeans(na.rm = TRUE)
+# from Eucinostomus gula
+species_list[which(species_list$scientific_name == "Eucinostomus"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(11,15,25.5,0.00920,0.01096,0.01307,3.04,3.08,3.12)
+#rfishbase::length_weight(c("Eucinostomus gula", "Eucinostomus argenteus")) |>
+#               dplyr::select(c("Species","LengthMin","LengthMax","a","b")) |>
+#               dplyr::mutate(LengthMin = as.numeric(LengthMin), LengthMax = as.numeric(LengthMax)) |>
+#               dplyr::mutate(bodymass_min = a * LengthMin^b, bodymass_max = a * LengthMax^b) |>
+#               dplyr::select(c("bodymass_min", "bodymass_max")) |>
+#               colMeans(na.rm = TRUE)
 
 # Haplochromis nigripinnis, fishbase bayesian L-W relationships
-species_list[which(species_list$scientific_name == "Haplochromis nigripinnis"), c("bodymass_min","bodymass_max")] <- c(0.00708*(6.8^2.80),0.02949*(6.8^3.14))
+# (https://www.fishbase.de/summary/Haplochromis-nigripinnis.html)
+species_list[which(species_list$scientific_name == "Haplochromis nigripinnis"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(6.8,6.8,6.8,0.00708,0.01445,0.02949,2.80,2.97,3.14)
 
 # Zoobenthos -> Chaoborus spp., Copepods, Oligochaetes (arbitrary)
 species_list[which(species_list$scientific_name == "Zoobenthos"), c("bodymass_min","bodymass_max")] <- c(0.05,1)
 
 # Haplochromis angustifrons, fishbase bayesian L-W relationships
-species_list[which(species_list$scientific_name == "Haplochromis angustifrons"), c("bodymass_min","bodymass_max")] <- c(0.00244*(9^2.81),0.04107*(9^3.27))
+# (https://www.fishbase.de/summary/Haplochromis-angustifrons.html)
+species_list[which(species_list$scientific_name == "Haplochromis angustifrons"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(9,9,9,0.00244,0.01000,0.04107,2.81,3.04,3.27)
 
 # Haplochromis squamipinnis, fishbase bayesian L-W relationships
-species_list[which(species_list$scientific_name == "Haplochromis squamipinnis"), c("bodymass_min","bodymass_max")] <- c(0.00687*(20.2^2.79),0.03186*(20.2^3.15))
+# (https://www.fishbase.de/summary/Haplochromis-squamipinnis.html)
+species_list[which(species_list$scientific_name == "Haplochromis squamipinnis"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(20.2,20.2,20.2,0.00687,0.01479,0.03186,2.79,2.97,3.15)
 
 # Phytobenthos -> Macroalgae, Chlorophytes (green algae) and Pheophytes (brown algae), Rhodophytes (red algae) -> arbitrary
 species_list[which(species_list$scientific_name == "Phytobenthos"), c("bodymass_min","bodymass_max")] <- c(0.005,1) 
@@ -177,16 +403,21 @@ species_list[which(species_list$scientific_name == "Phytobenthos"), c("bodymass_
 species_list[which(species_list$scientific_name == "Benthic deposit feeders"), c("bodymass_min","bodymass_max")] <- c(0.05,10) 
 
 # Benthic suspension feeders (Cerastoderma edule and Abra alba), mean of both with L-W relationships on sealifebase
-species_list[which(species_list$scientific_name == "Benthic suspension feeders"), c("bodymass_min","bodymass_max")] <- c(0.1205*(2.3^2.835),1.1570*(5.4^2.260))
+# Based of Cerastoderma edule
+species_list[which(species_list$scientific_name == "Benthic suspension feeders"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(1.1,3.5,5.6,1.1570,1.1570,1.1570,2.26,2.26,2.26)
 
 # Caridina nilotica
-species_list[which(species_list$scientific_name == "Caridina nilotica"), c("bodymass_min","bodymass_max")] <- c(0.01, 0.142) # https://www.sciencedirect.com/science/article/pii/S1474706512000824
+# https://www.sciencedirect.com/science/article/pii/S1474706512000824
+species_list[which(species_list$scientific_name == "Caridina nilotica"), c("bodymass_min","bodymass_max")] <- c(0.01, 0.142)
 
 # Macrozoobenthos -> arbitrary, went 0.5-2 just to be bigger than Zoobenthos
 species_list[which(species_list$scientific_name == "Macrozoobenthos"), c("bodymass_min","bodymass_max")] <- c(0.5,2)
 
 # Microtus oeconomus
-species_list[which(species_list$scientific_name == "Microtus oeconomus"), c("bodymass_min","bodymass_max")] <- c(32.2, 43.0) # BODY MASS OF LATE QUATERNARY MAMMALS, Ecological Archives E084-094
+# (https://animaldiversity.org/accounts/Microtus_oeconomus/)
+species_list[which(species_list$scientific_name == "Microtus oeconomus"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(25, 50, 80)
 
 # Geese (Anser brachyrhynchus, Branta leucopsis)
 species_list[which(species_list$scientific_name == "Geese"), c("bodymass_min","bodymass_max")] <- c(1210,3400) # Wikipedia (https://en.wikipedia.org/wiki/Pink-footed_goose)(https://en.wikipedia.org/wiki/Barnacle_goose)
@@ -494,6 +725,12 @@ species_list[which(species_list$scientific_name == "Cichlids"), c("bodymass_min"
 # Stolothrissa tanganicae -> Bayesian L-W from fishbase (https://www.fishbase.de/summary/Stolothrissa-tanganicae.html)
 species_list[which(species_list$scientific_name == "Stolothrissa tanganicae"), c("bodymass_min","bodymass_max")] <- c(0.00230*(7^2.90), 0.01313*(7^3.32))
 
+test <- rfishbase::species("Stolothrissa tanganicae")
+ok <- rfishbase::fb_tbl("POPLW") |>
+  dplyr::filter(Genus %in% c("Clarias")) |>
+  dplyr::mutate(sp_name = paste(Genus, Species, sep = " ")) |>
+  dplyr::select(c("sp_name")) 
+
 # Benthic fish -> Labeo horie, Barbus bynni, Citharinus citharis and  Distichodus nefasch
 species_list[which(species_list$scientific_name == "Benthic fish"), c("bodymass_min","bodymass_max")] <-
                rfishbase::validate_names(c("Labeo horie", "Barbus bynni", "Citharinus citharus", "Distichodus nefasch")) |>
@@ -623,6 +860,12 @@ species_list[which(species_list$scientific_name == "Vulpes vulpes"), c("bodymass
 # Check remaining missing
 # Check which species are NAs for bodymass
 missing_mass2 <- species_list[which(is.na(species_list$bodymass_min & species_list$bodymass_max)),]
+
+# Add species metabolic classes
+species_list[which(species_list$class %in% c("Aves", "Mammalia")), "metabolic_class"] <- "endotherm"
+species_list[which(species_list$scientific_name == "Fishing birds"), "metabolic_class"] <- "endotherm"
+species_list[which(species_list$family %in% c("Istiophoridae","Xiphiidae","Scombridae")), "metabolic_class"] <- "homeotherm"
+species_list[which(is.na(species_list$metabolic_class)),"metabolic_class"] <- "ectotherm"
 
 # Save the file
 saveRDS(species_list, "data/intermediate/new/species_traits_new.RDS")
