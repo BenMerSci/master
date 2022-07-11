@@ -27,12 +27,11 @@ organism_class <- dplyr::select(organism_class, c("X1", "X2")) |>
 
 # Bind the classes to the species list
 species_list <- cbind(species_list, organism_class) |>
-                dplyr::mutate(bodymass_min = NA, bodymass_max = NA,
-                 bodymass_mean = NA)
-species_list <- dplyr::mutate(species_list, length_min = NA, length_mean = NA,
+                dplyr::mutate(length_min = NA, length_mean = NA,
                  length_max = NA, a_min = NA, a_mean = NA, a_max = NA,
                  b_min = NA, b_mean = NA, b_max = NA, bodymass_min = NA,
                  bodymass_mean = NA, bodymass_max = NA)
+
 # Find species/groups with missing class/family info
 #missing <- species_list[which(is.na(species_list$class)), ]
 species_list[grep("plankton", species_list$scientific_name), c("class","family")] <- "Plankton"
@@ -72,25 +71,25 @@ species_list[which(species_list$scientific_name == "Sheephead"), c("class","fami
 # Find species bodymasses #
 ############################
 # Validate the fish names
-fish <- species_list[which(species_list$class %in%
-         c("Actinopterygii", "Elasmobranchii", "Sarcopterygii")), ]
-validated_fish <- data.frame(cbind(fish$scientific_name,
-                   rfishbase::validate_names(fish$scientific_name))) |>
-                  dplyr::rename(original = "X1", validated = "X2")
-# Get the length-weight relationships
-fish_LW <- rfishbase::length_weight(validated_fish$validated)
-fish_LW_ls <- base::split(fish_LW, f = fish_LW$Species)
-fish_LW_ls <- purrr::map(fish_LW_ls, ~ dplyr::mutate(., LengthMin = as.numeric(.$LengthMin),
-                                              LengthMax = as.numeric(.$LengthMax)) |>
-                                       dplyr::mutate(bodymass_min = .$a * .$LengthMin^.$b,
-                                              bodymass_max = .$a * .$LengthMax^.$b) |>
-                                       dplyr::select(c("Species","bodymass_min","bodymass_max")) |>
-                                       dplyr::group_by(Species) |>
-                                       dplyr::summarise(bodymass_min = mean(bodymass_min, na.rm = TRUE),
-                                        bodymass_max = mean(bodymass_max, na.rm = TRUE))                    
-                        )
-
-fish_LW_ls <- do.call("rbind", fish_LW_ls)
+#fish <- species_list[which(species_list$class %in%
+#         c("Actinopterygii", "Elasmobranchii", "Sarcopterygii")), ]
+#validated_fish <- data.frame(cbind(fish$scientific_name,
+#                   rfishbase::validate_names(fish$scientific_name))) |>
+#                  dplyr::rename(original = "X1", validated = "X2")
+## Get the length-weight relationships
+#fish_LW <- rfishbase::length_weight(validated_fish$validated)
+#fish_LW_ls <- base::split(fish_LW, f = fish_LW$Species)
+#fish_LW_ls <- purrr::map(fish_LW_ls, ~ dplyr::mutate(., LengthMin = as.numeric(.$LengthMin),
+#                                              LengthMax = as.numeric(.$LengthMax)) |>
+#                                       dplyr::mutate(bodymass_min = .$a * .$LengthMin^.$b,
+#                                              bodymass_max = .$a * .$LengthMax^.$b) |>
+#                                       dplyr::select(c("Species","bodymass_min","bodymass_max")) |>
+#                                       dplyr::group_by(Species) |>
+#                                       dplyr::summarise(bodymass_min = mean(bodymass_min, na.rm = TRUE),
+#                                        bodymass_max = mean(bodymass_max, na.rm = TRUE))                    
+#                        )
+#
+#fish_LW_ls <- do.call("rbind", fish_LW_ls)
 #species_list$bodymass_min <- fish_LW_ls$bodymass_min[match(species_list$scientific_name,fish_LW_ls$Species)]
 #species_list$bodymass_max <- fish_LW_ls$bodymass_max[match(species_list$scientific_name,fish_LW_ls$Species)]
 
@@ -100,16 +99,15 @@ fish_LW_ls <- do.call("rbind", fish_LW_ls)
 ################################
 ## Manual entry of bodymasses ##
 ################################
-# IMPORTANT: for fish without common length, I take the middle between min and max length.
-# For every fish, where possible, the data were taken from Fishbase with the Bayesian LW,
-# since this is the relationship which is most available
+# IMPORTANT: for fish without common length, I took max-(max-min/2)
+# For every fish, where possible, the data were taken from Fishbase with the Bayesian L-W,
+# since this is the relationship which is the most available
 # (The Bayesian L-W relationships can be found at the bottom of the Fishbase page for a species),
 # bodymass_min are computed using the smallest length found with the lower bounds for a and b
 # bodymass_max are computed using the largest length found with the highest bounds for a and b
 # bodymass_mean are computed using common length if available, if not found somewhere else with source and using the average a and b values
 # For some species, bodymass_max is the max reported in litterature from the fishbase page (will be specified if the case)
 # Did that because some of them didn't really make sense
-species_list[which(species_list$scientific_name == ""), c("bodymass_min","bodymass_max","bodymass_mean")] <-
 
 # Acanthostracion quadricornis (https://fishbase.in/summary/Acanthostracion-quadricornis.html)
 species_list[which(species_list$scientific_name == "Acanthostracion quadricornis"),
@@ -142,9 +140,10 @@ species_list[which(species_list$scientific_name == "Chaetodipterus faber"),
                                    c(12,50,91,0.02599,0.03388,0.04418,2.86,2.94,3.02,9000)
 
 # Citharichthys spilopterus (https://fishbase.in/summary/Citharichthys-spilopterus.html)
+# length_min based on same genus species at maturity
 species_list[which(species_list$scientific_name == "Citharichthys spilopterus"),
                                    c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
-                                   c(NA,15,21,0.00501,0.00617,0.00758,3.08,3.13,3.18)
+                                   c(3,15,21,0.00501,0.00617,0.00758,3.08,3.13,3.18)
 
 # Clarias gariepinus (https://fishbase.in/summary/Clarias-gariepinus.html)
 species_list[which(species_list$scientific_name == "Clarias gariepinus"),
@@ -196,7 +195,7 @@ species_list[which(species_list$scientific_name == "Harengula jaguana"),
 # Hydrocynus forskahlii (https://fishbase.in/summary/Hydrocynus-forskahlii.html)
 species_list[which(species_list$scientific_name == "Hydrocynus forskahlii"),
                                    c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
-                                   c(20,NA,78,0.00384,0.00759,0.01500,2.97,3.15,3.33)
+                                   c(20,49,78,0.00384,0.00759,0.01500,2.97,3.15,3.33)
 
 # Hydrocynus vittatus (https://fishbase.in/summary/Hydrocynus-vittatus.html)
 species_list[which(species_list$scientific_name == "Hydrocynus vittatus"),
@@ -315,13 +314,14 @@ species_list[which(species_list$scientific_name == "Other fish1"),
 #               colMeans(na.rm = TRUE)
 
 # Mollusca -> arbitrary
-species_list[which(species_list$scientific_name == "Mollusca"), c("bodymass_min","bodymass_max")] <- c(0.5,50)
+species_list[which(species_list$scientific_name == "Mollusca"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.5,25.25,50)
 
 # Microcrustacean -> arbitrary
-species_list[which(species_list$scientific_name == "Microcrustacean"), c("bodymass_min","bodymass_max")] <- c(0.5, 25)
+species_list[which(species_list$scientific_name == "Microcrustacean"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.5,12.75, 25)
 
 # Decapoda -> Penaeidae & brachyura
 # Mixed the shrimps and crabs mass.
+# bodymass_mean is midpoint between max and min
 shrimps <- c(0.7133*(1.2^2.940), 0.0084*(10.8^2.956)) # shrimps
 crabs <- rfishbase::length_weight(c("Callinectes danae", "Callinectes boucorti", "Callinectes sapidus"), server = "sealifebase") |>
                dplyr::select(c("Species","LengthMin","LengthMax","a","b")) |>
@@ -331,36 +331,37 @@ crabs <- rfishbase::length_weight(c("Callinectes danae", "Callinectes boucorti",
                colMeans(na.rm = TRUE)
 decapoda <- rbind(shrimps,crabs) |>
             colMeans()
-species_list[which(species_list$scientific_name == "Decapoda"), c("bodymass_min","bodymass_max")] <- decapoda
+species_list[which(species_list$scientific_name == "Decapoda"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(15.94638,117.152,218.35769)
             
-# Nereidae, based on (doi:10.1017/S0025315409991408)
-# bodymass_mean was computed with the inbetween of length_max and length_min
-species_list[which(species_list$scientific_name == "Nereidae"),
-                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] #<- TO DO
-                                   #c(1.12,3.79,4.91,NA,)
+# Nereidae
+# bodymass_min and max were from Nereis pelagic from the table in (doi:10.1017/S0025315409991408)
+# bodymass_mean was computed with the inbetween of bodymass_max and bodymass_min
+species_list[which(species_list$scientific_name == "Nereidae"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.007,0.3235,0.64)
 
 
 # Benthic producer -> arbitrary decision (only small benthic prod, seagrass, macrophytes)
 # arbitrary
-species_list[which(species_list$scientific_name == "Benthic producer"), c("bodymass_min","bodymass_max")] <- c(0.05,1) 
+species_list[which(species_list$scientific_name == "Benthic producer"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.05,0.525,1)
 
 # Zooplankton
-species_list[which(species_list$scientific_name == "Zooplankton"), c("bodymass_min","bodymass_max")] <- c(0.0001, 1) # Yodzis
+# Yodzis
+species_list[which(species_list$scientific_name == "Zooplankton"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.0001,0.5005,1)
 
 # Phytoplankton
-species_list[which(species_list$scientific_name == "Phytoplankton"), c("bodymass_min","bodymass_max")] <- c(0.0001, 0.001) # Yodzis
+# Yodzis
+species_list[which(species_list$scientific_name == "Phytoplankton"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.0001,0.00055,0.001)
 
 # Forbs -> arbitrary
-species_list[which(species_list$scientific_name == "Forbs"), c("bodymass_min","bodymass_max")] <- c(0.5,1)
+species_list[which(species_list$scientific_name == "Forbs"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.5,0.75,1)
 
 # Shrubs -> arbitrary
-species_list[which(species_list$scientific_name == "Shrubs"), c("bodymass_min","bodymass_max")] <- c(0.5,1)
+species_list[which(species_list$scientific_name == "Shrubs"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.5,0.75,1)
 
 # Mosses -> arbitrary
-species_list[which(species_list$scientific_name == "Mosses"), c("bodymass_min","bodymass_max")] <- c(0.5,1)
+species_list[which(species_list$scientific_name == "Mosses"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.5,0.75,1)
 
 # Grasses -> arbitrary
-species_list[which(species_list$scientific_name == "Grasses"), c("bodymass_min","bodymass_max")] <- c(0.5,1)
+species_list[which(species_list$scientific_name == "Grasses"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.5,0.75,1)
 
 # Eucinostomus
 # from Eucinostomus gula
@@ -381,7 +382,7 @@ species_list[which(species_list$scientific_name == "Haplochromis nigripinnis"),
                                    c(6.8,6.8,6.8,0.00708,0.01445,0.02949,2.80,2.97,3.14)
 
 # Zoobenthos -> Chaoborus spp., Copepods, Oligochaetes (arbitrary)
-species_list[which(species_list$scientific_name == "Zoobenthos"), c("bodymass_min","bodymass_max")] <- c(0.05,1)
+species_list[which(species_list$scientific_name == "Zoobenthos"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.05,0.525,1)
 
 # Haplochromis angustifrons, fishbase bayesian L-W relationships
 # (https://www.fishbase.de/summary/Haplochromis-angustifrons.html)
@@ -396,11 +397,11 @@ species_list[which(species_list$scientific_name == "Haplochromis squamipinnis"),
                                    c(20.2,20.2,20.2,0.00687,0.01479,0.03186,2.79,2.97,3.15)
 
 # Phytobenthos -> Macroalgae, Chlorophytes (green algae) and Pheophytes (brown algae), Rhodophytes (red algae) -> arbitrary
-species_list[which(species_list$scientific_name == "Phytobenthos"), c("bodymass_min","bodymass_max")] <- c(0.005,1) 
+species_list[which(species_list$scientific_name == "Phytobenthos"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.005,0.5025,1) 
 
 # Benthic deposit feeders (Pectinaria koreni, Macoma balthica and Owenia fusiformis)
 # Used 10.1017/S0025315409991408, for the only Terebellida present (for Pectinaria koreni)
-species_list[which(species_list$scientific_name == "Benthic deposit feeders"), c("bodymass_min","bodymass_max")] <- c(0.05,10) 
+species_list[which(species_list$scientific_name == "Benthic deposit feeders"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.05,4.025,10) 
 
 # Benthic suspension feeders (Cerastoderma edule and Abra alba), mean of both with L-W relationships on sealifebase
 # Based of Cerastoderma edule
@@ -410,10 +411,11 @@ species_list[which(species_list$scientific_name == "Benthic suspension feeders")
 
 # Caridina nilotica
 # https://www.sciencedirect.com/science/article/pii/S1474706512000824
-species_list[which(species_list$scientific_name == "Caridina nilotica"), c("bodymass_min","bodymass_max")] <- c(0.01, 0.142)
+# Used the bodymass of control
+species_list[which(species_list$scientific_name == "Caridina nilotica"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.01,0.076,0.142)
 
 # Macrozoobenthos -> arbitrary, went 0.5-2 just to be bigger than Zoobenthos
-species_list[which(species_list$scientific_name == "Macrozoobenthos"), c("bodymass_min","bodymass_max")] <- c(0.5,2)
+species_list[which(species_list$scientific_name == "Macrozoobenthos"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.5,1.25,2)
 
 # Microtus oeconomus
 # (https://animaldiversity.org/accounts/Microtus_oeconomus/)
@@ -425,7 +427,7 @@ species_list[which(species_list$scientific_name == "Geese"), c("bodymass_min","b
 
 # Lemmings (Lemmus trimucronatus, Dicrostonyx groenlandicus)
 # Used the data of Lemmus trimucronatus
-species_list[which(species_list$scientific_name == "Lemmings"), c("bodymass_min","bodymass_max")] <- c(30, 63, 113)
+species_list[which(species_list$scientific_name == "Lemmings"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(30, 63, 113)
 
 # Lemmus trimucronatus
 # Mix Wikipedia (https://en.wikipedia.org/wiki/Canadian_lemming) and NatureServe (https://explorer.natureserve.org/Taxon/ELEMENT_GLOBAL.2.105072/Lemmus_trimucronatus)
@@ -460,7 +462,7 @@ species_list[which(species_list$scientific_name == "Passerines"), c("bodymass_mi
 # Waterfowl, based the smallest and largest: Anas crecca, Cygnus columbianus
 # (https://en.wikipedia.org/wiki/Eurasian_teal)(https://en.wikipedia.org/wiki/Tundra_swan)
 # bodymass_mean was chosen arbitrary based on all the species
-species_list[which(species_list$scientific_name == "Waterfowl"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(340,,2500,9600)
+species_list[which(species_list$scientific_name == "Waterfowl"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(340,2500,9600)
 
 # Gulls (Larus hyperboreus, L. argentatus)
 # Wikkipedia (https://en.wikipedia.org/wiki/Glaucous_gull)(https://en.wikipedia.org/wiki/European_herring_gull)
@@ -477,7 +479,7 @@ species_list[which(species_list$scientific_name == "Anser caerulescens atlanticu
 
 # Ptarmigan
 # Wikipedia(https://en.wikipedia.org/wiki/Willow_ptarmigan)(https://en.wikipedia.org/wiki/Rock_ptarmigan)
-species_list[which(species_list$scientific_name == "Ptarmigan"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(430,,580,810) 
+species_list[which(species_list$scientific_name == "Ptarmigan"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(430,580,810) 
 
 # Lepus arcticus
 # Wikipedia(https://en.wikipedia.org/wiki/Arctic_hare)
@@ -486,7 +488,7 @@ species_list[which(species_list$scientific_name == "Lepus arcticus"), c("bodymas
 
 # Ovibos moschatus
 # Wikipedia(https://en.wikipedia.org/wiki/Muskox)
-species_list[which(species_list$scientific_name == "Ovibos moschatus"), c("bodymass_min","bodymass_mean""bodymass_max")] <- c(180000,285000,410000)
+species_list[which(species_list$scientific_name == "Ovibos moschatus"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(180000,285000,410000)
 
 # Rangifer tarandus
 # Wikipedia(https://fr.wikipedia.org/wiki/Rangifer_tarandus)
@@ -544,7 +546,8 @@ species_list[which(species_list$scientific_name == "Gerreidae"),
 
 # Crustacea -> Clivanarius vittatus, decapod, amphipod
 # Used 10.1017/S0025315409991408 for lowest (amphipoda) and the lowest of decpoda
-species_list[which(species_list$scientific_name == "Crustacea"), c("bodymass_min","bodymass_max")] <- c(0.02, 15.94638) # To confirm
+# bodymass_mean is midpoint between both
+species_list[which(species_list$scientific_name == "Crustacea"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.02,7.980448,15.94638) # To confirm
 
 # Goby
 # Min based on Ctenogobius boleosoma mean
@@ -647,7 +650,7 @@ species_list[which(species_list$scientific_name == "Crabs"),
 #colMeans(na.rm = TRUE)
 
 # Meiofauna -> arbitrary
-species_list[which(species_list$scientific_name == "Meiofauna"), c("bodymass_min","bodymass_max")] <- c(0.005,0.5)
+species_list[which(species_list$scientific_name == "Meiofauna"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.005,0.2525,0.5)
 
 # Snout -> Synodontis and mormyrus
 # Used Synodontis victoriae (https://fishbase.in/summary/Synodontis-victoriae.html)
@@ -687,14 +690,14 @@ species_list[which(species_list$scientific_name == "Benthivorous haplochromines"
                                    c(10.5,10.5,NA,0.00244,0.01000,NA,2.81,3.04,NA,40)
 
 # Periphyton -> arbitrary
-species_list[which(species_list$scientific_name == "Periphyton"), c("bodymass_min","bodymass_max")] <- c(0.05,0.5)
+species_list[which(species_list$scientific_name == "Periphyton"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.05,0.275,0.5)
 
 # Macrophytes -> arbitrary
-species_list[which(species_list$scientific_name == "Macrophytes"), c("bodymass_min","bodymass_max")] <- c(0.5,1)
+species_list[which(species_list$scientific_name == "Macrophytes"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.5,0.75,1)
 
 # Bivalvia -> Corbicula africana, Caelatura mossarnbicensis, Aspatharia wahlbergi and Mutela dubia
 # Used the same as Mollusca
-species_list[which(species_list$scientific_name == "Bivalvia"), c("bodymass_min","bodymass_max")] <- c(0.5,50)
+species_list[which(species_list$scientific_name == "Bivalvia"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.5,25.25,50)
                #rfishbase::length_weight(c("Corbicula africana", "Caelatura mossarnbicensis", "Aspatharia wahlbergi", "Mutela dubia"), server = "sealifebase") |>
                #dplyr::select(c("Species","LengthMin","LengthMax","a","b")) |>
                #dplyr::mutate(LengthMin = as.numeric(LengthMin), LengthMax = as.numeric(LengthMax)) |>
@@ -704,7 +707,7 @@ species_list[which(species_list$scientific_name == "Bivalvia"), c("bodymass_min"
 
 # Chaoborus edulis
 # Used the same as Zoobenthos, since Chaoborus is part of this group
-species_list[which(species_list$scientific_name == "Chaoborus edulis"), c("bodymass_min","bodymass_max")] <- c(0.05,1)
+species_list[which(species_list$scientific_name == "Chaoborus edulis"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.05,0.525,1)
 
 # Large catfish
 # Based of Bagrus docmak (https://fishbase.in/summary/Bagrus-docmak.html)
@@ -734,10 +737,11 @@ species_list[which(species_list$scientific_name == "Small catfish"),
 #colMeans(na.rm = TRUE)
 
 # Neomysis integer -> used the shrimps part of the Decapoda group
-species_list[which(species_list$scientific_name == "Neomysis integer"), c("bodymass_min","bodymass_max")] <- c(0.7133*(1.2^2.940), 0.0084*(10.8^2.956))
+# bodymass_mean is the midpoint
+species_list[which(species_list$scientific_name == "Neomysis integer"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(1.219172,5.374444,9.529715)
 
 # Heterotrophic benthos -> same as Macrozoobenthos
-species_list[which(species_list$scientific_name == "Heterotrophic benthos"), c("bodymass_min","bodymass_max")] <- c(0.5,2)
+species_list[which(species_list$scientific_name == "Heterotrophic benthos"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.5,1.25,2)
 
 # Crustacea and Molluscs
 # Used Scylla serrata (https://sealifebase.ca/summary/Scylla-serrata.html)
@@ -752,17 +756,17 @@ species_list[which(species_list$scientific_name == "Crustacea and Molluscs"),
 #colMeans(na.rm = TRUE)
 
 # Palaemon longirostris -> used the shrimps part of the Decapoda group
-species_list[which(species_list$scientific_name == "Palaemon longirostris"), c("bodymass_min","bodymass_max")] <- c(0.7133*(1.2^2.940), 0.0084*(10.8^2.956))
+species_list[which(species_list$scientific_name == "Palaemon longirostris"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(1.219172,5.374444,9.529715)
 
 
 # Benthic predators -> Nereis diversicolor, Nephtys hombergii
-species_list[which(species_list$scientific_name == "Benthic predators"), c("bodymass_min","bodymass_max")] <-
-rfishbase::length_weight(c("Nereis diversicolor", "Nephtys hombergii"), server = "sealifebase") |>
-               dplyr::select(c("Species","LengthMin","LengthMax","a","b")) |>
-               dplyr::mutate(LengthMin = as.numeric(LengthMin), LengthMax = as.numeric(LengthMax)) |>
-               dplyr::mutate(bodymass_min = a * LengthMin^b, bodymass_max = a * LengthMax^b) |>
-               dplyr::select(c("bodymass_min", "bodymass_max")) |>
-               colMeans(na.rm = TRUE)
+species_list[which(species_list$scientific_name == "Benthic predators"), c("bodymass_min","bodymass_mean","bodymass_max")] <-c(0.089,0.3345,0.58)
+#rfishbase::length_weight(c("Nereis diversicolor", "Nephtys hombergii"), server = "sealifebase") |>
+#               dplyr::select(c("Species","LengthMin","LengthMax","a","b")) |>
+#               dplyr::mutate(LengthMin = as.numeric(LengthMin), LengthMax = as.numeric(LengthMax)) |>
+#               dplyr::mutate(bodymass_min = a * LengthMin^b, bodymass_max = a * LengthMax^b) |>
+#               dplyr::select(c("bodymass_min", "bodymass_max")) |>
+#               colMeans(na.rm = TRUE)
 
 # Crangon crangon (https://sealifebase.ca/summary/Crangon-crangon.html)
 species_list[which(species_list$scientific_name == "Crangon crangon"),
@@ -776,7 +780,7 @@ species_list[which(species_list$scientific_name == "Crangon crangon"),
 #colMeans(na.rm = TRUE)
 
 # Lichens
-species_list[which(species_list$scientific_name == "Lichens"), c("bodymass_min","bodymass_max")] <- c(0.5,1) # To confirm
+species_list[which(species_list$scientific_name == "Lichens"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.5,0.75,1) # To confirm
 
 # Engraulicypris sardella (https://www.fishbase.de/summary/Engraulicypris-sardella.html)
 # Arbitrary length_min
@@ -785,7 +789,7 @@ species_list[which(species_list$scientific_name == "Engraulicypris sardella"),
                                    c(3,10,13,0.00254,0.00447,0.00785,2.85,3.01,3.17)
 
 # Copepoda, putting same as Zookplankton
-species_list[which(species_list$scientific_name == "Copepoda"), c("bodymass_min","bodymass_max")] <- c(0.0001, 1)
+species_list[which(species_list$scientific_name == "Copepoda"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.0001,0.50005,1)
 
 # Stercorarius longicaudus
 # (https://en.wikipedia.org/wiki/Long-tailed_jaeger)
@@ -793,7 +797,7 @@ species_list[which(species_list$scientific_name == "Stercorarius longicaudus"), 
 
 # Arthropoda -> Chironomidae, Muscidae, Aranea, Lepidoptera, Ichneumonidae, Carabidae
 # Arbitrary
-species_list[which(species_list$scientific_name == "Arthropoda"), c("bodymass_min","bodymass_max")] <- c(0.5,1)
+species_list[which(species_list$scientific_name == "Arthropoda"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(0.5,0.75,1)
 
 # Alepisaurus -> A. minutus and A. ferox
 # Based on Alepisaurus ferox (https://www.fishbase.de/summary/Alepisaurus-ferox.html)
@@ -897,14 +901,14 @@ species_list[which(species_list$scientific_name == "Arius"),
 #colMeans(na.rm = TRUE)
 
 # Bubo scandiacus (https://en.wikipedia.org/wiki/Snowy_owl)
-species_list[which(species_list$scientific_name == "Bubo scandiacus"), c("bodymass_min","bodymass_max")] <- c(1300,1872.5,2.951)
+species_list[which(species_list$scientific_name == "Bubo scandiacus"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(1300,1872.5,2.951)
 
 # Buteo lagopus (https://en.wikipedia.org/wiki/Rough-legged_buzzard)
-species_list[which(species_list$scientific_name == "Buteo lagopus"), c("bodymass_min","bodymass_max")] <- c(600,1051.75,1660)
+species_list[which(species_list$scientific_name == "Buteo lagopus"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(600,1051.75,1660)
 
 #  Canis lupus arctos (https://fr.wikipedia.org/wiki/Loup_arctique)
 # bodymass_min -> (https://www.museedelhistoire.ca/cmc/exhibitions/hist/cae/col1111bf.html)
-species_list[which(species_list$scientific_name == "Canis lupus arctos"), c("bodymass_min","bodymass_max")] <- c(19000, 45000, 80000)
+species_list[which(species_list$scientific_name == "Canis lupus arctos"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(19000, 45000, 80000)
 
 # Carangidae
 # Caranx crysos for length_min
@@ -929,67 +933,101 @@ species_list[which(species_list$scientific_name == "Diplotaxodon"),
                                    c(15.4,15.4,15.4,0.00687,0.01479,0.03186,2.79,2.97,3.15)
 
 # Falco -> Falco peregrinus, F. rusticolus (https://en.wikipedia.org/wiki/Peregrine_falcon)(https://en.wikipedia.org/wiki/Gyrfalcon)
-species_list[which(species_list$scientific_name == "Falco"), c("bodymass_min","bodymass_max")] <- c(330, 1200, 2100)
+species_list[which(species_list$scientific_name == "Falco"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(330, 1200, 2100)
 
 # Falco peregrinus (https://en.wikipedia.org/wiki/Peregrine_falcon)
-species_list[which(species_list$scientific_name == "Falco peregrinus"), c("bodymass_min","bodymass_max")] <- c(330,882.5,1500)
+species_list[which(species_list$scientific_name == "Falco peregrinus"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(330,882.5,1500)
 
 # Gulo gulo (https://en.wikipedia.org/wiki/Wolverine)
-species_list[which(species_list$scientific_name == "Gulo gulo"), c("bodymass_min","bodymass_max")] <- c(7000,16125,27500)
+species_list[which(species_list$scientific_name == "Gulo gulo"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(7000,16125,27500)
 
 # Jaegers -> Stercorarius longicaudus, S. parasiticus (https://en.wikipedia.org/wiki/Parasitic_jaeger)(https://en.wikipedia.org/wiki/Long-tailed_jaeger)
-species_list[which(species_list$scientific_name == "Jaegers"), c("bodymass_min","bodymass_max")] <- c(230, 650)
+species_list[which(species_list$scientific_name == "Jaegers"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(230,406,650)
 
 # Larus hyperboreus (https://en.wikipedia.org/wiki/Glaucous_gull)
-species_list[which(species_list$scientific_name == "Larus hyperboreus"), c("bodymass_min","bodymass_max")] <- c(960,2700)
+species_list[which(species_list$scientific_name == "Larus hyperboreus"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(960,1450,2700)
 
 # Opsaridium microcephalum (https://www.fishbase.ca/summary/Opsaridium-microcephalum.html)
-species_list[which(species_list$scientific_name == "Opsaridium microcephalum"), c("bodymass_min","bodymass_max")] <- c(0.00313*(23.7^2.86), 0.01602*(23.7^3.24))
+# bodymass_mean is the midpoint 
+species_list[which(species_list$scientific_name == "Opsaridium microcephalum"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(23.7,28.85,34,0.00284,0.00646,0.01468,2.88,3.07,3.26)
 
 # Other fish2
-species_list[which(species_list$scientific_name == "Other fish2"), c("bodymass_min","bodymass_max")] <- 
-               rfishbase::validate_names(c("Trisopterus luscus", "Pleuronectes platessa", "Clupea harengus", "Sprattus sprattus", "Solea vulgaris", "Pomatoschistus microps")) |>
-               rfishbase::length_weight() |>
-               dplyr::select(c("Species","LengthMin","LengthMax","a","b")) |>
-               dplyr::mutate(LengthMin = as.numeric(LengthMin), LengthMax = as.numeric(LengthMax)) |>
-               dplyr::mutate(bodymass_min = a * LengthMin^b, bodymass_max = a * LengthMax^b) |>
-               dplyr::select(c("bodymass_min", "bodymass_max")) |>
-               colMeans(na.rm = TRUE)
+# bodymasss_min from Clupea harengus (https://www.fishbase.de/summary/Clupea-harengus.html)
+# bodymass_mean from Trisopterus luscus (https://www.fishbase.ca/summary/Trisopterus-luscus.html)
+# bodymass_max from Pleuronectes platessa (https://fishbase.in/summary/Pleuronectes-platessa.html)
+species_list[which(species_list$scientific_name == "Other fish2"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(16.7,30,100,0.00485,0.00776,0.00903,3.06,3.11,3.10)
+#rfishbase::validate_names(c("Trisopterus luscus", "Pleuronectes platessa", "Clupea harengus", "Sprattus sprattus", "Solea vulgaris", "Pomatoschistus microps")) |>
+#rfishbase::length_weight() |>
+#dplyr::select(c("Species","LengthMin","LengthMax","a","b")) |>
+#dplyr::mutate(LengthMin = as.numeric(LengthMin), LengthMax = as.numeric(LengthMax)) |>
+#dplyr::mutate(bodymass_min = a * LengthMin^b, bodymass_max = a * LengthMax^b) |>
+#dplyr::select(c("bodymass_min", "bodymass_max")) |>
+#colMeans(na.rm = TRUE)
 
-# Rhamphochromis longiceps -> Bayesian L-W from fishbase (https://www.fishbase.ca/summary/Rhamphochromis-longiceps.html)
-species_list[which(species_list$scientific_name == "Rhamphochromis longiceps"), c("bodymass_min","bodymass_max")] <- c(0.00244*(28^2.81), 0.04107*(28^3.27))
+# Rhamphochromis longiceps
+# Bayesian L-W from fishbase (https://www.fishbase.ca/summary/Rhamphochromis-longiceps.html)
+species_list[which(species_list$scientific_name == "Rhamphochromis longiceps"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(13,20.5,28,0.00244,0.01000,0.04107,2.81,3.04,3.27)
 
 # Seabirds
 # Calidris alpina,Haemotopus ostrealegus,Numenius aquatus,Fulica atra,Anas crecca,Anas plathyrhynchus,Larus ridibundus,Larus argentus, Podiceps cristatus, Phalocrocorax carbo
-species_list[which(species_list$scientific_name == "Seabirds"), c("bodymass_min","bodymass_max")] <- c(48,3700)
+# bodymass_min from Calidris alpina
+# bodymass_mean is midpoint
+# bodymass_max from Phalocrocorax carbo
+species_list[which(species_list$scientific_name == "Seabirds"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(48,1874,3700)
 
 # Fishing birds
-# Fishing eagles (aliaeetus vocifer, https://fr.wikipedia.org/wiki/Pygargue_vocifer), kingfishers (used belted kingfisher, https://en.wikipedia.org/wiki/Belted_kingfisher), 
-#cormorants (https://fr.wikipedia.org/wiki/Cormoran), pelicans (https://fr.wikipedia.org/wiki/P%C3%A9lican_gris)
-species_list[which(species_list$scientific_name == "Fishing birds"), c("bodymass_min","bodymass_max")] <- c(113,7000)
+# bodymass_min from kingfishers(https://en.wikipedia.org/wiki/Belted_kingfisher)
+# bodymass_mean is midpoint
+# bodymass_max from pelicans (https://fr.wikipedia.org/wiki/P%C3%A9lican_gris)
+species_list[which(species_list$scientific_name == "Fishing birds"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(113,3556.5,7000)
 
-# Sheephead -> Archosargus probatocephalus, Lagodon romboides
-species_list[which(species_list$scientific_name == "Sheephead"), c("bodymass_min","bodymass_max")] <-
-               rfishbase::validate_names(c("Archosargus probatocephalus", "Lagodon romboides")) |>
-               rfishbase::length_weight() |>
-               dplyr::select(c("Species","LengthMin","LengthMax","a","b")) |>
-               dplyr::mutate(LengthMin = as.numeric(LengthMin), LengthMax = as.numeric(LengthMax)) |>
-               dplyr::mutate(bodymass_min = a * LengthMin^b, bodymass_max = a * LengthMax^b) |>
-               dplyr::select(c("bodymass_min", "bodymass_max")) |>
-               colMeans(na.rm = TRUE)
+# Sheephead
+# bodymass_min from Lagodon rhomboides (https://www.fishbase.de/summary/Lagodon-rhomboides.html)
+#bodymass_mean and max from Archosargus probatocephalus (https://www.fishbase.de/summary/Archosargus-probatocephalus.html)
+species_list[which(species_list$scientific_name == "Sheephead"),
+                                   c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
+                                   c(9,35,91,0.01189,0.02188,0.02622,3.01,3.04,3.07)
+#rfishbase::validate_names(c("Archosargus probatocephalus", "Lagodon romboides")) |>
+#rfishbase::length_weight() |>
+#dplyr::select(c("Species","LengthMin","LengthMax","a","b")) |>
+#dplyr::mutate(LengthMin = as.numeric(LengthMin), LengthMax = as.numeric(LengthMax)) |>
+#dplyr::mutate(bodymass_min = a * LengthMin^b, bodymass_max = a * LengthMax^b) |>
+#dplyr::select(c("bodymass_min", "bodymass_max")) |>
+#colMeans(na.rm = TRUE)
 
 # Stercorarius parasiticus (https://en.wikipedia.org/wiki/Parasitic_jaeger)
-species_list[which(species_list$scientific_name == "Stercorarius parasiticus"), c("bodymass_min","bodymass_max")] <- c(300,650)
+species_list[which(species_list$scientific_name == "Stercorarius parasiticus"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(300,475,650)
 
-# Ursus arctos (https://fr.wikipedia.org/wiki/Ours_brun)
-species_list[which(species_list$scientific_name == "Ursus arctos"), c("bodymass_min","bodymass_max")] <- c(130000, 700000)
+# Ursus arctos (https://en.wikipedia.org/wiki/Brown_bear)
+species_list[which(species_list$scientific_name == "Ursus arctos"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(135000,166000,217000)
 
 # Vulpes vulpes (https://fr.wikipedia.org/wiki/Renard_roux)
-species_list[which(species_list$scientific_name == "Vulpes vulpes"), c("bodymass_min","bodymass_max")] <- c(2200,14000)
+species_list[which(species_list$scientific_name == "Vulpes vulpes"), c("bodymass_min","bodymass_mean","bodymass_max")] <- c(2200,8100,14000)
+
+
+# Compute mass for species from fishbase and sealifebase
+species_list[which(!is.na(species_list$length_min)),"bodymass_min"] <- species_list[which(!is.na(species_list$length_min)),"a_min"]*(
+       species_list[which(!is.na(species_list$length_min)),"length_min"]^species_list[which(!is.na(species_list$length_min)),"b_min"]
+)
+species_list[which(!is.na(species_list$length_mean)),"bodymass_mean"] <- species_list[which(!is.na(species_list$length_mean)),"a_mean"]*(
+       species_list[which(!is.na(species_list$length_mean)),"length_mean"]^species_list[which(!is.na(species_list$length_mean)),"b_mean"]
+)
+species_list[which(!is.na(species_list$length_max)),"bodymass_max"] <- species_list[which(!is.na(species_list$length_max)),"a_max"]*(
+       species_list[which(!is.na(species_list$length_max)),"length_max"]^species_list[which(!is.na(species_list$length_max)),"b_max"]
+)
+
+
+
 
 # Check remaining missing
 # Check which species are NAs for bodymass
-missing_mass2 <- species_list[which(is.na(species_list$bodymass_min & species_list$bodymass_max)),]
+missing_mass2 <- species_list[which(is.na(species_list$bodymass_min & species_list$bodymass_max & species_list$bodymass_mean)),]
 
 # Add species metabolic classes
 species_list[which(species_list$class %in% c("Aves", "Mammalia")), "metabolic_class"] <- "endotherm"
