@@ -36,6 +36,9 @@ dataset$bodymass_min_predator <- dataset$bodymass_min_predator * 0.000001
 dataset$bodymass_mean_predator <- dataset$bodymass_mean_predator * 0.000001
 dataset$bodymass_max_predator <- dataset$bodymass_max_predator * 0.000001
 
+# Generate unique IDs for each predator
+dataset <- dplyr::left_join(dataset, tibble::rownames_to_column(as.data.frame(unique(dataset$predator))), by = c("predator" = "unique(dataset$predator)")) |>
+	dplyr::rename(pred_id = "rowname")
 # Only keep interactions in which the prey are also predators,
 # to only keep all the interactions of the predators
 #test <- dataset[!(dataset$predator %in% dataset$prey), ]
