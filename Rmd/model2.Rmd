@@ -1,0 +1,61 @@
+---
+title: "Model analysis"
+author: "Benjamin Mercier"
+date: "`r paste('Last updated on', format(Sys.time(), '%d %B, %Y'))`"
+---
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+# Load needed libraries
+suppressPackageStartupMessages(library(rstan))
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(tidybayes))
+suppressPackageStartupMessages(library(brms))
+suppressPackageStartupMessages(library(bayesplot))
+suppressPackageStartupMessages(library(flexdashboard))
+suppressPackageStartupMessages(library(knitr))
+# Options to run the chains faster
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+```
+
+
+# Model 2
+Column 1
+--------------------------------------------------
+### Description of the model
+<br>
+
+This second model is a slight variant of the first, in which we assign a specific $\alpha$ to each predator. In doing so, we can isolate difference between predator, to check if some predator seems to be different from the whole.
+
+\begin{align}
+F_{ij}^{real} &= \alpha_{j} * B_i * \frac{B_j}{M_j}
+\end{align}
+
+```{r table_2, echo = FALSE}
+kable(summary(output_stan_model2)$summary, caption = "Stan model 2 output")
+```
+
+Column 2
+--------------------------------------------------
+### Plots
+
+```{r load model2, echo = FALSE, include = FALSE}
+output_brms_model2 <- readRDS("results/model_outputs/output_brms_model2.RDS")
+output_stan_model2 <- readRDS("results/model_outputs/output_stan_model2.RDS")
+```
+
+#### **Brms**
+
+```{r plotting_2-1, echo = FALSE, out.width = "100%"}
+plot(output_brms_model2)
+```
+
+#### **Stan**
+
+```{r plotting_2-2, echo = FALSE, out.width = "100%"}
+#get(output_stan_model2)
+#summary(output_stan_model2)$summary[, 4:8] %>%
+#      as.data.frame() %>%
+#      rownames_to_column(var = 'param')
+traceplot(output_stan_model2)
+```

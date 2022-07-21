@@ -1,0 +1,34 @@
+name: "BenMerSci"
+navbar:
+  title: "Prey-predators flux models"
+  left:
+    - text: "Home"
+      icon: fa-home
+      href: index.html
+
+    - text: "Model 1"
+      icon: fa-bookmark
+      menu:
+        - text: "Model 1 Brms-Stan"
+          href: Rmd/model1.html
+
+    - text: "Model 2"
+      icon: fa-bookmark
+      menu:
+        - text: "Model 2 Brms-Stan"
+          href: Rmd/model2.html
+
+    - text: "Model 3"
+      icon: fa-bookmark
+      menu:
+        - text: "Model 3 Brms-Stan"
+          href: Rmd/model3.html
+  right:
+    - icon: fa-github fa-lg
+      href: https://github.com/BenMerSci/master
+output:
+  html_document:
+    theme: cosmo
+    toc: true
+    toc_float: true
+    toc_depth: 2
