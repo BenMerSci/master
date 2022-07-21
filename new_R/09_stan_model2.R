@@ -26,3 +26,10 @@ output_stan_model2 <- stan(
 
 # Save it RDS
 saveRDS(output_stan_model2, "data/clean/model_outputs/output_stan_model2.RDS")
+
+
+
+get(output_stan_model2)
+summary(output_stan_model2)$summary[, 4:8] %>%
+      as.data.frame() %>%
+      rownames_to_column(var = 'param')
