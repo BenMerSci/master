@@ -1,6 +1,6 @@
 # Load the matrices
 load("data/raw/ecopath/data/Ecopath_models_modif.Rdata")
-Group_name <- readRDS("data/intermediate/new/Group_name.RDS")
+Group_name <- readRDS("data/intermediate/Group_name.RDS")
 load("data/raw/ecopath/data/DIET.Rdata")
 load("data/raw/ecopath/data/Q_vec.Rdata")
 load("data/raw/ecopath/data/B_vec.Rdata")
@@ -78,7 +78,7 @@ interactions <- purrr::map2(asplit(Ecopath_models, 1), interactions, .f = functi
 inter_table <- do.call("rbind", interactions)
 
 # Save the data
-saveRDS(inter_table, file = "data/intermediate/new/inter_table.RDS")
+saveRDS(inter_table, file = "data/intermediate/inter_table.RDS")
 
 # Andrew's checking
 # Check to see if there is a causation between

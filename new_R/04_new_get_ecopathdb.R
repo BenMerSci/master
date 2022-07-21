@@ -41,4 +41,4 @@ ecopath_metadata[which(ecopath_metadata$model_name == "Arctic islands, Zackenber
 ecopath_metadata[which(ecopath_metadata$model_name == "Arctic islands, Bylot"), "model_year"] <- "2008"
 
 # Write the list as a .Rdata file
-saveRDS(ecopath_metadata, file = "data/intermediate/new/ecopath_metadata.RDS")
+saveRDS(ecopath_metadata, file = "data/intermediate/ecopath_metadata.RDS")

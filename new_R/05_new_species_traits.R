@@ -1,5 +1,5 @@
 # Load the interaction table to make a unique species list
-resolved_inter_table <- readRDS("data/intermediate/new/resolved_inter_table.RDS")
+resolved_inter_table <- readRDS("data/intermediate/resolved_inter_table.RDS")
 
 
 species_list <- tibble::enframe(unique(c(resolved_inter_table$prey,
@@ -1036,4 +1036,4 @@ species_list[which(species_list$family %in% c("Istiophoridae","Xiphiidae","Scomb
 species_list[which(is.na(species_list$metabolic_class)),"metabolic_class"] <- "ectotherm"
 
 # Save the file
-saveRDS(species_list, "data/intermediate/new/species_traits_new.RDS")
+saveRDS(species_list, "data/intermediate/species_traits.RDS")

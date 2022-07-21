@@ -1,5 +1,5 @@
 # Load the interactions table
-inter_table <- readRDS("data/intermediate/new/inter_table.RDS")
+inter_table <- readRDS("data/intermediate/inter_table.RDS")
 
 # Get a unique vector of the species names
 prelem_sp_list <- tibble::enframe(x = unique(c(inter_table$prey, inter_table$predator)),
@@ -13,7 +13,7 @@ prelem_sp_list[which(prelem_sp_list$original_name == "Nereidae"),"original_name"
 
  # Resolve the names
 # If file of resolved_names doesn't exist it creates it, otherwise it loads it
-if(!file.exists("data/intermediate/new/resolved_names.RDS")) {
+if(!file.exists("data/intermediate/resolved_names.RDS")) {
 # Used traitdataform instead of taxize because the
 # function is a wrapper around gnr_resolve
 # to get the accepted name if it's a synonym
@@ -24,9 +24,9 @@ if(!file.exists("data/intermediate/new/resolved_names.RDS")) {
                       dplyr::select(c("verbatimScientificName","scientificName"))
 # Replace the NA names
     resolved_names[index, "verbatimScientificName"] <- temp
-        saveRDS(resolved_names, "data/intermediate/new/resolved_names.RDS")
+        saveRDS(resolved_names, "data/intermediate/resolved_names.RDS")
 } else{
-    resolved_names <-  readRDS("data/intermediate/new/resolved_names.RDS")
+    resolved_names <-  readRDS("data/intermediate/resolved_names.RDS")
   }
 
 # Manually replace names that had no matches
@@ -60,5 +60,5 @@ resolved_inter_table <- base::merge(inter_table, resolved_names, by.x = "prey",
 
 # Save it back into inter_table
 saveRDS(resolved_inter_table,
- file = "data/intermediate/new/resolved_inter_table.RDS"
+ file = "data/intermediate/resolved_inter_table.RDS"
 )

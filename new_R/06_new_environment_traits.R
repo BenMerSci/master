@@ -1,5 +1,5 @@
 # Load the ecopath metadata file
-ecopath_metadata <- readRDS("data/intermediate/new/ecopath_metadata.RDS")
+ecopath_metadata <- readRDS("data/intermediate/ecopath_metadata.RDS")
 
 # Load Ecopath_models_modif to get the habitat type
 load("data/raw/ecopath/data/Ecopath_models_modif.Rdata")
@@ -142,4 +142,4 @@ for (i in 1:nrow(enviro_df)) {
 	enviro_df[i,"air_temperature"] <- raster::extract(air_final_stack[[as.character(enviro_df[i,"model_year"])]], enviro_df[i,c("lon","lat")])
 }
 
-saveRDS(enviro_df, "data/intermediate/new/enviro_traits.RDS")
+saveRDS(enviro_df, "data/intermediate/enviro_traits.RDS")

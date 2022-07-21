@@ -496,4 +496,4 @@ Group_name[[116]][which(Group_name[[116]][,"original_name"] == "Jaegers"),"scien
 Group_name[[116]][which(Group_name[[116]][,"original_name"] == "Brown_bear"),"scientific_name"] <- "Ursus horribilis"
 
 # Write the list as a .RDS file
-saveRDS(Group_name, file = "data/intermediate/new/Group_name.RDS")
+saveRDS(Group_name, file = "data/intermediate/Group_name.RDS")
