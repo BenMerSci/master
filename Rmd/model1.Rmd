@@ -42,8 +42,8 @@ Column 2
 ### Plots
 
 ```{r load model1, echo = FALSE, include = FALSE}
-output_brms_model1 <- readRDS("results/model_outputs/output_brms_model1.RDS")
-output_stan_model1 <- readRDS("results/model_outputs/output_stan_model1.RDS")
+output_brms_model1 <- readRDS("../results/model_outputs/output_brms_model1.RDS")
+output_stan_model1 <- readRDS("../results/model_outputs/output_stan_model1.RDS")
 ```
 
 #### **Brms**
