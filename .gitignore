@@ -2,9 +2,7 @@
 obsidian_notes/
 paperasse/e
 propose/
-data/raw
-data/legagneux
-data/intermediate/old
+data/
 R/graveyard/
 seminaire1/*
 R/*.rds
