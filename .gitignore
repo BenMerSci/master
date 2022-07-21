@@ -6,7 +6,7 @@ data/raw
 data/legagneux
 data/intermediate/old
 R/graveyard/
-seminaire1/
+seminaire1/*
 
 # Files to ignore
 *.jpg
