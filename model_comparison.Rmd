@@ -43,8 +43,8 @@ Column 2
 ### Plots
 
 ```{r load model1, echo = FALSE, include = FALSE}
-output_brms_model1 <- readRDS("../data/clean/model_outputs/output_brms_model1.RDS")
-output_stan_model1 <- readRDS("../data/clean/model_outputs/output_stan_model1.RDS")
+output_brms_model1 <- readRDS("results/model_outputs/output_brms_model1.RDS")
+output_stan_model1 <- readRDS("results/model_outputs/output_stan_model1.RDS")
 ```
 
 #### **Brms**
@@ -80,8 +80,8 @@ Column 2
 ### Plots
 
 ```{r load model2, echo = FALSE, include = FALSE}
-output_brms_model2 <- readRDS("../data/clean/model_outputs/output_brms_model2.RDS")
-output_stan_model2 <- readRDS("../data/clean/model_outputs/output_stan_model2.RDS")
+output_brms_model2 <- readRDS("results/model_outputs/output_brms_model2.RDS")
+output_stan_model2 <- readRDS("results/model_outputs/output_stan_model2.RDS")
 ```
 
 #### **Brms**
@@ -93,5 +93,9 @@ plot(output_brms_model2)
 #### **Stan**
 
 ```{r plotting_2-2, echo = FALSE, out.width = "100%"}
+get(output_stan_model2)
+summary(output_stan_model2)$summary[, 4:8] %>%
+      as.data.frame() %>%
+      rownames_to_column(var = 'param')
 traceplot(output_stan_model2)
 ```
