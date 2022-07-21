@@ -1,0 +1,40 @@
+\chapter{\textbf{MATÉRIEL ET MÉTHODES / ARTICLE SCIENTIFIQUE}}
+
+\section{Titre}
+\lipsum[1]
+\vfill{}
+\pagebreak
+
+\begin{center}
+\textbf{Titre de l'article} \\
+\textit{Journal} (Année), Volume (Issue): pages. \\
+Auteurs
+\end{center}
+
+\section{Titre}
+\lipsum[1]
+\vfill{}
+\textbf{Keyword :} Mot-clé, mot-clé
+\pagebreak
+
+\section{Titre}
+Exemples de références qui seront seulement dans ce chapitre si la thèse est par insertion d'article: \cite{Thackeray2010, Siepielski2017}.
+
+Faire référence au tableau \ref{ch2table1} au moins une fois et à la figure \ref{ch2FigS1} de l'annexe A.  % ceci fait référence au label donné dans la figure 
+
+\section{Titre}
+\subsection{Titre}
+\input{figs/chapitre2/ch2table1}
+
+\lipsum[2-4]
+
+%-------------------BIBLIOGRAPHIE----------------------------
+% assurez vous d’avoir un dossier avec vos listes de références par chapitre. C’est ici que chaque liste est intégrée au chapitre. 
+% il faut la commande \bibliography ET \bibliographystyle pour que la liste par chapitre (avec différents styles) fonctionne. 
+
+\singlespacing 
+{\renewcommand{\bibname}{References}
+\renewcommand{\bibsection}{\section{\bibname}}
+\bibliography{bib/chapitre2}}
+\bibliographystyle{styles/myBEAS} 
+
