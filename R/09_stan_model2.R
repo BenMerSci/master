@@ -17,7 +17,7 @@ lst_score_data2 <- list(y = obs, N = length(obs), biomass_prey = biomass_prey,
 
 # Fit the models
 output_stan_model2 <- stan(
-  file = "new_R/09_stan_model2.stan",
+  file = "R/09_stan_model2.stan",
   iter = 2000,
   chains = 4,
   cores = 3,
@@ -25,11 +25,4 @@ output_stan_model2 <- stan(
 )
 
 # Save it RDS
-saveRDS(output_stan_model2, "data/clean/model_outputs/output_stan_model2.RDS")
-
-
-
-get(output_stan_model2)
-summary(output_stan_model2)$summary[, 4:8] %>%
-      as.data.frame() %>%
-      rownames_to_column(var = 'param')
+saveRDS(output_stan_model2, "results/model_outputs/output_stan_model2.RDS")

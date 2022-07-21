@@ -16,12 +16,13 @@ lst_score_data3 <- list(y = obs, N = length(obs), biomass_prey = biomass_prey,
   pred_id = pred_id, npred = npred, degree_predator = degree_predator)
 
 # Fit the model
-fit_score3 <- stan(
-  file = "new_R/09_stan_model3.stan",
+output_stan_model3 <- stan(
+  file = "R/09_stan_model3.stan",
   iter = 2000,
   chains = 4,
   cores = 3,
   data = lst_score_data3
 )
-traceplot(fit_score3, pars = c("alpha", "sigma"))
-bayesplot::mcmc_areas(as.matrix(fit_score3), pars = paste0("alpha[", 1:118, "]"))
+
+# Save it RDS
+saveRDS(output_stan_model3, "results/model_outputs/output_stan_model3.RDS")

@@ -40,11 +40,8 @@ curve_lgnorm_prior <- c(
 output_brms_model1 <- brm(curve_bf_const1,
                     prior = curve_lgnorm_prior,
                     data = dataset_sub,
-                    file = "data/clean/model_outputs/brms_model1",
+                    file = "results/model_outputs/output_brms_model1.RDS",
                     file_refit = "on_change")
-
-# Save it RDS
-saveRDS(output_brms_model1, "data/clean/model_outputs/output_brms_model1.RDS")
 
 # Draw predictions from the model
 #const_post <- dataset_sub |>
