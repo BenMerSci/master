@@ -1,60 +1,68 @@
 ---
-title: "Model analysis"
+title: "Model 1 analysis"
 author: "Benjamin Mercier"
 date: "`r paste('Last updated on', format(Sys.time(), '%d %B, %Y'))`"
 ---
 
+<!-- Load nedeed libraries -->
 ```{r, echo = FALSE, message=FALSE, warning=FALSE}
-# Load needed libraries
 suppressPackageStartupMessages(library(rstan))
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(tidybayes))
 suppressPackageStartupMessages(library(brms))
 suppressPackageStartupMessages(library(bayesplot))
-suppressPackageStartupMessages(library(flexdashboard))
 suppressPackageStartupMessages(library(knitr))
 # Options to run the chains faster
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 ```
-
-# Model 1
-Column 1
---------------------------------------------------
-
-### Description of the model
-<br>
-
-Model 1 fits the flux between a prey (i) and its predator (j) only based on mass-action (biomass of prey and abundance of predators).
-The scaling parameters $\alpha$ is general to every predator.
-
-\begin{align}
-F_{ij}^{real} &= \alpha * B_i * \frac{B_j}{M_j}
-\end{align}
-
-```{r table_1, echo = FALSE}
-kable(summary(output_stan_model1)$summary, caption = "Stan model 1 output")
-```
-
-Column 2
---------------------------------------------------
-
-### Plots
-
+<!-- Load the data --> 
 ```{r load model1, echo = FALSE, include = FALSE}
 output_brms_model1 <- readRDS("../results/model_outputs/output_brms_model1.RDS")
 output_stan_model1 <- readRDS("../results/model_outputs/output_stan_model1.RDS")
 ```
 
-#### **Brms**
+# Model 1
+## Description of the model
+<br>
+Model 1 fits the flux between a prey (i) and its predator (j) only based on mass-action (biomass of prey and abundance of predators).
+The scaling parameters $\alpha$ is general to every predator.
+<!-- Model equation -->
+\begin{align}
+F_{ij}^{real} &= \alpha * B_i * \frac{B_j}{M_j}
+\end{align}
 
+## Stan section
+### Summary table
+```{r table_1, echo = FALSE}
+kable(summary(output_stan_model1)$summary, caption = "Summary table model 1")
+```
+### Traceplots
+```{r trace plots, echo = FALSE}
+traceplot(output_stan_model1)
+```
+### Density plots
+``` {r density plots, echo = FALSE}
+# Structure the outputed data
+extracted_stan1 <- rstan::extract(output_stan_model1) |>
+                    enframe() |>
+                     unnest(cols = "value") |>
+                      rename(parameters = "name") |>
+                       dplyr::filter(parameters != "lp__")
+
+extracted_stan1_mean <- plyr::ddply(extracted_stan1, "parameters", summarise, grp.mean=mean(value))
+
+extracted_stan1 |>
+ dplyr::filter(parameters != "lp__") |>
+  ggplot(aes(x = value)) +
+   geom_density(color="black", fill="lightblue") +
+   facet_grid(parameters ~ .)+
+    geom_vline(data = extracted_stan1_mean, aes(xintercept=grp.mean),
+     color="black", linetype="dashed", size=1) +
+       theme_classic()
+```
+
+## Brms section
 ```{r plotting_1-1, echo = FALSE, out.width = "100%"}
 plot(output_brms_model1)
 ```
-
-#### **Stan**
-
-```{r plotting_1-2, echo = FALSE, out.width = "100%"}
-traceplot(output_stan_model1)
-```
-

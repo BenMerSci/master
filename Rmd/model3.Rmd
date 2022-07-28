@@ -1,0 +1,56 @@
+---
+title: "Model analysis"
+author: "Benjamin Mercier"
+date: "`r paste('Last updated on', format(Sys.time(), '%d %B, %Y'))`"
+---
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+# Load needed libraries
+suppressPackageStartupMessages(library(rstan))
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(tidybayes))
+suppressPackageStartupMessages(library(brms))
+suppressPackageStartupMessages(library(bayesplot))
+suppressPackageStartupMessages(library(flexdashboard))
+suppressPackageStartupMessages(library(knitr))
+# Options to run the chains faster
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+```
+
+# Model 3
+## Description of the model
+<br>
+
+This third model is again a slight variant of the two first, in which we assign a specific $\alpha$ to each predator, but we also divide it by the degree of the predator (number of preys). In doing so, we can still isolate difference between predator, to check if some predator seems to be different from the whole, but also try to divide between each of ones predators prey.
+
+\begin{align}
+F_{ij}^{real} &= \frac{\alpha_{j}}{D_{j}} * B_i * \frac{B_j}{M_j}
+\end{align}
+
+```{r table_2, echo = FALSE}
+kable(summary(output_stan_model3)$summary, caption = "Stan model 3 output")
+```
+
+## Plots
+
+```{r load model3, echo = FALSE, include = FALSE}
+output_brms_model3 <- readRDS("../results/model_outputs/output_brms_model3.RDS")
+output_stan_model3 <- readRDS("../results/model_outputs/output_stan_model3.RDS")
+```
+
+### **Brms**
+
+```{r plotting_3-1, echo = FALSE, out.width = "100%"}
+plot(output_brms_model3)
+```
+
+### **Stan**
+
+```{r plotting_3-2, echo = FALSE, out.width = "100%"}
+#get(output_stan_model3)
+#summary(output_stan_model3)$summary[, 4:8] %>%
+#      as.data.frame() %>%
+#      rownames_to_column(var = 'param')
+traceplot(output_stan_model3)
+```

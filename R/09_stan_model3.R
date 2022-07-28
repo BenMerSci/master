@@ -18,7 +18,7 @@ lst_score_data3 <- list(y = obs, N = length(obs), biomass_prey = biomass_prey,
 # Fit the model
 output_stan_model3 <- stan(
   file = "R/09_stan_model3.stan",
-  iter = 2000,
+  iter = 8000,
   chains = 4,
   cores = 3,
   data = lst_score_data3
