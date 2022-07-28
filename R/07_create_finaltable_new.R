@@ -1,7 +1,7 @@
 # Load the data needed
-interactions <- readRDS("data/intermediate/new/resolved_inter_table.RDS")
-traits <- readRDS("data/intermediate/new/species_traits_new.RDS")
-enviro <- readRDS("data/intermediate/new/enviro_traits.RDS")
+interactions <- readRDS("data/intermediate/resolved_inter_table.RDS")
+traits <- readRDS("data/intermediate/species_traits.RDS")
+enviro <- readRDS("data/intermediate/enviro_traits.RDS")
 
 # Merge the tables together
 dataset <- merge(interactions, traits, by.x = "prey",
@@ -27,6 +27,9 @@ dataset <- merge(interactions, traits, by.x = "prey",
             "bodymass_max_predator", "class_predator", "family_predator",
             "metabolism_predator", "model_name", "model_year", "ecosystem_type",
             "habitat_type", "water_temperature", "air_temperature")
+
+# Add column of predator-model_name combined
+dataset <- dplyr::mutate(dataset, predator_by_web = paste(dataset$predator, dataset$model_name, sep = "_"))
 
 # Change species mass from grams to tons
 dataset$bodymass_min_prey <- dataset$bodymass_min_prey * 0.000001
