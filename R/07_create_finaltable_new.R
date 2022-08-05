@@ -28,9 +28,6 @@ dataset <- merge(interactions, traits, by.x = "prey",
             "metabolism_predator", "model_name", "model_year", "ecosystem_type",
             "habitat_type", "water_temperature", "air_temperature")
 
-# Add column of predator-model_name combined
-dataset <- dplyr::mutate(dataset, predator_by_web = paste(dataset$predator, dataset$model_name, sep = "_"))
-
 # Change species mass from grams to tons
 dataset$bodymass_min_prey <- dataset$bodymass_min_prey * 0.000001
 dataset$bodymass_mean_prey <- dataset$bodymass_mean_prey * 0.000001
@@ -41,7 +38,10 @@ dataset$bodymass_max_predator <- dataset$bodymass_max_predator * 0.000001
 
 # Generate unique IDs for each predator
 dataset <- dplyr::left_join(dataset, tibble::rownames_to_column(as.data.frame(unique(dataset$predator))), by = c("predator" = "unique(dataset$predator)")) |>
-	dplyr::rename(pred_id = "rowname")
+	dplyr::rename(pred_id = "rowname") |>
+    dplyr::left_join(tibble::rownames_to_column(as.data.frame(unique(dataset$model_name))), by = c("model_name" = "unique(dataset$model_name)")) |>
+    dplyr::rename(foodweb_id = "rowname")
+
 # Only keep interactions in which the prey are also predators,
 # to only keep all the interactions of the predators
 #test <- dataset[!(dataset$predator %in% dataset$prey), ]
