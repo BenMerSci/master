@@ -15,7 +15,7 @@ lst_score_data3 <- list(y = dataset$pred_flow,
 
 # Fit the model
 output_stan_model3 <- stan(
-  file = "R/09_stan_model3.stan",
+  file = "R/08_stan_model3.stan",
   iter = 6000,
   chains = 4,
   cores = 3,

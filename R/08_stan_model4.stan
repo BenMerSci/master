@@ -37,8 +37,8 @@ model {
   // Priors:
   a_pop ~ normal(1, 5);
   a_grp ~ normal(2, a_sd);
-  a_sd ~ exponential(0.2);
-  sigma ~ exponential(0.15);
+  a_sd ~ exponential(0.16);
+  sigma ~ exponential(0.16);
 
   // Likelihood:
   // Computing each alpha by predator
