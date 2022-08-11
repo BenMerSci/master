@@ -5,37 +5,42 @@ data {
   // Vector data
   vector[N] y;  // Predicted data
   vector[N] biomass_prey; // Prey biomasses
-  vector[N] biomass_predator; // Predator biomasses
-  vector[N] bodymass_mean_predator; //  Predator bodymasses
-  int pred_id[N]; // predator id to assess each alpha
+  vector[N] abundance_pred; // Predator abundances
   vector[N] degree_predator; // Degrees of each predator
+  int pred_id[N]; // predator id to assess each alpha
+}
+
+transformed data {
+  vector[N] log_y = log(y);
+  vector[N] log_biomass_prey = log(biomass_prey);
+  vector[N] log_abundance_pred = log(abundance_pred);
+  vector[N] log_degree_predator = log(degree_predator);
 }
 
 parameters {
   real a_pop; // Population-level alpha
   vector[npred] a_grp; // Group-level effect for each predator to be added to the Population-level alpha
-  real a_sd;
+  real<lower = 0 > a_sd;
   real<lower = 0> sigma; // 
 }
 
 model {
   vector[N] mu;
-  vector[N] alpha_spec;
+  vector[npred] alpha_spec;
 
   // Priors:
   a_pop ~ normal(1, 10);
   a_grp ~ normal(1, a_sd);
-  a_sd ~ lognormal(1,1);
-  sigma ~ lognormal(3, 1);
+  a_sd ~ exponential(0.2);
+  sigma ~ exponential(0.2);
 
   // Likelihood:
-  for(j in 1:npred){
-    alpha_spec[j] = a_pop + a_grp[j];
-  }
+  // Computing each alpha by predator
+   alpha_spec = a_pop + a_grp;
+  
+  // Computing target's mean
+   mu = (alpha_spec[pred_id]-log_degree_predator) + log_biomass_prey + log_abundance_pred;
 
-  for(i in 1:N)
-   mu[i] = (alpha_spec[pred_id[i]]-degree_predator[i]) + biomass_prey[i] + (biomass_predator[i] - bodymass_mean_predator[i]);
-
-  y ~ normal(mu, sigma);
+  log_y ~ normal(mu, sigma);
 
 }

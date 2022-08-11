@@ -2,10 +2,15 @@ data {
   // Size integer
   int<lower = 1> N;  // Sample size
   // Vector data
-  vector[N] y;  // Predicted data
+  vector[N] y;  // Target data
   vector[N] biomass_prey; // Prey biomasses
-  vector[N] biomass_predator; // Predator biomasses
-  vector[N] bodymass_mean_predator; //  Predator bodymasses
+  vector[N] abundance_pred; // Predator abundances
+}
+
+transformed data {
+   vector[N] log_y = log(y);
+   vector[N] log_biomass_prey = log(biomass_prey);
+   vector[N] log_abundance_pred = log(abundance_pred);
 }
 
 parameters {
@@ -19,12 +24,25 @@ model {
 
   // Priors:
   a_pop ~ normal(1, 10);
-  sigma ~ lognormal(3, 1);
+  sigma ~ exponential(0.2);
 
   // Likelihood:
-  for(i in 1:N)
-  mu[i] = a_pop + biomass_prey[i] + (biomass_predator[i] - bodymass_mean_predator[i]);
-  
-  y ~ normal(mu, sigma);
+  // Computing target's mean
+   mu = a_pop + log_biomass_prey + log_abundance_pred;
+
+  // Computing target
+   log_y ~ normal(mu, sigma);
 
 }
+
+//generated quantities {
+//  vector[N] yhat;                // predictor
+//  real<lower=0> rss;             // residual sum of squares
+//  real<lower=0> totalss;         // total SS              
+//  real Rsq;                      // Rsq
+//  
+//  yhat = a_pop + biomass_prey + abundance_pred;
+//  rss = dot_self(y-yhat);
+//  totalss = dot_self(y-mean(y));
+//  Rsq = 1 - rss/totalss;
+//}

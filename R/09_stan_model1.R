@@ -1,15 +1,14 @@
 library(rstan)
-# The data
 
+# The data
 dataset <- readRDS("data/clean/new_dataset.RDS")
-obs <- log(dataset$pred_flow)
-biomass_prey <- log(dataset$biomass_prey)
-biomass_predator <- log(dataset$biomass_predator)
-bodymass_mean_predator <- log(dataset$bodymass_mean_predator)
 
 # Store the info in a list for each model
-lst_score_data1 <- list(y = obs, N = length(obs), biomass_prey = biomass_prey,
-  biomass_predator = biomass_predator, bodymass_mean_predator = bodymass_mean_predator)
+lst_score_data1 <- list(y = dataset$pred_flow,
+                    N = length(dataset$pred_flow),
+                    biomass_prey = dataset$biomass_prey,
+                    abundance_pred = dataset$biomass_pred/dataset$bodymass_mean_predator
+                   )
 
 
 # Fit the models
