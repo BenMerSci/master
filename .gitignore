@@ -1,9 +1,6 @@
 # Folder to ignore
-obsidian_notes/
-paperasse/e
 propose/
 data/
-R/graveyard/
 seminaire1/*
 R/*.rds
 
