@@ -42,6 +42,10 @@ dataset <- dplyr::left_join(dataset, tibble::rownames_to_column(as.data.frame(un
     dplyr::left_join(tibble::rownames_to_column(as.data.frame(unique(dataset$model_name))), by = c("model_name" = "unique(dataset$model_name)")) |>
     dplyr::rename(foodweb_id = "rowname")
 
+# Change Zooplankton habitat_type to marine_freshwater
+dataset$habitat_type <- as.character(dataset$habitat_type)
+dataset[which(dataset$predator == "Zooplankton"), "habitat_type"] <- "marine_freshwater"
+
 # Only keep interactions in which the prey are also predators,
 # to only keep all the interactions of the predators
 #test <- dataset[!(dataset$predator %in% dataset$prey), ]
