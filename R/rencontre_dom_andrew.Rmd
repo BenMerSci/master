@@ -47,3 +47,22 @@ F_{ij}^{real} = \frac{\phi_{ij} * B_i * B_j}{M_j * D_j + h_j \sum_{n=1} ^{i} \ph
 \end{align}
 
 se faisant, on a réellement besoin que de la masse du prédateur, et non de celle des proies non taxonomiquement résolues pour lesquelles il est "impossible" d'obtenir une valeur moyenne de bodymass.
+
+
+# Équation pour Will
+\begin{align}
+F_{ij}^{real} = \frac{F_{ij}^{theoretical}}{1+h_j * \sum_{i=1} ^{i}{F_{j}^{theoretical}}} && F_{ij}^{theoretical} &= \alpha_{j} * B_i * \frac{B_j}{M_j} \\ 
+\end{align}
+
+ où <br>
+- $\alpha$ est un paramètre spécifique à un prédateur (mais le prédateur peut se retrouver dans plusieurs réseaux différents) <br>
+- $B_i$ est la biomasse de la proie dans un réseau spéficique <br>
+- $B_j$ et $M_j$ sont la biomasse et la bodymass d'un prédateur spéficique. La biomasse du prédateur est la même dans un réseau, mais peut varier d'un réseau à l,autre, alors que son bodymass sera le même pour chacun des réseaux.<br>
+- $h_j$ est une variable déjà calculée.
+<br>
+
+Donc par exemple un prédateur avec 2 proies:<br>
+
+\begin{align}
+F_{proie1,pred1}^{real} = \frac{\alpha_{pred1} * B_{proie1} * \frac{B_{pred1}}{M_{pred1}}}{1+ h_j * ((\alpha_{pred1} * B_{proie1} * \frac{B_{pred1}}{M_{pred1 }})+(\alpha_{pred1} * B_{proie2} * \frac{B_ {pred1}}{M_{pred1}}))}
+\end{align}
