@@ -39,6 +39,7 @@ dataset$bodymass_max_predator <- dataset$bodymass_max_predator * 0.000001
 # Generate unique IDs for each predator
 dataset <- dplyr::left_join(dataset, tibble::rownames_to_column(as.data.frame(unique(dataset$predator))), by = c("predator" = "unique(dataset$predator)")) |>
 	dplyr::rename(pred_id = "rowname") |>
+    dplyr::mutate(pred_id = as.numeric(pred_id)) |>
     dplyr::left_join(tibble::rownames_to_column(as.data.frame(unique(dataset$model_name))), by = c("model_name" = "unique(dataset$model_name)")) |>
     dplyr::rename(foodweb_id = "rowname")
 
