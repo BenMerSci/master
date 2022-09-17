@@ -1,16 +1,16 @@
 data {
   // Size integer
-  int<lower = 1> N;  // Sample size
+  int<lower = 1> n;  // Sample size
   // Vector data
-  vector[N] y;  // Target data
-  vector[N] biomass_prey; // Prey biomasses
-  vector[N] abundance_pred; // Predator abundances
+  vector[n] pred_flow;  // Target data
+  vector[n] biomass_prey; // Prey biomasses
+  vector[n] abundance_predator; // Predator abundances
 }
 
 transformed data {
-   vector[N] log_y = log(y);
-   vector[N] log_biomass_prey = log(biomass_prey);
-   vector[N] log_abundance_pred = log(abundance_pred);
+   vector[n] log_pred_flow = log(pred_flow);
+   vector[n] log_biomass_prey = log(biomass_prey);
+   vector[n] log_abundance_predator = log(abundance_predator);
 }
 
 parameters {
@@ -20,7 +20,7 @@ parameters {
 }
 
 model {
-  vector[N] mu;
+  vector[n] mu;
 
   // Priors:
   a_pop ~ normal(1, 10);
@@ -28,10 +28,10 @@ model {
 
   // Likelihood:
   // Computing target's mean
-   mu = a_pop + log_biomass_prey + log_abundance_pred;
+   mu = a_pop + log_biomass_prey + log_abundance_predator;
 
   // Computing target
-   log_y ~ normal(mu, sigma);
+   log_pred_flow ~ normal(mu, sigma);
 
 }
 

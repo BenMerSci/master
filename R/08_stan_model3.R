@@ -3,15 +3,13 @@ library(rstan)
 # The data
 dataset <- readRDS("data/clean/new_dataset.RDS")
 
-# Store the info in a list for each model
-lst_score_data3 <- list(y = dataset$pred_flow,
-                    N = length(dataset$pred_flow),
-                    biomass_prey = dataset$biomass_prey,
-                    pred_id = as.numeric(dataset$pred_id),
-                    npred = length(unique(dataset$predator)),
-                    abundance_pred = dataset$biomass_pred/dataset$bodymass_mean_predator,
-                    degree_predator = dataset$degree_predator
-                   )
+# Select desired variables
+dataset <- dataset |>
+            dplyr::mutate(abundance_predator = 
+            biomass_predator / bodymass_mean_predator) |>
+             dplyr::select(pred_flow, biomass_prey,
+              abundance_predator, predator, pred_id,
+              degree_predator)
 
 # Fit the model
 output_stan_model3 <- stan(
@@ -19,7 +17,7 @@ output_stan_model3 <- stan(
   iter = 6000,
   chains = 4,
   cores = 3,
-  data = lst_score_data3
+  data = tidybayes::compose_data(dataset)
 )
 
 # Save it RDS

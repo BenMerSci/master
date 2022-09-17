@@ -3,21 +3,20 @@ library(rstan)
 # The data
 dataset <- readRDS("data/clean/new_dataset.RDS")
 
-# Store the info in a list for each model
-lst_score_data1 <- list(y = dataset$pred_flow,
-                    N = length(dataset$pred_flow),
-                    biomass_prey = dataset$biomass_prey,
-                    abundance_pred = dataset$biomass_pred/dataset$bodymass_mean_predator
-                   )
+# Select desired variables
+dataset <- dataset |>
+            dplyr::mutate(abundance_predator = 
+            biomass_predator / bodymass_mean_predator) |>
+             dplyr::select(pred_flow, biomass_prey,
+              abundance_predator, predator)
 
-
-# Fit the models
+# Fit the model
 output_stan_model1 <- stan(
   file = "R/08_stan_model1.stan",
-  iter = 4000,
+  iter = 6000,
   chains = 4,
   cores = 3,
-  data = lst_score_data1
+  data = tidybayes::compose_data(dataset)
 )
 
 # Save it RDS

@@ -15,20 +15,13 @@ dataset <- dataset |>
             dplyr::summarise(sum_biomass_prey = sum(biomass_prey)) |>
               dplyr::left_join(dataset, by = "pred_id_by_web")
 
-# Compute index for number of unique predator and number of unique predator per network respectively
-npred <- length(unique(dataset$predator))
-
-# Store the info in a list for each model
-lst_score_data4 <- list(y = dataset$pred_flow,
-                    N = length(dataset$pred_flow),
-                    biomass_prey = dataset$biomass_prey,
-                    pred_id = as.numeric(dataset$pred_id),
-                    npred = length(unique(dataset$predator)),
-                    abundance_pred = dataset$biomass_predator/dataset$bodymass_mean_predator,
-                    degree_predator = dataset$degree_predator,
-                    h_j = 0.4 * (dataset$bodymass_mean_predator^-0.75),
-                    sum_biomass_prey = dataset$sum_biomass_prey
-                   )
+# Select desired variables
+dataset <- dataset |>
+               dplyr::mutate(abundance_predator = biomass_predator / bodymass_mean_predator) |>
+               dplyr::mutate(h_j = 0.4 * bodymass_mean_predator^-0.75) |>
+                dplyr::select(pred_flow, biomass_prey,
+                abundance_predator, predator, pred_id,
+                h_j, degree_predator, sum_biomass_prey)
 
 # Fit the model
 output_stan_model4 <- stan(
@@ -36,7 +29,7 @@ output_stan_model4 <- stan(
   iter = 8000,
   chains = 4,
   cores = 3,
-  data = lst_score_data4
+  data = tidybayes::compose_data(dataset)
   )
 
 # Save it RDS
