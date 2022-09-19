@@ -1,4 +1,7 @@
 library(rstan)
+# Options to run the chains faster
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
 
 # The data
 dataset <- readRDS("data/clean/new_dataset.RDS")
