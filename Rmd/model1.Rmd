@@ -9,16 +9,16 @@ date: "`r paste('Last updated on', format(Sys.time(), '%d %B, %Y'))`"
 suppressPackageStartupMessages(library(rstan))
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(tidybayes))
-suppressPackageStartupMessages(library(brms))
 suppressPackageStartupMessages(library(bayesplot))
 suppressPackageStartupMessages(library(knitr))
-# Options to run the chains faster
-rstan_options(auto_write = TRUE)
-options(mc.cores = parallel::detectCores())
+suppressPackageStartupMessages(library(ggdist))
+suppressPackageStartupMessages(library(ggridges))
+suppressPackageStartupMessages(library(hrbrthemes))
+suppressPackageStartupMessages(library(viridis))
 ```
 <!-- Load the data --> 
-```{r load model1, echo = FALSE, include = FALSE}
-output_brms_model1 <- readRDS("../results/model_outputs/output_brms_model1.RDS")
+```{r load_model1, echo = FALSE, include = FALSE}
+dataset <- readRDS("../data/clean/new_dataset.RDS")
 output_stan_model1 <- readRDS("../results/model_outputs/output_stan_model1.RDS")
 ```
 
@@ -32,37 +32,41 @@ The scaling parameters $\alpha$ is general to every predator.
 F_{ij}^{real} &= \alpha * B_i * \frac{B_j}{M_j}
 \end{align}
 
-## Stan section
-### Summary table
+```{r structure_data, echo = FALSE}
+# Recover types
+output_stan_model1 <- recover_types(output_stan_model1)
+# Draw the posterior for all parameters
+general_params <- output_stan_model1 |>
+                   tidybayes::gather_draws(a_pop, sigma)
+```
+
+## Summary table
 ```{r table_1, echo = FALSE}
 kable(summary(output_stan_model1)$summary, caption = "Summary table model 1")
 ```
-### Traceplots
+
+## Exploring parameters posterior distribution
+### General parameters
+```{r general-ridgeplots, echo=FALSE, message=FALSE, fig.height=12, fig.width=10}
+# Plot the global parameters
+general_params |>
+  ggplot(aes(x = `.value`, y = `.variable`)) +
+  geom_density_ridges_gradient(scale = 1, rel_min_height = 0.0001, fill = "lightskyblue3") +
+  labs(title = "Posterior distribution of global parameters") +
+  theme_ipsum() +
+  theme(
+    legend.position = "none",
+    axis.title.y = element_text(size = 20),
+    axis.title.x = element_text(size = 20),
+    plot.title = element_text(size = 30),
+    axis.text.x = element_text(size = 15),
+    axis.text.y = element_text(size = 15)
+  ) +
+   xlab("log-values") +
+   ylab("Parameter ID")
+```
+
+## Traceplots
 ```{r trace plots, echo = FALSE}
 traceplot(output_stan_model1)
-```
-### Density plots
-``` {r density plots, echo = FALSE}
-# Structure the outputed data
-extracted_stan1 <- rstan::extract(output_stan_model1) |>
-                    enframe() |>
-                     unnest(cols = "value") |>
-                      rename(parameters = "name") |>
-                       dplyr::filter(parameters != "lp__")
-
-extracted_stan1_mean <- plyr::ddply(extracted_stan1, "parameters", summarise, grp.mean=mean(value))
-
-extracted_stan1 |>
- dplyr::filter(parameters != "lp__") |>
-  ggplot(aes(x = value)) +
-   geom_density(color="black", fill="lightblue") +
-   facet_grid(parameters ~ .)+
-    geom_vline(data = extracted_stan1_mean, aes(xintercept=grp.mean),
-     color="black", linetype="dashed", size=1) +
-       theme_classic()
-```
-
-## Brms section
-```{r plotting_1-1, echo = FALSE, out.width = "100%"}
-plot(output_brms_model1)
 ```

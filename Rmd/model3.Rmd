@@ -1,56 +1,108 @@
 ---
-title: "Model analysis"
+title: "Model 3 analysis"
 author: "Benjamin Mercier"
 date: "`r paste('Last updated on', format(Sys.time(), '%d %B, %Y'))`"
 ---
 
+<!-- Load nedeed libraries -->
 ```{r, echo = FALSE, message=FALSE, warning=FALSE}
-# Load needed libraries
 suppressPackageStartupMessages(library(rstan))
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(tidybayes))
-suppressPackageStartupMessages(library(brms))
 suppressPackageStartupMessages(library(bayesplot))
-suppressPackageStartupMessages(library(flexdashboard))
 suppressPackageStartupMessages(library(knitr))
-# Options to run the chains faster
-rstan_options(auto_write = TRUE)
-options(mc.cores = parallel::detectCores())
+suppressPackageStartupMessages(library(ggdist))
+suppressPackageStartupMessages(library(ggridges))
+suppressPackageStartupMessages(library(hrbrthemes))
+suppressPackageStartupMessages(library(viridis))
+```
+<!-- Load the data --> 
+```{r load_model3, echo = FALSE, include = FALSE}
+dataset <- readRDS("../data/clean/new_dataset.RDS")
+output_stan_model3 <- readRDS("../results/model_outputs/output_stan_model3.RDS")
 ```
 
 # Model 3
 ## Description of the model
 <br>
-
 This third model is again a slight variant of the two first, in which we assign a specific $\alpha$ to each predator, but we also divide it by the degree of the predator (number of preys). In doing so, we can still isolate difference between predator, to check if some predator seems to be different from the whole, but also try to divide between each of ones predators prey.
-
+<!-- Model equation -->
 \begin{align}
 F_{ij}^{real} &= \frac{\alpha_{j}}{D_{j}} * B_i * \frac{B_j}{M_j}
 \end{align}
 
-```{r table_2, echo = FALSE}
-kable(summary(output_stan_model3)$summary, caption = "Stan model 3 output")
+This model was fit with a hierarchy implemented on the alpha parameter. A global alpha was estimated, with 118 respective unique alphas for each predators.
+In contrast with model 2, the alphas in model 3 are divided by the predator's degree.
+
+```{r structure_data, echo = FALSE}
+# Recover types
+output_stan_model3 <- recover_types(output_stan_model3)
+# Draw the posterior for all parameters
+general_params <- output_stan_model3 |>
+                   tidybayes::gather_draws(a_pop, a_sd, sigma)
+
+a_grp <- output_stan_model3 |> tidybayes::gather_draws(a_grp[pred_id])
+         # dplyr::arrange(pred_id)
+          #dplyr::mutate(pred_id = as.factor(pred_id))
+
+# Get pred_id & habitat_type to join with the stan output
+pred_ids <- unique(dataset[, c("pred_id", "habitat_type")])
+a_grp <- dplyr::left_join(a_grp, pred_ids, by = "pred_id") |>
+          dplyr::arrange(pred_id) |>
+          dplyr::mutate(pred_id = as.factor(pred_id))
+#alphas2_mean <- plyr::ddply(alphas2, "parameters", dplyr::summarise, grp.mean = mean(value))
+#other_params2_mean <- plyr::ddply(other_params2, "parameters", dplyr::summarise, grp.mean = mean(value)) |> dplyr::filter(!parameters %in% c("lp__"))
 ```
 
-## Plots
-
-```{r load model3, echo = FALSE, include = FALSE}
-output_brms_model3 <- readRDS("../results/model_outputs/output_brms_model3.RDS")
-output_stan_model3 <- readRDS("../results/model_outputs/output_stan_model3.RDS")
+## Exploring parameters posterior distribution
+### General parameters
+```{r general-ridgeplots, echo=FALSE, message=FALSE, fig.height=12, fig.width=10}
+# Plot the global parameters
+general_params |>
+  ggplot(aes(x = `.value`, y = `.variable`)) +
+  geom_density_ridges_gradient(scale = 1, rel_min_height = 0.0001, fill = "lightskyblue3") +
+  labs(title = "Posterior distribution of global parameters") +
+  theme_ipsum() +
+  theme(
+    legend.position = "none",
+    axis.title.y = element_text(size = 20),
+    axis.title.x = element_text(size = 20),
+    plot.title = element_text(size = 30),
+    axis.text.x = element_text(size = 15),
+    axis.text.y = element_text(size = 15)
+  ) +
+   xlab("log-values") +
+   ylab("Parameter ID")
 ```
 
-### **Brms**
+### Respective predator alphas
+```{r alphas-ridgeplots, echo=FALSE, message=FALSE, fig.height=18, fig.width=15}
+# Plot the unique alphas by predator
+ggplot(a_grp, aes(x = `.value`, y = pred_id, fill = habitat_type)) +
+  geom_density_ridges_gradient(scale = 5, rel_min_height = 0.01) +
+   #scale_fill_viridis(option = "C") +
+    labs(title = "Posterior distribution of predators alpha") +
+     theme_ipsum() +
+      theme(
+       legend.title = element_text(size = 15),
+       legend.text = element_text(size = 13),
+       axis.title.y = element_text(size = 20),
+       axis.title.x = element_text(size = 20),
+       plot.title = element_text(size = 30),
+       axis.text.x = element_text(size = 15),
+       axis.text.y = element_text(size = 15)
+      ) +
+       ylab("Parameters ID") +
+       xlab("log-values") +
+        scale_y_discrete(guide = guide_axis(n.dodge = 2)) +
+         scale_fill_manual("Ecosystem type",values = c("terrestrial" = "olivedrab",
+          "freshwater" = "sandybrown", "marine" = "deepskyblue3","marine_freshwater" = "slateblue4")) 
 
-```{r plotting_3-1, echo = FALSE, out.width = "100%"}
-plot(output_brms_model3)
 ```
 
-### **Stan**
-
-```{r plotting_3-2, echo = FALSE, out.width = "100%"}
-#get(output_stan_model3)
-#summary(output_stan_model3)$summary[, 4:8] %>%
-#      as.data.frame() %>%
-#      rownames_to_column(var = 'param')
-traceplot(output_stan_model3)
+## Rhats
+### Examining Rhats to see if all parameters have converge
+```{r rhats, echo=FALSE, message=FALSE}
+rhat(output_stan_model3) |>
+mcmc_rhat_hist()
 ```
