@@ -31,24 +31,66 @@ parameters {
 
 model {
   vector[n] mu;
-  vector[n_predator] alpha_spec;
+  vector[n] alpha_spec;
   vector[n] pred_factor;
 
   // Priors:
-  a_pop ~ normal(1, 5);
-  a_grp ~ normal(2, a_sd);
-  a_sd ~ exponential(0.16);
-  sigma ~ exponential(0.16);
+  a_pop ~ normal(4, 5);
+  a_grp ~ std_normal();
+  //a_grp ~ normal(0, a_sd);
+  a_sd ~ exponential(1);
+  sigma ~ exponential(0.5);
+  //a_sd ~ gamma(15^2/100.0, 15/100.0);
+  //sigma ~ pareto_type_2(0.001, 10.0, 3.0);
 
   // Likelihood:
   // Computing each alpha by predator
-   alpha_spec = a_pop + a_grp;
+   alpha_spec = a_pop + a_grp[pred_id] * a_sd;
 
   // Computing predators part for the numerator and denominator
-   pred_factor = (alpha_spec[pred_id] - log_degree_predator) + log_abundance_predator;
+   pred_factor = (alpha_spec - log_degree_predator) + log_abundance_predator;
 
    mu = pred_factor + log_biomass_prey - log1p_exp(log_h_j + pred_factor + log_sum_biomass_prey);
 
   log_pred_flow ~ normal(mu, sigma);
 
+}
+
+generated quantities {
+  vector[n] mu;
+  vector[n] alpha_spec;
+  vector[n] pred_factor;
+  vector[n] log_lik;
+
+  alpha_spec = a_pop + a_grp[pred_id];
+
+  pred_factor = (alpha_spec - log_degree_predator) + log_abundance_predator;
+
+  mu = pred_factor + log_biomass_prey - log1p_exp(log_h_j + pred_factor + log_sum_biomass_prey);
+      
+  for (i in 1:n) {
+    log_lik[i] = normal_lpdf(log_pred_flow[i] | mu[i], sigma);
+  }
+
+//  // Values to predict
+//  vector[n] log_pred_flow_sim;
+//  vector[n_predator] alpha_spec;
+//  vector[n] pred_factor;
+//  // To check the fit
+//  real<lower=0> rss; // residual sum of squares
+//  real<lower=0> totalss; // total SS  
+//  real Rsq; // Rsq
+//
+//  // Computing each alpha by predator
+//   alpha_spec = a_pop + a_grp;
+//
+//  // Computing predators part for the numerator and denominator
+//   pred_factor = (alpha_spec[pred_id] - log_degree_predator) + log_abundance_predator;
+//
+//  log_pred_flow_sim = pred_factor + log_biomass_prey - log1p_exp(log_h_j + pred_factor + log_sum_biomass_prey);
+//
+//  rss = dot_self(log_pred_flow-log_pred_flow_sim);
+//  totalss = dot_self(log_pred_flow-mean(log_pred_flow));
+//  Rsq = 1 - rss/totalss;
+//
 }

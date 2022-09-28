@@ -35,14 +35,30 @@ model {
 
 }
 
-//generated quantities {
-//  vector[N] yhat;                // predictor
-//  real<lower=0> rss;             // residual sum of squares
-//  real<lower=0> totalss;         // total SS              
-//  real Rsq;                      // Rsq
-//  
-//  yhat = a_pop + biomass_prey + abundance_pred;
-//  rss = dot_self(y-yhat);
-//  totalss = dot_self(y-mean(y));
-//  Rsq = 1 - rss/totalss;
-//}
+generated quantities {
+    vector[n] mu;
+    vector[n] log_lik;
+
+  mu = a_pop + log_biomass_prey + log_abundance_predator;
+
+  for (i in 1:n) {
+    log_lik[i] = normal_lpdf(log_pred_flow[i] | mu[i], sigma);
+  }
+  
+  // Values to predict
+  //vector[n] log_pred_flow_sim;
+  //// To check the fit
+  //real<lower=0> rss; // residual sum of squares
+  //real<lower=0> totalss; // total SS  
+  //real Rsq; // Rsq
+
+  //// use current esmitate of a_pop to generate new sample
+  //for (i in 1:n) {
+  //  log_pred_flow_sim[i] = a_pop + log_biomass_prey[i] + log_abundance_predator[i];
+  //}
+  //
+  //rss = dot_self(log_pred_flow-log_pred_flow_sim);
+  //totalss = dot_self(log_pred_flow-mean(log_pred_flow));
+  //Rsq = 1 - rss/totalss;
+
+}

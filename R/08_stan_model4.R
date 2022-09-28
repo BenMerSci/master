@@ -32,8 +32,12 @@ output_stan_model4 <- stan(
   iter = 8000,
   chains = 4,
   cores = 3,
-  data = tidybayes::compose_data(dataset)
+  data = tidybayes::compose_data(dataset),
+  control = list(max_treedepth = 15)
   )
 
-# Save it RDS
+# small community, with not a lot of predator
+# Try to draw the line with the parameters from the model
+# can be as simple as just take the meean value, or use the post dist. in some way
+
 saveRDS(output_stan_model4, "results/model_outputs/output_stan_model4.RDS")

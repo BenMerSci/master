@@ -26,7 +26,7 @@ parameters {
 
 model {
   vector[n] mu;
-  vector[n_predator] alpha_spec;
+  vector[n] alpha_spec;
 
   // Priors:
   a_pop ~ normal(1, 10);
@@ -36,11 +36,42 @@ model {
 
   // Likelihood:
   // Computing each alpha by predator
-   alpha_spec = a_pop + a_grp;
+   alpha_spec = a_pop + a_grp[pred_id];
   
   // Computing target's mean
-   mu = (alpha_spec[pred_id]-log_degree_predator) + log_biomass_prey + log_abundance_predator;
+   mu = (alpha_spec-log_degree_predator) + log_biomass_prey + log_abundance_predator;
 
   log_pred_flow ~ normal(mu, sigma);
+
+}
+
+generated quantities {
+    vector[n] mu;
+    vector[n] alpha_spec;
+    vector[n] log_lik;
+
+  alpha_spec = a_pop + a_grp[pred_id];
+  mu = (alpha_spec-log_degree_predator) + log_biomass_prey + log_abundance_predator;
+  
+  for (i in 1:n) {
+    log_lik[i] = normal_lpdf(log_pred_flow[i] | mu[i], sigma);
+  }
+
+  // Values to predict
+  //vector[n] log_pred_flow_sim;
+  //vector[n_predator] alpha_spec;
+  //// To check the fit
+  //real<lower=0> rss; // residual sum of squares
+  //real<lower=0> totalss; // total SS  
+  //real Rsq; // Rsq
+
+  //alpha_spec = a_pop + a_grp;
+  //
+  //// Use current estimate of alphas to generate new sample
+  //log_pred_flow_sim = (alpha_spec[pred_id]-log_degree_predator) + log_biomass_prey + log_abundance_predator;
+  //
+  //rss = dot_self(log_pred_flow-log_pred_flow_sim);
+  //totalss = dot_self(log_pred_flow-mean(log_pred_flow));
+  //Rsq = 1 - rss/totalss;
 
 }
