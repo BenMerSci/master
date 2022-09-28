@@ -3,6 +3,7 @@ propose/
 data/
 seminaire1/*
 R/*.rds
+/.history
 
 # Files to ignore
 *.jpg
