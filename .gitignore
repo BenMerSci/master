@@ -2,7 +2,6 @@
 propose/
 data/
 seminaire1/*
-R/*.rds
 /.history
 /results
 
@@ -15,3 +14,4 @@ R/*.rds
 *.toc
 *.lot
 *.lof
+*.rds
