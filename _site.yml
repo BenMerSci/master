@@ -6,26 +6,58 @@ navbar:
       icon: fa-home
       href: index.html
 
+    - text: "Pre-analysis"
+      icon: fa-bookmark
+      menu:
+        - text: "Pre-analysis"
+          href: Rmd/pre_analysis.html
+
+    - text: "Model 0"
+      icon: fa-bookmark
+      menu:
+        - text: "Stan analysis"
+          href: Rmd/model0.html
+
     - text: "Model 1"
       icon: fa-bookmark
       menu:
-        - text: "Model 1 Brms-Stan"
+        - text: "Stan analysis"
           href: Rmd/model1.html
 
     - text: "Model 2"
       icon: fa-bookmark
       menu:
-        - text: "Model 2 Brms-Stan"
+        - text: "Stan analysis"
           href: Rmd/model2.html
 
     - text: "Model 3"
       icon: fa-bookmark
       menu:
-        - text: "Model 3 Brms-Stan"
+        - text: "Stan analysis"
           href: Rmd/model3.html
+
+    - text: "Model 4"
+      icon: fa-bookmark
+      menu:
+        - text: "Stan analysis"
+          href: Rmd/model4.html
+
+    - text: "Model 5"
+      icon: fa-bookmark
+      menu:
+        - text: "Stan analysis"
+          href: Rmd/model5.html
+          
+    - text: "Model comparison"
+      icon: fa-bookmark
+      menu:
+        - text: "Comparisons"
+          href: Rmd/compare_model.html
+
   right:
     - icon: fa-github fa-lg
       href: https://github.com/BenMerSci/master
+      
 output:
   html_document:
     theme: cosmo
