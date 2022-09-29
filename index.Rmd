@@ -8,8 +8,18 @@ date: "`r paste('Last updated on', format(Sys.time(), '%d %B, %Y'))`"
 
 # Models
 
-- Model 1 Brms-Stan ([link](https://BenMerSci.github.io/master/Rmd/model1.html))
+- Pre-analysis ([link](https://BenMerSci.github.io/master/Rmd/pre_analysis.html))
 
-- Model 2 Brms-Stan ([link](https://BenMerSci.github.io/master/Rmd/model2.html))
+- Model 0 Stan ([link](https://BenMerSci.github.io/master/Rmd/model0.html))
 
+- Model 1 Stan ([link](https://BenMerSci.github.io/master/Rmd/model1.html))
 
+- Model 2 Stan ([link](https://BenMerSci.github.io/master/Rmd/model2.html))
+
+- Model 3 Stan ([link](https://BenMerSci.github.io/master/Rmd/model3.html))
+
+- Model 4 Stan ([link](https://BenMerSci.github.io/master/Rmd/model4.html))
+
+- Model 5 Stan ([link](https://BenMerSci.github.io/master/Rmd/model5.html))
+
+- Model comparison ([link](https://BenMerSci.github.io/master/Rmd/compare_model.html))
