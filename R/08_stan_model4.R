@@ -34,7 +34,7 @@ output_stan_model4 <- stan(
   cores = 3,
   data = tidybayes::compose_data(dataset),
   control = list(max_treedepth = 15)
-  )
+)
 
 # small community, with not a lot of predator
 # Try to draw the line with the parameters from the model

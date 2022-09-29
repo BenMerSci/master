@@ -17,7 +17,7 @@ suppressPackageStartupMessages(library(hrbrthemes))
 suppressPackageStartupMessages(library(viridis))
 ```
 <!-- Load the data --> 
-```{r load model3, echo = FALSE, include = FALSE}
+```{r load model4, echo = FALSE, include = FALSE}
 dataset <- readRDS("../data/clean/new_dataset.RDS")
 output_stan_model4 <- readRDS("../results/model_outputs/output_stan_model4.RDS")
 ```
@@ -44,8 +44,8 @@ output_stan_model4 <- recover_types(output_stan_model4)
 general_params <- output_stan_model4 |>
                    tidybayes::gather_draws(a_pop, a_sd, sigma)
 
-a_grp <- output_stan_model4 |> tidybayes::gather_draws(a_grp[pred_id])
-         # dplyr::arrange(pred_id)
+a_grp <- output_stan_model4 |> tidybayes::gather_draws(a_grp[pred_id]) |>
+          dplyr::arrange(pred_id)
           #dplyr::mutate(pred_id = as.factor(pred_id))
 
 # Get pred_id & habitat_type to join with the stan output

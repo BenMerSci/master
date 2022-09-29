@@ -10,7 +10,6 @@ data {
   vector[n] degree_predator; // Degrees of each predator
   vector[n] sum_biomass_prey; // Total biomass consumption
   vector[n] h_j; // Predator handling time
-    //array[N] int<lower=1,upper=npred> pred_id; Andrew example for cmdstanr
 }
 
 transformed data {
@@ -35,13 +34,10 @@ model {
   vector[n] pred_factor;
 
   // Priors:
-  a_pop ~ normal(4, 5);
+  a_pop ~ normal(1,10);
   a_grp ~ std_normal();
-  //a_grp ~ normal(0, a_sd);
-  a_sd ~ exponential(1);
-  sigma ~ exponential(0.5);
-  //a_sd ~ gamma(15^2/100.0, 15/100.0);
-  //sigma ~ pareto_type_2(0.001, 10.0, 3.0);
+  a_sd ~ exponential(2);
+  sigma ~ exponential(2);
 
   // Likelihood:
   // Computing each alpha by predator
@@ -56,21 +52,21 @@ model {
 
 }
 
-generated quantities {
-  vector[n] mu;
-  vector[n] alpha_spec;
-  vector[n] pred_factor;
-  vector[n] log_lik;
-
-  alpha_spec = a_pop + a_grp[pred_id];
-
-  pred_factor = (alpha_spec - log_degree_predator) + log_abundance_predator;
-
-  mu = pred_factor + log_biomass_prey - log1p_exp(log_h_j + pred_factor + log_sum_biomass_prey);
-      
-  for (i in 1:n) {
-    log_lik[i] = normal_lpdf(log_pred_flow[i] | mu[i], sigma);
-  }
+//generated quantities {
+//  vector[n] mu;
+//  vector[n] alpha_spec;
+//  vector[n] pred_factor;
+//  vector[n] log_lik;
+//
+//  alpha_spec = a_pop + a_grp[pred_id];
+//
+//  pred_factor = (alpha_spec - log_degree_predator) + log_abundance_predator;
+//
+//  mu = pred_factor + log_biomass_prey - log1p_exp(log_h_j + pred_factor + log_sum_biomass_prey);
+//      
+//  for (i in 1:n) {
+//    log_lik[i] = normal_lpdf(log_pred_flow[i] | mu[i], sigma);
+//  }
 
 //  // Values to predict
 //  vector[n] log_pred_flow_sim;
@@ -93,4 +89,4 @@ generated quantities {
 //  totalss = dot_self(log_pred_flow-mean(log_pred_flow));
 //  Rsq = 1 - rss/totalss;
 //
-}
+//}
