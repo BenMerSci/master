@@ -28,11 +28,14 @@ generated quantities {
   // Generating log-lik for loo
   vector[n] log_lik;
   vector[n] mu;
-  
+  real<lower = 0, upper = 1> Rsq;
+
   mu = Intercept + rep_vector(0.0, n);
   
   for (i in 1:n) {
     log_lik[i] = normal_lpdf(log_pred_flow[i] | mu[i], sigma);
   }
+
+  Rsq = variance(mu) / (variance(mu) + square(sigma));
 
 }
