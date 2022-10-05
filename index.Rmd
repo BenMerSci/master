@@ -20,6 +20,4 @@ date: "`r paste('Last updated on', format(Sys.time(), '%d %B, %Y'))`"
 
 - Model 4 Stan ([link](https://BenMerSci.github.io/master/Rmd/model4.html))
 
-- Model 5 Stan ([link](https://BenMerSci.github.io/master/Rmd/model5.html))
-
 - Model comparison ([link](https://BenMerSci.github.io/master/Rmd/compare_model.html))

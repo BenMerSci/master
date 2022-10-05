@@ -21,10 +21,9 @@ dataset <- dataset |>
 # Select desired variables
 dataset <- dataset |>
                dplyr::mutate(abundance_predator = biomass_predator / bodymass_mean_predator) |>
-               dplyr::mutate(h_j = 0.4 * bodymass_mean_predator^-0.75) |>
                 dplyr::select(pred_flow, biomass_prey,
                 abundance_predator, predator, pred_id,
-                h_j, degree_predator, sum_biomass_prey)
+                degree_predator, sum_biomass_prey)
 
 # Fit the model
 output_stan_model4 <- stan(
@@ -32,8 +31,8 @@ output_stan_model4 <- stan(
   iter = 8000,
   chains = 4,
   cores = 3,
-  data = tidybayes::compose_data(dataset),
-  control = list(max_treedepth = 15)
+  data = tidybayes::compose_data(dataset)#,
+  #control = list(max_treedepth = 15)
 )
 
 # small community, with not a lot of predator

@@ -1,0 +1,66 @@
+---
+title: "Model 0 analysis"
+author: "Benjamin Mercier"
+date: "`r paste('Last updated on', format(Sys.time(), '%d %B, %Y'))`"
+---
+
+<!-- Load nedeed libraries -->
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+suppressPackageStartupMessages(library(rstan))
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(tidybayes))
+suppressPackageStartupMessages(library(bayesplot))
+suppressPackageStartupMessages(library(knitr))
+suppressPackageStartupMessages(library(ggdist))
+suppressPackageStartupMessages(library(ggridges))
+suppressPackageStartupMessages(library(hrbrthemes))
+suppressPackageStartupMessages(library(viridis))
+```
+<!-- Load the data --> 
+```{r load_model1, echo = FALSE, include = FALSE}
+dataset <- readRDS("../data/clean/new_dataset.RDS")
+output_stan_model0 <- readRDS("../results/model_outputs/output_stan_model0.RDS")
+```
+
+# Model 0
+## Description of the model
+<br>
+Model 0 acts like a null model, where the flux is only fitted to an intercept.
+<!-- Model equation -->
+\begin{align}
+F_{ij}^{real} &= 1
+\end{align}
+
+```{r structure_data, echo = FALSE}
+# Recover types
+output_stan_model0 <- recover_types(output_stan_model0)
+# Draw the posterior for all parameters
+general_params <- output_stan_model0 |>
+                   tidybayes::gather_draws(Intercept, sigma)
+```
+
+## Summary table
+```{r table_1, echo = FALSE}
+kable(summary(output_stan_model0, pars = c("Intercept","sigma"))$summary, caption = "Summary table model 0")
+```
+
+## Exploring parameters posterior distribution
+### General parameters
+```{r general-ridgeplots, echo=FALSE, message=FALSE, fig.height=12, fig.width=10}
+# Plot the global parameters
+general_params |>
+  ggplot(aes(x = `.value`, y = `.variable`)) +
+  geom_density_ridges_gradient(scale = 1, rel_min_height = 0.0001, fill = "lightskyblue3") +
+  labs(title = "Posterior distribution of global parameters") +
+  theme_ipsum() +
+  theme(
+    legend.position = "none",
+    axis.title.y = element_text(size = 20),
+    axis.title.x = element_text(size = 20),
+    plot.title = element_text(size = 30),
+    axis.text.x = element_text(size = 15),
+    axis.text.y = element_text(size = 15)
+  ) +
+   xlab("log-values") +
+   ylab("Parameter ID")
+```

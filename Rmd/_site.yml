@@ -1,0 +1,16 @@
+name: "BenMerSci"
+navbar:
+  title: "Prey-predators flux models"
+  left:
+    - text: "Home"
+      icon: fa-home
+      href: index.html
+  right:
+    - icon: fa-github fa-lg
+      href: https://github.com/BenMerSci/master
+output:
+  html_document:
+    theme: cosmo
+    toc: true
+    toc_float: true
+    toc_depth: 2
