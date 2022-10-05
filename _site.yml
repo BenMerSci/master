@@ -41,12 +41,6 @@ navbar:
       menu:
         - text: "Stan analysis"
           href: Rmd/model4.html
-
-    - text: "Model 5"
-      icon: fa-bookmark
-      menu:
-        - text: "Stan analysis"
-          href: Rmd/model5.html
           
     - text: "Model comparison"
       icon: fa-bookmark
