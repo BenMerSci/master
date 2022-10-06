@@ -18,4 +18,4 @@ results/*
 *.rds
 R/rencontre_dom_andrew.html
 R/rencontre_dom_andrew.Rmd
-
+Rmd/test_model.*
