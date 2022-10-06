@@ -49,7 +49,7 @@ generated quantities {
     vector[n] mu;
     vector[n] alpha_spec;
     vector[n] log_lik;
-    real<lower = 0, upper = 1> Rsq;
+    real<lower = 0, upper = 1> Rsq_3;
 
   alpha_spec = a_pop + a_grp[pred_id];
   mu = (alpha_spec-log_degree_predator) + log_biomass_prey + log_abundance_predator;
@@ -58,6 +58,6 @@ generated quantities {
     log_lik[i] = normal_lpdf(log_pred_flow[i] | mu[i], sigma);
   }
 
-  Rsq = variance(mu) / (variance(mu) + square(sigma));
+  Rsq_3 = variance(mu) / (variance(mu) + square(sigma));
 
 }

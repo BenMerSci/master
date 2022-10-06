@@ -28,7 +28,7 @@ generated quantities {
   // Generating log-lik for loo
   vector[n] log_lik;
   vector[n] mu;
-  real<lower = 0, upper = 1> Rsq;
+  real<lower = 0, upper = 1> Rsq_0;
 
   mu = Intercept + rep_vector(0.0, n);
   
@@ -36,6 +36,6 @@ generated quantities {
     log_lik[i] = normal_lpdf(log_pred_flow[i] | mu[i], sigma);
   }
 
-  Rsq = variance(mu) / (variance(mu) + square(sigma));
+  Rsq_0 = variance(mu) / (variance(mu) + square(sigma));
 
 }
