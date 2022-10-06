@@ -1,3 +1,4 @@
+---
 title: "Compare models"
 author: "Benjamin Mercier"
 date: "`r paste('Last updated on', format(Sys.time(), '%d %B, %Y'))`"
@@ -25,28 +26,73 @@ output_stan_model3 <- readRDS("../results/model_outputs/output_stan_model3.RDS")
 output_stan_model4 <- readRDS("../results/model_outputs/output_stan_model4.RDS")
 ```
 
-```{r compute_loo, echo=FALSE}
-log_lik_0 <- extract_log_lik(output_stan_model0, merge_chains = FALSE)
-r_eff_0 <- relative_eff(exp(log_lik_0), cores = 8)
-loo_0 <- loo(log_lik_0, r_eff = r_eff_0, cores = 8)
+## R-square
+```{r r-square-functions, echo=FALSE, warning=FALSE, include=FALSE}
+table_rsq <- function(list_model) {
 
-log_lik_1 <- extract_log_lik(output_stan_model1, merge_chains = FALSE)
-r_eff_1 <- relative_eff(exp(log_lik_1), cores = 8)
-loo_1 <- loo(log_lik_1, r_eff = r_eff_1, cores = 8)
+        df_list <- purrr::map(list_model, function(x) {
+                summary(x)$summary |>
+                as.data.frame() |>
+                tibble::rownames_to_column(var = "parameters") |>
+                dplyr::filter(stringr::str_detect(parameters, "Rsq"))
+        })
 
-log_lik_2 <- extract_log_lik(output_stan_model2, merge_chains = FALSE)
-r_eff_2 <- relative_eff(exp(log_lik_2), cores = 8)
-loo_2 <- loo(log_lik_2, r_eff = r_eff_2, cores = 8)
+        df <- do.call(rbind, df_list)
 
-log_lik_3 <- extract_log_lik(output_stan_model3, merge_chains = FALSE)
-r_eff_3 <- relative_eff(exp(log_lik_3), cores = 8)
-loo_3 <- loo(log_lik_3, r_eff = r_eff_3, cores = 8)
+        rsq_table <- knitr::kable(df)
 
-log_lik_4 <- extract_log_lik(output_stan_model4, merge_chains = FALSE)
-r_eff_4 <- relative_eff(exp(log_lik_4), cores = 8)
-loo_4 <- loo(log_lik_4, r_eff = r_eff_4, cores = 8)
+  return(rsq_table)
+}
+
+plot_rsq <- function(list_model) {
+
+        df_list <- purrr::map(list_model, function(x) {
+          as.data.frame(x) |>
+          dplyr::select(dplyr::matches("Rsq"))
+        })
+
+        df <- do.call(cbind, df_list)
+
+        rsq_plot <- bayesplot::mcmc_areas(df, area_method = "equal height") +
+                    ggplot2::xlim(0, 1)
+
+  return(rsq_plot)
+}
 ```
 
-```{r compare_loo}
-loo_compare(list(model_0=loo_0, model_1=loo_1, model_2=loo_2, model_3=loo_3, model_4=loo_4))
+```{r r-squares, echo=FALSE, warning=FALSE, message=FALSE}
+list_model <- list(output_stan_model0, output_stan_model1,
+                   output_stan_model2, output_stan_model3,
+                   output_stan_model4)
+
+table_rsq(list_model)
+plot_rsq(list_model)
+```
+
+## Loo-compare the models
+```{r compute_loo, echo=FALSE, include=FALSE, warning=FALSE}
+log_lik_0 <- extract_log_lik(output_stan_model0, merge_chains = FALSE)
+r_eff_0 <- relative_eff(exp(log_lik_0), cores = 4)
+loo_0 <- loo(log_lik_0, r_eff = r_eff_0, cores = 4)
+
+log_lik_1 <- extract_log_lik(output_stan_model1, merge_chains = FALSE)
+r_eff_1 <- relative_eff(exp(log_lik_1), cores = 4)
+loo_1 <- loo(log_lik_1, r_eff = r_eff_1, cores = 4)
+
+log_lik_2 <- extract_log_lik(output_stan_model2, merge_chains = FALSE)
+r_eff_2 <- relative_eff(exp(log_lik_2), cores = 4)
+loo_2 <- loo(log_lik_2, r_eff = r_eff_2, cores = 4)
+
+log_lik_3 <- extract_log_lik(output_stan_model3, merge_chains = FALSE)
+r_eff_3 <- relative_eff(exp(log_lik_3), cores = 4)
+loo_3 <- loo(log_lik_3, r_eff = r_eff_3, cores = 4)
+
+log_lik_4 <- extract_log_lik(output_stan_model4, merge_chains = FALSE)
+r_eff_4 <- relative_eff(exp(log_lik_4), cores = 4)
+loo_4 <- loo(log_lik_4, r_eff = r_eff_4, cores = 4)
+```
+
+```{r compare_loo, echo=FALSE, warning=FALSE}
+loo_compare(list(model_0=loo_0, model_1=loo_1,
+ model_2=loo_2, model_3=loo_3, model_4=loo_4))
 ```
