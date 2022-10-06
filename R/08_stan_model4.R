@@ -28,7 +28,7 @@ dataset <- dataset |>
 # Fit the model
 output_stan_model4 <- stan(
   file = "R/08_stan_model4.stan",
-  iter = 8000,
+  iter = 6000,
   chains = 4,
   cores = 3,
   data = tidybayes::compose_data(dataset)#,
