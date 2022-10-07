@@ -29,31 +29,34 @@ coords_habitat <- readRDS("../data/intermediate/enviro_traits.RDS") |>
 # Data used
 The data used come from the same from the study of Jacquet et al. 2019. They are a compilation of Ecopath networks. Here is their global distribution:
 
-```{r worldmap, echo=FALSE}
+```{r worldmap, echo=FALSE, warning=FALSE, message=FALSE, fig.height=7, fig.width=12}
 world <- map_data("world")
 #world <- st_as_sf(world, coords = c("long","lat"))
 ggplot() + geom_map(data = world, map = world, aes(x = long, y = lat, map_id=region),
                   fill = "gray") +
-	   geom_point(data=coords_habitat, aes(x=lon, y=lat, color=habitat_type)) +
-	   scale_color_manual(values= c("marine" = "deepskyblue3", "freshwater" = "sandybrown", "terrestrial" = "olivedrab")) +
-	   coord_map("rectangular", lat0=0, xlim=c(-180,180), ylim=c(-90, 90)) +
-	   labs(title="Global distribution of the Ecopath networks", x="Longitude", y="Latitude") +
-	   labs(color = "Habitat type") + 
-	   scale_x_continuous(breaks = seq(-200, 200, 50)) +
-	   scale_y_continuous(breaks = seq(-90, 90, 30)) +
-    	   theme_bw()
+      geom_point(data=coords_habitat, aes(x=lon, y=lat, color=habitat_type), size = 3) +
+      scale_color_manual(values= c("marine" = "deepskyblue3", "freshwater" = "sandybrown", "terrestrial" = "olivedrab")) +
+      coord_map("rectangular", lat0=0, xlim=c(-180,180), ylim=c(-90, 90)) +
+      labs(title="Global distribution of the Ecopath networks", x="Longitude", y="Latitude") +
+      labs(color = "Habitat type") +
+      scale_x_continuous(breaks = seq(-200, 200, 50)) +
+      scale_y_continuous(breaks = seq(-90, 90, 30)) +
+      theme_bw()
 ```
 
 # Preliminary figures
 
-```{r prelim-fig, echo=FALSE}
+```{r prelim-fig, echo=FALSE, warning=FALSE, message=FALSE}
+# Compute predators abundances
+dataset$abundance_predator <- dataset$biomass_predator/dataset$bodymass_mean_predator
+
 terrestrial <- dataset[which(dataset$habitat_type == "terrestrial"), ]
 freshwater <- dataset[which(dataset$habitat_type == "freshwater"), ]
 marine <- dataset[which(dataset$habitat_type == "marine"), ]
 
 # Create axis label
 x_exp <- expression(B[i] ~ N[j])
-x_exp_log <- expression(log(B[i] ~ N[j]))
+x_exp_log <- expression(log(B[i]) + log(N[j]))
 
 # terrestrial
 plot1 <- ggplot(data = terrestrial, aes(x = (biomass_prey *
@@ -72,7 +75,7 @@ plot2 <- ggplot(data = freshwater, aes(x = (biomass_prey *
          ggtitle("Aquatique") +
          theme_bw()
 # marine
-plot3 <- ggplot(data = dataset, aes(x = (biomass_prey *
+plot3 <- ggplot(data = marine, aes(x = (biomass_prey *
          (biomass_predator / bodymass_mean_predator)), y = pred_flow)) +
          geom_point(color = "deepskyblue3") +
          theme(legend.position = "none", axis.title.y = element_blank()) +
@@ -80,22 +83,22 @@ plot3 <- ggplot(data = dataset, aes(x = (biomass_prey *
          ggtitle("Marin") +
          theme_bw()
 # log-terrestrial
-plot4 <- ggplot(data = terrestrial, aes(x = log(biomass_prey *
-         (biomass_predator / bodymass_mean_predator)), y = log(pred_flow))) +
+plot4 <- ggplot(data = terrestrial, aes(x = log(biomass_prey) +
+         log(abundance_predator), y = log(pred_flow))) +
          geom_point(color = "olivedrab") +
          theme(legend.position = "none") +
          labs(y = "log(Flux biomasse (g/m²/année))", x = x_exp_log) +
          theme_bw()
 # log-freshwater
-plot5 <- ggplot(data = freshwater, aes(x = log(biomass_prey *
-         (biomass_predator / bodymass_mean_predator)), y = log(pred_flow))) +
+plot5 <- ggplot(data = freshwater, aes(x = log(biomass_prey) +
+         log(abundance_predator), y = log(pred_flow))) +
          geom_point(color = "sandybrown") +
          theme(legend.position = "none", axis.title.y = element_blank()) +
          labs(y = "", x = x_exp_log) +
          theme_bw()
 # log-marine
-plot6 <- ggplot(data = dataset, aes(x = log(biomass_prey *
-         (biomass_predator / bodymass_mean_predator)), y = log(pred_flow))) +
+plot6 <- ggplot(data = marine, aes(x = log(biomass_prey) +
+         log(abundance_predator), y = log(pred_flow))) +
          geom_point(color = "deepskyblue3") +
          theme(legend.position = "none", axis.title.y = element_blank()) +
          labs(y = "", x = x_exp_log) +
@@ -107,7 +110,7 @@ plots <- gridExtra::grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, nrow 
 
 # Preliminary analysis
 
-```{r randomforest, echo=FALSE}
+```{r randomforest, echo=FALSE, warning=FALSE, message=FALSE}
 # randomForest model
 ## Dataset for randomForest
 RF_datasetsub <- dataset[ , c("pred_flow", "biomass_prey", "bodymass_mean_prey",
