@@ -21,9 +21,10 @@ dataset <- dataset |>
 # Select desired variables
 dataset <- dataset |>
                dplyr::mutate(abundance_predator = biomass_predator / bodymass_mean_predator) |>
+               dplyr::mutate(h_j = 0) |>
                 dplyr::select(pred_flow, biomass_prey,
                 abundance_predator, predator, pred_id,
-                degree_predator, sum_biomass_prey)
+                degree_predator, sum_biomass_prey, h_j)
 
 # Fit the model
 output_stan_model4to2 <- stan(
@@ -35,8 +36,12 @@ output_stan_model4to2 <- stan(
   #control = list(max_treedepth = 15)
 )
 
+output_stan_model2 <- readRDS("results/model_outputs/output_stan_model2.RDS")
+View(summary(output_stan_model4to2, pars=c("a_pop","a_grp","a_sd","sigma"))$summary)
+View(summary(output_stan_model2, pars=c("a_pop","a_grp","a_sd","sigma"))$summary)
+
 # small community, with not a lot of predator
 # Try to draw the line with the parameters from the model
 # can be as simple as just take the meean value, or use the post dist. in some way
 
-saveRDS(output_stan_model4, "results/model_outputs/output_stan_model4to2.RDS")
+saveRDS(output_stan_model4to2, "results/model_outputs/output_stan_model4to2.RDS")

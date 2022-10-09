@@ -33,15 +33,12 @@ model {
 
   // Priors:
   a_pop ~ normal(1,10);
-  //a_grp ~ std_normal();
   a_grp ~ normal(1, a_sd);
   a_sd ~ exponential(10);
   sigma ~ exponential(2);
-  //h_j ~ normal(1,5);
 
   // Likelihood:
   // Computing each alpha by predator
-   //alpha_spec = a_pop + a_grp[pred_id] * a_sd;
    alpha_spec = a_pop + a_grp[pred_id];
 
   // Computing predators part for the numerator and denominator
@@ -52,24 +49,3 @@ model {
   log_pred_flow ~ normal(mu, sigma);
 
 }
-
-//generated quantities {
-//  vector[n] mu;
-//  vector[n] alpha_spec;
-//  vector[n] pred_factor;
-//  vector[n] log_lik;
-//  real<lower = 0, upper = 1> Rsq_4;
-//
-//  alpha_spec = a_pop + a_grp[pred_id];
-//
-//  pred_factor = alpha_spec + log_abundance_predator;
-//
-//  mu = pred_factor + log_biomass_prey - log1p_exp(h_j[pred_id] + pred_factor + log_sum_biomass_prey);
-//      
-//  for (i in 1:n) {
-//    log_lik[i] = normal_lpdf(log_pred_flow[i] | mu[i], sigma);
-//  }
-//
-//  Rsq_4 = variance(mu) / (variance(mu) + square(sigma));
-//
-//}
