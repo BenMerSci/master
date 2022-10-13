@@ -46,7 +46,7 @@ kable(summary(output_stan_model0, pars = c("Intercept","sigma"))$summary, captio
 
 ## Exploring parameters posterior distribution
 ### General parameters
-```{r general-ridgeplots, echo=FALSE, message=FALSE, fig.height=12, fig.width=10}
+```{r general-ridgeplots, echo=FALSE, message=FALSE, fig.height=10, fig.width=13}
 # Plot the global parameters
 general_params |>
   ggplot(aes(x = `.value`, y = `.variable`)) +
@@ -63,4 +63,26 @@ general_params |>
   ) +
    xlab("log-values") +
    ylab("Parameter ID")
+```
+
+## Simulated data vs observed data
+```{r sim_plot, echo=FALSE, warning=FALSE, message=FALSE, fig.height=10, fig.width=13}
+dataset$sim_pred_flow <- summary(output_stan_model0, pars = "mu")$summary[,"mean"]
+
+dataset |>
+  ggplot(aes(x = log(pred_flow), y = sim_pred_flow)) +
+  geom_point() +
+  labs(title = "Simulated by observed biomass flows (log-scaled)") +
+  theme_ipsum() +
+  theme(
+    legend.position = "none",
+    axis.title.y = element_text(size = 20),
+    axis.title.x = element_text(size = 20),
+    plot.title = element_text(size = 30),
+    axis.text.x = element_text(size = 15),
+    axis.text.y = element_text(size = 15)
+  ) +
+  xlab("Observed biomass flows") +
+  ylab("Simulated biomass flows") +
+  geom_abline(intercept = 0, slope = 1)
 ```

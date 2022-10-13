@@ -62,9 +62,14 @@ h_j <- dplyr::left_join(h_j, pred_ids, by = "pred_id") |>
           dplyr::mutate(pred_id = as.factor(pred_id))
 ```
 
+## Summary table
+```{r table_4, echo = FALSE}
+kable(summary(output_stan_model4, pars = c("a_pop","a_sd","sigma"))$summary, caption = "Summary table model 4")
+```
+
 ## Exploring parameters posterior distribution
 ### General parameters
-```{r general-ridgeplots, echo=FALSE, message=FALSE, fig.height=12, fig.width=10}
+```{r general-ridgeplots, echo=FALSE, message=FALSE, fig.height=10, fig.width=13}
 # Plot the global parameters
 general_params |>
   ggplot(aes(x = `.value`, y = `.variable`)) +
@@ -84,7 +89,7 @@ general_params |>
 ```
 
 ### Respective predator alphas
-```{r alphas-ridgeplots, echo=FALSE, message=FALSE, fig.height=18, fig.width=15}
+```{r alphas-ridgeplots, echo=FALSE, message=FALSE, fig.height=13, fig.width=13}
 # Plot the unique alphas by predator
 ggplot(a_grp, aes(x = `.value`, y = pred_id, fill = habitat_type)) +
   geom_density_ridges_gradient(scale = 5, rel_min_height = 0.01) +
@@ -110,7 +115,7 @@ ggplot(a_grp, aes(x = `.value`, y = pred_id, fill = habitat_type)) +
 
 ### Respective predator handling times
 
-```{r handling-ridgeplots, echo=FALSE, message=FALSE, fig.height=18, fig.width=15}
+```{r handling-ridgeplots, echo=FALSE, message=FALSE, fig.height=13, fig.width=13}
 # Plot the unique alphas by predator
 ggplot(h_j, aes(x = `.value`, y = pred_id, fill = habitat_type)) +
   geom_density_ridges_gradient(scale = 5, rel_min_height = 0.01) +
@@ -141,6 +146,30 @@ rhat(output_stan_model4) |>
 mcmc_rhat_hist()
 ```
 
+## Simulated data vs observed data
+```{r sim_plot, echo=FALSE, warning=FALSE, message=FALSE, fig.height=10, fig.width=13}
+dataset$sim_pred_flow <- summary(output_stan_model4, pars = "mu")$summary[,"mean"]
+
+dataset |>
+  ggplot(aes(x = log(pred_flow), y = sim_pred_flow)) +
+  geom_point() +
+  labs(title = "Simulated by observed biomass flows (log-scaled)") +
+  theme_ipsum() +
+  theme(
+    legend.position = "none",
+    axis.title.y = element_text(size = 20),
+    axis.title.x = element_text(size = 20),
+    plot.title = element_text(size = 30),
+    axis.text.x = element_text(size = 15),
+    axis.text.y = element_text(size = 15)
+  ) +
+  xlab("Observed biomass flows") +
+  ylab("Simulated biomass flows") +
+  geom_abline(intercept = 0, slope = 1)
+```
+
+
+<!---
 ## Check the fit by plotting the data line
 ```{r format_data, echo=FALSE, message=FALSE, include=FALSE}
 dataset <- dplyr::mutate(dataset, predator_by_web = paste(dataset$predator, dataset$model_name, sep = "_")) |>
@@ -170,7 +199,7 @@ dataset <- dataset |> dplyr::left_join(df_output_stan, by = "pred_id") |>
            dplyr::mutate(a_pop = exp(a_pop), a_grp_pred = exp(a_grp_pred)) |>
            dplyr::mutate(alpha_spec = round(a_pop + a_grp_pred, 5))
 ```
-
+--->
 ```{r fit-plot, echo=FALSE, message=FALSE, include=FALSE}
 #ggplot(dataset, aes(y = pred_flow, x = (((alpha_spec/degree_predator)*biomass_prey*abundance_predator)/(1 + (h_j *(alpha_spec/degree_predator) * abundance_predator * sum_biomass_prey))))) +
 #geom_point()
