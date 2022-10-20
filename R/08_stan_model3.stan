@@ -46,18 +46,24 @@ model {
 }
 
 generated quantities {
-    vector[n] mu;
     vector[n] alpha_spec;
-    vector[n] log_lik;
+    vector[n] log_pred_flow_hat;
+    vector[n] log_lik; //compute log-likelihood
+    vector[n] y_rep; //replications from posterior predictive distribution
     real<lower = 0, upper = 1> Rsq_3;
 
   alpha_spec = a_pop + a_grp[pred_id];
-  mu = (alpha_spec-log_degree_predator) + log_biomass_prey + log_abundance_predator;
+  
+  log_pred_flow_hat = (alpha_spec-log_degree_predator) + log_biomass_prey + log_abundance_predator;
   
   for (i in 1:n) {
-    log_lik[i] = normal_lpdf(log_pred_flow[i] | mu[i], sigma);
+
+    log_lik[i] = normal_lpdf(log_pred_flow[i] | log_pred_flow_hat[i], sigma);
+
+    y_rep[i] = normal_rng(log_pred_flow_hat[i], sigma);
+
   }
 
-  Rsq_3 = variance(mu) / (variance(mu) + square(sigma));
+  Rsq_3 = variance(log_pred_flow_hat) / (variance(log_pred_flow_hat) + square(sigma));
 
 }

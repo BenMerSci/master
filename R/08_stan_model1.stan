@@ -20,7 +20,7 @@ parameters {
 }
 
 model {
-  vector[n] mu;
+vector[n] mu;
 
   // Priors:
   a_pop ~ normal(1, 10);
@@ -31,21 +31,26 @@ model {
    mu = a_pop + log_biomass_prey + log_abundance_predator;
 
   // Computing target
-   log_pred_flow ~ normal(mu, sigma);
+  log_pred_flow ~ normal(mu, sigma);
 
 }
 
 generated quantities {
-    vector[n] mu;
-    vector[n] log_lik;
-    real<lower = 0, upper = 1> Rsq_1;
+  vector[n] log_pred_flow_hat;
+  vector[n] log_lik; //compute log-likelihood
+  vector[n] y_rep; //replications from posterior predictive distribution
+  real<lower = 0, upper = 1> Rsq_1;
 
-  mu = a_pop + log_biomass_prey + log_abundance_predator;
+  log_pred_flow_hat = a_pop + log_biomass_prey + log_abundance_predator;
 
-  for (i in 1:n) {
-    log_lik[i] = normal_lpdf(log_pred_flow[i] | mu[i], sigma);
-  }
+    for(i in 1:n) {
+  
+      log_lik[i] = normal_lpdf(log_pred_flow[i] | log_pred_flow_hat[i], sigma );
+  
+      y_rep[i] = normal_rng(log_pred_flow_hat[i], sigma);
+      
+    }
 
-  Rsq_1 = variance(mu) / (variance(mu) + square(sigma));
+  Rsq_1 = variance(log_pred_flow_hat) / (variance(log_pred_flow_hat) + square(sigma));
 
 }

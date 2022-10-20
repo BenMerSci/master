@@ -25,17 +25,21 @@ model {
 }
 
 generated quantities {
-  // Generating log-lik for loo
-  vector[n] log_lik;
-  vector[n] mu;
+  vector[n] log_pred_flow_hat;
+  vector[n] log_lik; //compute log-likelihood
+  vector[n] y_rep; //replications from posterior predictive distribution
   real<lower = 0, upper = 1> Rsq_0;
 
-  mu = Intercept + rep_vector(0.0, n);
+  log_pred_flow_hat = Intercept + rep_vector(0.0, n);
   
   for (i in 1:n) {
-    log_lik[i] = normal_lpdf(log_pred_flow[i] | mu[i], sigma);
+
+    log_lik[i] = normal_lpdf(log_pred_flow[i] | log_pred_flow_hat[i], sigma);
+
+    y_rep[i] = normal_rng(log_pred_flow_hat[i], sigma);
+
   }
 
-  Rsq_0 = variance(mu) / (variance(mu) + square(sigma));
+  Rsq_0 = variance(log_pred_flow_hat) / (variance(log_pred_flow_hat) + square(sigma));
 
 }
