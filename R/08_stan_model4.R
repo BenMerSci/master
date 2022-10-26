@@ -28,11 +28,10 @@ dataset <- dataset |>
 # Fit the model
 output_stan_model4 <- stan(
   file = "R/08_stan_model4.stan",
-  iter = 6000,
+  iter = 4000,
   chains = 4,
   cores = 3,
-  data = tidybayes::compose_data(dataset)#,
-  #control = list(max_treedepth = 15)
+  data = tidybayes::compose_data(dataset)
 )
 
 # small community, with not a lot of predator

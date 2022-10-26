@@ -8,7 +8,7 @@ dataset <- readRDS("data/clean/new_dataset.RDS")
 
 # Select desired variables
 dataset <- dataset |>
-            dplyr::mutate(abundance_predator = 
+            dplyr::mutate(abundance_predator =
             biomass_predator / bodymass_mean_predator) |>
              dplyr::select(pred_flow, biomass_prey,
               abundance_predator, predator)
@@ -16,7 +16,7 @@ dataset <- dataset |>
 # Fit the model
 output_stan_model1 <- stan(
   file = "R/08_stan_model1.stan",
-  iter = 6000,
+  iter = 4000,
   chains = 4,
   cores = 3,
   data = tidybayes::compose_data(dataset)
