@@ -5,7 +5,7 @@ date: "`r paste('Last updated on', format(Sys.time(), '%d %B, %Y'))`"
 ---
 
 <!-- Load nedeed libraries -->
-```{r, echo = FALSE, message=FALSE, warning=FALSE}
+```{r, echo = FALSE, message=FALSE, warning=FALSE, include=FALSE}
 suppressPackageStartupMessages(library(rstan))
 suppressPackageStartupMessages(library(loo))
 suppressPackageStartupMessages(library(tidyverse))
@@ -16,9 +16,11 @@ suppressPackageStartupMessages(library(ggdist))
 suppressPackageStartupMessages(library(ggridges))
 suppressPackageStartupMessages(library(hrbrthemes))
 suppressPackageStartupMessages(library(viridis))
+suppressPackageStartupMessages(library(gridExtra))
 ```
 <!-- Load the data --> 
 ```{r load_model, echo = FALSE, include = FALSE}
+dataset <- readRDS("../data/clean/new_dataset.RDS")
 output_stan_model0 <- readRDS("../results/model_outputs/output_stan_model0.RDS")
 output_stan_model1 <- readRDS("../results/model_outputs/output_stan_model1.RDS")
 output_stan_model2 <- readRDS("../results/model_outputs/output_stan_model2.RDS")
@@ -26,8 +28,7 @@ output_stan_model3 <- readRDS("../results/model_outputs/output_stan_model3.RDS")
 output_stan_model4 <- readRDS("../results/model_outputs/output_stan_model4.RDS")
 ```
 
-## R-square
-```{r r-square-functions, echo=FALSE, warning=FALSE, include=FALSE}
+```{r r-square-functions, echo=FALSE, warning=FALSE, message=FALSE, include=FALSE}
 table_rsq <- function(list_model) {
 
         df_list <- purrr::map(list_model, function(x) {
@@ -44,55 +45,303 @@ table_rsq <- function(list_model) {
   return(rsq_table)
 }
 
-plot_rsq <- function(list_model) {
-
-        df_list <- purrr::map(list_model, function(x) {
-          as.data.frame(x) |>
-          dplyr::select(dplyr::matches("Rsq"))
-        })
-
-        df <- do.call(cbind, df_list)
-
-        rsq_plot <- bayesplot::mcmc_areas(df, area_method = "equal height") +
-                    ggplot2::xlim(0, 1)
-
-  return(rsq_plot)
-}
+#plot_rsq <- function(list_model) {
+#
+#        df_list <- purrr::map(list_model, function(x) {
+#          as.data.frame(x) |>
+#          dplyr::select(dplyr::matches("Rsq"))
+#        })
+#
+#        df <- do.call(cbind, df_list)
+#
+#        rsq_plot <- bayesplot::mcmc_areas(df, area_method = "equal height") +
+#                    ggplot2::xlim(0, 1)
+#
+#  return(rsq_plot)
+#}
 ```
 
+## R-square
 ```{r r-squares, echo=FALSE, warning=FALSE, message=FALSE}
 list_model <- list(output_stan_model0, output_stan_model1,
                    output_stan_model2, output_stan_model3,
                    output_stan_model4)
 
 table_rsq(list_model)
-plot_rsq(list_model)
+#plot_rsq(list_model)
+```
+
+```{r compute_loo, echo=FALSE, include=FALSE, warning=FALSE, message=FALSE, include=FALSE}
+log_lik_0 <- extract_log_lik(output_stan_model0, merge_chains = FALSE)
+r_eff_0 <- relative_eff(exp(log_lik_0))
+loo_0 <- loo(log_lik_0, r_eff = r_eff_0, save_psis = TRUE)
+
+log_lik_1 <- extract_log_lik(output_stan_model1, merge_chains = FALSE)
+r_eff_1 <- relative_eff(exp(log_lik_1))
+loo_1 <- loo(log_lik_1, r_eff = r_eff_1, save_psis = TRUE)
+
+log_lik_2 <- extract_log_lik(output_stan_model2, merge_chains = FALSE)
+r_eff_2 <- relative_eff(exp(log_lik_2))
+loo_2 <- loo(log_lik_2, r_eff = r_eff_2, save_psis = TRUE)
+
+log_lik_3 <- extract_log_lik(output_stan_model3, merge_chains = FALSE)
+r_eff_3 <- relative_eff(exp(log_lik_3))
+loo_3 <- loo(log_lik_3, r_eff = r_eff_3, save_psis = TRUE)
+
+log_lik_4 <- extract_log_lik(output_stan_model4, merge_chains = FALSE)
+r_eff_4 <- relative_eff(exp(log_lik_4))
+loo_4 <- loo(log_lik_4, r_eff = r_eff_4, save_psis = TRUE)
 ```
 
 ## Loo-compare the models
-```{r compute_loo, echo=FALSE, include=FALSE, warning=FALSE}
-log_lik_0 <- extract_log_lik(output_stan_model0, merge_chains = FALSE)
-r_eff_0 <- relative_eff(exp(log_lik_0), cores = 4)
-loo_0 <- loo(log_lik_0, r_eff = r_eff_0, cores = 4)
-
-log_lik_1 <- extract_log_lik(output_stan_model1, merge_chains = FALSE)
-r_eff_1 <- relative_eff(exp(log_lik_1), cores = 4)
-loo_1 <- loo(log_lik_1, r_eff = r_eff_1, cores = 4)
-
-log_lik_2 <- extract_log_lik(output_stan_model2, merge_chains = FALSE)
-r_eff_2 <- relative_eff(exp(log_lik_2), cores = 4)
-loo_2 <- loo(log_lik_2, r_eff = r_eff_2, cores = 4)
-
-log_lik_3 <- extract_log_lik(output_stan_model3, merge_chains = FALSE)
-r_eff_3 <- relative_eff(exp(log_lik_3), cores = 4)
-loo_3 <- loo(log_lik_3, r_eff = r_eff_3, cores = 4)
-
-log_lik_4 <- extract_log_lik(output_stan_model4, merge_chains = FALSE)
-r_eff_4 <- relative_eff(exp(log_lik_4), cores = 4)
-loo_4 <- loo(log_lik_4, r_eff = r_eff_4, cores = 4)
-```
-
-```{r compare_loo, echo=FALSE, warning=FALSE}
+```{r compare_loo, echo=FALSE, warning=FALSE, message=FALSE}
 loo_compare(list(model_0=loo_0, model_1=loo_1,
  model_2=loo_2, model_3=loo_3, model_4=loo_4))
 ```
+
+```{r wrangling_yrep, echo=FALSE, warning=FALSE, message=FALSE, include=FALSE}
+yrep_0 <- rstan::extract(output_stan_model0, pars = "y_rep")[[1]]
+yrep_1 <- rstan::extract(output_stan_model1, pars = "y_rep")[[1]]
+yrep_2 <- rstan::extract(output_stan_model2, pars = "y_rep")[[1]]
+yrep_3 <- rstan::extract(output_stan_model3, pars = "y_rep")[[1]]
+yrep_4 <- rstan::extract(output_stan_model4, pars = "y_rep")[[1]]
+
+dataset <- dataset |>
+           dplyr::mutate(
+            yrep_0_mean = apply(yrep_0, 2, mean),
+            yrep_1_mean = apply(yrep_1, 2, mean),
+            yrep_2_mean = apply(yrep_2, 2, mean),
+            yrep_3_mean = apply(yrep_3, 2, mean),
+            yrep_4_mean = apply(yrep_4, 2, mean)
+           )
+```
+
+```{r ppc_plots, echo=FALSE, warning=FALSE, message=FALSE, include=FALSE}
+# Plots for model 0
+ppc_plot0 <- ppc_loo_pit_overlay(
+  y = log(dataset$pred_flow),
+  yrep = yrep_0,
+  lw = weights(loo_0$psis_object)
+) + labs(title = "Model 0")
+qq_plot0 <- ppc_loo_pit_qq(
+  y = log(dataset$pred_flow),
+  yrep = yrep_0,
+  lw = weights(loo_0$psis_object)
+) + labs(title = "Model 0")
+
+# Plots for model 1
+ppc_plot1 <- ppc_loo_pit_overlay(
+  y = log(dataset$pred_flow),
+  yrep = yrep_1,
+  lw = weights(loo_1$psis_object)
+) + labs(title = "Model 1")
+qq_plot1 <- ppc_loo_pit_qq(
+  y = log(dataset$pred_flow),
+  yrep = yrep_1,
+  lw = weights(loo_1$psis_object)
+) + labs(title = "Model 1")
+
+# Plots for model 2
+ppc_plot2 <- ppc_loo_pit_overlay(
+  y = log(dataset$pred_flow),
+  yrep = yrep_2,
+  lw = weights(loo_2$psis_object)
+) + labs(title = "Model 2")
+qq_plot2 <- ppc_loo_pit_qq(
+  y = log(dataset$pred_flow),
+  yrep = yrep_2,
+  lw = weights(loo_2$psis_object)
+) + labs(title = "Model 2")
+
+# Plots for model 3
+ppc_plot3 <- ppc_loo_pit_overlay(
+  y = log(dataset$pred_flow),
+  yrep = yrep_3,
+  lw = weights(loo_3$psis_object)
+) + labs(title = "Model 3")
+qq_plot3 <- ppc_loo_pit_qq(
+  y = log(dataset$pred_flow),
+  yrep = yrep_3,
+  lw = weights(loo_3$psis_object)
+) + labs(title = "Model 3")
+
+# Plots for model 4
+ppc_plot4 <- ppc_loo_pit_overlay(
+  y = log(dataset$pred_flow),
+  yrep = yrep_4,
+  lw = weights(loo_4$psis_object)
+) + labs(title = "Model 4")
+qq_plot4 <- ppc_loo_pit_qq(
+  y = log(dataset$pred_flow),
+  yrep = yrep_4,
+  lw = weights(loo_4$psis_object)
+) + labs(title = "Model 4")
+```
+
+## Posterior predictive checks with loo
+```{r plot_ppc_qq, echo=FALSE, warning=FALSE, message=FALSE}
+ppc_plot0
+ppc_plot1
+ppc_plot2
+ppc_plot3
+ppc_plot4
+qq_plot0
+qq_plot1
+qq_plot2
+qq_plot3
+qq_plot4
+#ppc_plot_list <- list(ppc_plot0, qq_plot0, ppc_plot1, qq_plot1,
+#                      ppc_plot2, qq_plot2, ppc_plot3, qq_plot3,
+#                      ppc_plot4, qq_plot4)
+
+#bayesplot::bayesplot_grid(plots = ppc_plot_list, grid_args = list(nrow = 5, ncol = 2))
+```
+
+## Density plot of observations against simulations
+```{r ppc_dens, echo=FALSE, warning=FALSE, message=FALSE}
+bayesplot::ppc_dens_overlay(log(dataset$pred_flow), yrep_0[1:500, ]) + labs(title = "Model 0")
+bayesplot::ppc_dens_overlay(log(dataset$pred_flow), yrep_1[1:500, ]) + labs(title = "Model 1")
+bayesplot::ppc_dens_overlay(log(dataset$pred_flow), yrep_2[1:500, ]) + labs(title = "Model 2")
+bayesplot::ppc_dens_overlay(log(dataset$pred_flow), yrep_3[1:500, ]) + labs(title = "Model 3")
+bayesplot::ppc_dens_overlay(log(dataset$pred_flow), yrep_4[1:500, ]) + labs(title = "Model 4")
+```
+
+```{r pred_plot, echo=FALSE, warning=FALSE, message=FALSE, include=FALSE}
+plot_pred0 <- dataset |>
+             ggplot(aes(x = log(pred_flow), y = yrep_0_mean)) +
+             geom_point() +
+             theme_minimal() +
+             theme(
+              legend.title = element_blank(),
+              plot.title = element_text(size = 15),
+              axis.title.y = element_text(size = 15),
+              axis.title.x = element_text(size = 15),
+              axis.text.x = element_text(size = 13),
+              axis.text.y = element_text(size = 13)
+             ) +
+             labs(title = "Model 0") +
+             xlab("Observed values") +
+             ylab("Simulated values") +
+             xlim(c(-10,10)) +
+             ylim(c(-10,10)) +
+             geom_abline(intercept = 0, slope = 1)
+
+plot_pred1 <- dataset |>
+             ggplot(aes(x = log(pred_flow), y = yrep_1_mean)) +
+             geom_point() +
+             theme_minimal() +
+             theme(
+              legend.title = element_blank(),
+              plot.title = element_text(size = 15),
+              axis.title.y = element_text(size = 15),
+              axis.title.x = element_text(size = 15),
+              axis.text.x = element_text(size = 13),
+              axis.text.y = element_text(size = 13)
+             ) +
+             labs(title = "Model 1") +
+             xlab("Observed values") +
+             ylab("Simulated values") +
+             xlim(c(-16, 16)) +
+             ylim(c(-16, 16)) +
+             geom_abline(intercept = 0, slope = 1)
+
+plot_pred2 <- dataset |>
+             ggplot(aes(x = log(pred_flow), y = yrep_2_mean)) +
+             geom_point() +
+             theme_minimal() +
+             theme(
+              legend.title = element_blank(),
+              plot.title = element_text(size = 15),
+              axis.title.y = element_text(size = 15),
+              axis.title.x = element_text(size = 15),
+              axis.text.x = element_text(size = 13),
+              axis.text.y = element_text(size = 13)
+             ) +
+             labs(title = "Model 2") +
+             xlab("Observed values") +
+             ylab("Simulated values") +
+             xlim(c(-13, 13)) +
+             ylim(c(-13, 13)) +
+             geom_abline(intercept = 0, slope = 1)
+
+plot_pred3 <- dataset |>
+             ggplot(aes(x = log(pred_flow), y = yrep_3_mean)) +
+             geom_point() +
+             theme_minimal() +
+             theme(
+              legend.title = element_blank(),
+              plot.title = element_text(size = 15),
+              axis.title.y = element_text(size = 15),
+              axis.title.x = element_text(size = 15),
+              axis.text.x = element_text(size = 13),
+              axis.text.y = element_text(size = 13)
+             ) +
+             labs(title = "Model 3") +
+             xlab("Observed values") +
+             ylab("Simulated values") +
+             xlim(c(-13, 13)) +
+             ylim(c(-13, 13)) +
+             geom_abline(intercept = 0, slope = 1)
+
+plot_pred4 <- dataset |>
+             ggplot(aes(x = log(pred_flow), y = yrep_4_mean)) +
+             geom_point() +
+             theme_minimal() +
+             theme(
+              legend.title = element_blank(),
+              plot.title = element_text(size = 15),
+              axis.title.y = element_text(size = 15),
+              axis.title.x = element_text(size = 15),
+              axis.text.x = element_text(size = 13),
+              axis.text.y = element_text(size = 13)
+             ) +
+             labs(title = "Model 4") +
+             xlab("Observed values") +
+             ylab("Simulated values") +
+             xlim(c(-13, 13)) +
+             ylim(c(-13, 13)) +
+             geom_abline(intercept = 0, slope = 1)
+```
+
+## Simulations against observed data
+```{r plot_pred_plot, echo=FALSE, warning=FALSE, message=FALSE}
+plot_pred0
+plot_pred1
+plot_pred2
+plot_pred3
+plot_pred4
+#pred_plot_list <- list(plot_pred0, plot_pred1, plot_pred2,
+#                       plot_pred3, plot_pred4)
+
+#do.call("grid.arrange", c(pred_plot_list, ncol = 2))                   # Apply do.call & grid.arrange
+```
+
+<!--
+```{r test, echo=FALSE, warning=FALSE, message=FALSE, include=FALSE}
+#plot_mu_post <- function(model, community_id, dataset) {
+#  df <- output_stan_model3 |>
+#        tidybayes::gather_rvars(log_pred_flow_hat[id]) |>
+#        dplyr::left_join(dataset |> mutate(id = row_number()))
+#  df |> #dplyr::filter(habitat_type == "marine") |>
+#        ggplot(aes(x= log(biomass_prey) + (log(biomass_predator)-log(bodymass_mean_predator)), dist=.value), col="Posterior distribution") +
+#        stat_dist_pointinterval() +
+#        geom_point(aes(x=log(biomass_prey) + (log(biomass_predator)-log(bodymass_mean_predator)),
+#         y=log(pred_flow), col="Data point"), inherit.aes=FALSE, size=3) +
+#        theme_minimal() +
+#        theme(
+#         legend.position = "right",
+#         legend.title = element_blank(),
+#         plot.title = element_text(size = 15),
+#         axis.title.y = element_text(size = 15),
+#         axis.title.x = element_text(size = 15),
+#         axis.text.x = element_text(size = 13),
+#         axis.text.y = element_text(size = 13)
+#        ) +
+#        labs(title = "Observed against simulated from posterior distribution biomass flows (log-scaled)") +
+#        xlab(expression(B[i] * N[j])) +
+#        ylab("Biomass flow") +
+#        scale_colour_manual(name="Line color", values=c(`Posterior distribution`="black",`Data point`="#499DB7"))
+#}
+#plot_mu_post(output_stan_model3, 12, dataset)
+```
+-->
