@@ -13,15 +13,14 @@ parameters {
 }
 
 model {
-  vector[n] mu;
 
   // Prios:
   Intercept ~ normal(0,10);
   sigma ~ exponential(0.2);
 
-  mu = Intercept + rep_vector(0.0, n);
 
-  log_pred_flow ~ normal(mu, sigma);
+  log_pred_flow ~ normal(Intercept, sigma);
+  
 }
 
 generated quantities {
