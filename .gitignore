@@ -4,7 +4,6 @@ data/
 seminaire1/*
 /.history
 results/*
-/endmaster_notes
 
 # Files to ignore
 *.jpg
