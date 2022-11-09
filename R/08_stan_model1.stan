@@ -23,8 +23,8 @@ model {
 vector[n] mu;
 
   // Priors:
-  a_pop ~ normal(1, 10);
-  sigma ~ exponential(0.2);
+  a_pop ~ normal(-4, 2);
+  sigma ~ exponential(5);
 
   // Likelihood:
   // Computing target's mean

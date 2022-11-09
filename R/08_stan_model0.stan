@@ -15,8 +15,8 @@ parameters {
 model {
 
   // Prios:
-  Intercept ~ normal(0,10);
-  sigma ~ exponential(0.2);
+  Intercept ~ normal(0,1.5);
+  sigma ~ exponential(5);
 
 
   log_pred_flow ~ normal(Intercept, sigma);
