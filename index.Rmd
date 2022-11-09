@@ -21,3 +21,5 @@ date: "`r paste('Last updated on', format(Sys.time(), '%d %B, %Y'))`"
 - Model 4 Stan ([link](https://BenMerSci.github.io/master/Rmd/model4.html))
 
 - Model comparison ([link](https://BenMerSci.github.io/master/Rmd/compare_model.html))
+
+- Model predictions ([link](https://BenMerSci.github.io/master/Rmd/predictions.html))
