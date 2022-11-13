@@ -29,24 +29,17 @@ parameters {
 
 model {
   vector[n] mu;
-  vector[n] alpha_spec;
   vector[n] pred_factor;
 
   // Priors:
-  a_pop ~ normal(1,10);
-  //a_grp ~ std_normal();
-  a_grp ~ normal(1, a_sd);
-  a_sd ~ exponential(10);
+  a_pop ~ normal(-4,2);
+  a_grp ~ normal(a_pop, a_sd);
+  a_sd ~ exponential(3);
   sigma ~ exponential(2);
   h_j ~ normal(1,5);
 
-  // Likelihood:
-  // Computing each alpha by predator
-   //alpha_spec = a_pop + a_grp[pred_id] * a_sd;
-   alpha_spec = a_pop + a_grp[pred_id];
-
   // Computing predators part for the numerator and denominator
-   pred_factor = alpha_spec + log_abundance_predator;
+   pred_factor = a_grp[pred_id] + log_abundance_predator;
 
    mu = pred_factor + log_biomass_prey - log1p_exp(h_j[pred_id] + pred_factor + log_sum_biomass_prey);
 
@@ -55,16 +48,14 @@ model {
 }
 
 generated quantities {
-    vector[n] alpha_spec;
     vector[n] pred_factor;
     vector[n] log_pred_flow_hat;
     vector[n] log_lik; //compute log-likelihood
     vector[n] y_rep; //replications from posterior predictive distribution
     real<lower = 0, upper = 1> Rsq_4;
 
-  alpha_spec = a_pop + a_grp[pred_id];
 
-  pred_factor = alpha_spec + log_abundance_predator;
+  pred_factor = a_grp[pred_id] + log_abundance_predator;
 
   log_pred_flow_hat = pred_factor + log_biomass_prey - log1p_exp(h_j[pred_id] + pred_factor + log_sum_biomass_prey);
       
