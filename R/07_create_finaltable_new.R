@@ -51,5 +51,18 @@ dataset[which(dataset$predator == "Zooplankton"), "habitat_type"] <- "marine_fre
 dataset <- dataset |>
            dplyr::mutate(abundance_predator =
                           biomass_predator / bodymass_mean_predator)
+
+# Create another predator id by foodweb respectively
+# to compute the total biomass consumption of each predator
+# by foodweb respectively
+dataset <- dplyr::mutate(dataset, predator_by_web = paste(dataset$predator, dataset$model_name, sep = "_")) |>
+           dplyr::mutate(pred_id_by_web = as.numeric(as.factor(predator_by_web)))
+
+# Compute the biomass sum of each prey for every predator, respective of network
+dataset <- dataset |>
+          dplyr::group_by(pred_id_by_web) |>
+            dplyr::summarise(sum_biomass_prey = sum(biomass_prey)) |>
+              dplyr::left_join(dataset, by = "pred_id_by_web")
+
 # Save the dataset
 saveRDS(dataset, "data/clean/new_dataset.RDS")
