@@ -47,12 +47,9 @@ dataset <- dplyr::left_join(dataset, tibble::rownames_to_column(as.data.frame(un
 dataset$habitat_type <- as.character(dataset$habitat_type)
 dataset[which(dataset$predator == "Zooplankton"), "habitat_type"] <- "marine_freshwater"
 
-# Only keep interactions in which the prey are also predators,
-# to only keep all the interactions of the predators
-#test <- dataset[!(dataset$predator %in% dataset$prey), ]
-#
-#index <- unique(dataset[(dataset$prey %in% dataset$predator), "prey"])
-#test1 <- dataset[which(dataset$predator %in% index), ]
-
+# Compute predators abundances
+dataset <- dataset |>
+           dplyr::mutate(abundance_predator =
+                          biomass_predator / bodymass_mean_predator)
 # Save the dataset
 saveRDS(dataset, "data/clean/new_dataset.RDS")
