@@ -76,17 +76,9 @@ log_lik_0 <- extract_log_lik(output_stan_model0, merge_chains = FALSE)
 r_eff_0 <- relative_eff(exp(log_lik_0))
 loo_0 <- loo(log_lik_0, r_eff = r_eff_0, save_psis = TRUE)
 
-log_lik_bm1 <- extract_log_lik(output_stan_model_bm1, merge_chains = FALSE)
-r_eff_bm1 <- relative_eff(exp(log_lik_bm1))
-loo_bm1 <- loo(log_lik_bm1, r_eff = r_eff_bm1, save_psis = TRUE)
-
 log_lik_1 <- extract_log_lik(output_stan_model1, merge_chains = FALSE)
 r_eff_1 <- relative_eff(exp(log_lik_1))
 loo_1 <- loo(log_lik_1, r_eff = r_eff_1, save_psis = TRUE)
-
-log_lik_bm2 <- extract_log_lik(output_stan_model_bm2, merge_chains = FALSE)
-r_eff_bm2 <- relative_eff(exp(log_lik_bm2))
-loo_bm2 <- loo(log_lik_bm2, r_eff = r_eff_bm2, save_psis = TRUE)
 
 log_lik_2 <- extract_log_lik(output_stan_model2, merge_chains = FALSE)
 r_eff_2 <- relative_eff(exp(log_lik_2))
@@ -103,25 +95,21 @@ loo_4 <- loo(log_lik_4, r_eff = r_eff_4, save_psis = TRUE)
 
 ## Loo-compare the models
 ```{r compare_loo, echo=FALSE, warning=FALSE, message=FALSE}
-loo_compare(list(model_0 = loo_0, model_1 = loo_1, model_bm1 = loo_bm1,
- model_2 = loo_2, model_bm2 = loo_bm2, model_3 = loo_3, model_4 = loo_4))
+loo_compare(list(model_0 = loo_0, model_1 = loo_1, model_2 = loo_2,
+            model_3 = loo_3, model_4 = loo_4))
 ```
 
 ```{r wrangling_yrep, echo=FALSE, warning=FALSE, message=FALSE, include=FALSE}
 yrep_0 <- rstan::extract(output_stan_model0, pars = "y_rep")[[1]]
-yrep_bm1 <- rstan::extract(output_stan_model_bm1, pars = "y_rep")[[1]]
 yrep_1 <- rstan::extract(output_stan_model1, pars = "y_rep")[[1]]
 yrep_2 <- rstan::extract(output_stan_model2, pars = "y_rep")[[1]]
-yrep_bm2 <- rstan::extract(output_stan_model_bm2, pars = "y_rep")[[1]]
 yrep_3 <- rstan::extract(output_stan_model3, pars = "y_rep")[[1]]
 yrep_4 <- rstan::extract(output_stan_model4, pars = "y_rep")[[1]]
 
 dataset <- dataset |>
            dplyr::mutate(
             yrep_0_mean = apply(yrep_0, 2, mean),
-            yrep_bm1_mean = apply(yrep_bm1, 2, mean),
             yrep_1_mean = apply(yrep_1, 2, mean),
-            yrep_bm2_mean = apply(yrep_bm2, 2, mean),
             yrep_2_mean = apply(yrep_2, 2, mean),
             yrep_3_mean = apply(yrep_3, 2, mean),
             yrep_4_mean = apply(yrep_4, 2, mean)
@@ -141,18 +129,6 @@ qq_plot0 <- ppc_loo_pit_qq(
   lw = weights(loo_0$psis_object)
 ) + labs(title = "Model 0")
 
-# Plots for model bm1
-ppc_plot_bm1 <- ppc_loo_pit_overlay(
-  y = log(dataset$pred_flow),
-  yrep = yrep_bm1,
-  lw = weights(loo_bm1$psis_object)
-) + labs(title = "Model bm1")
-qq_plot_bm1 <- ppc_loo_pit_qq(
-  y = log(dataset$pred_flow),
-  yrep = yrep_bm1,
-  lw = weights(loo_bm1$psis_object)
-) + labs(title = "Model bm1")
-
 # Plots for model 1
 ppc_plot1 <- ppc_loo_pit_overlay(
   y = log(dataset$pred_flow),
@@ -164,18 +140,6 @@ qq_plot1 <- ppc_loo_pit_qq(
   yrep = yrep_1,
   lw = weights(loo_1$psis_object)
 ) + labs(title = "Model 1")
-
-# Plots for model bm2
-ppc_plot_bm2 <- ppc_loo_pit_overlay(
-  y = log(dataset$pred_flow),
-  yrep = yrep_bm2,
-  lw = weights(loo_bm2$psis_object)
-) + labs(title = "Model bm2")
-qq_plot_bm2 <- ppc_loo_pit_qq(
-  y = log(dataset$pred_flow),
-  yrep = yrep_bm2,
-  lw = weights(loo_bm2$psis_object)
-) + labs(title = "Model bm2")
 
 # Plots for model 2
 ppc_plot2 <- ppc_loo_pit_overlay(
