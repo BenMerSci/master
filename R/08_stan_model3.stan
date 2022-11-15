@@ -26,13 +26,13 @@ parameters {
 
 model {
   vector[n] mu;
-
   // Priors:
   a_pop ~ normal(-4, 2);
   a_grp ~ normal(a_pop, a_sd);
   a_sd ~ exponential(3);
   sigma ~ exponential(5);
   
+
   // Computing target's mean
    mu = (a_grp[pred_id]-log_degree_predator) + log_biomass_prey + log_abundance_predator;
 
@@ -46,7 +46,8 @@ generated quantities {
     vector[n] y_rep; //replications from posterior predictive distribution
     real<lower = 0, upper = 1> Rsq_3;
 
-  
+
+
   log_pred_flow_hat = (a_grp[pred_id]-log_degree_predator) + log_biomass_prey + log_abundance_predator;
   
   for (i in 1:n) {
