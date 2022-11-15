@@ -26,6 +26,8 @@ output_stan_model1 <- readRDS("results/model_outputs/output_stan_model1.RDS")
 output_stan_model2 <- readRDS("results/model_outputs/output_stan_model2.RDS")
 output_stan_model3 <- readRDS("results/model_outputs/output_stan_model3.RDS")
 output_stan_model4 <- readRDS("results/model_outputs/output_stan_model4.RDS")
+output_stan_model4_ht <- readRDS("results/model_outputs/output_stan_model4_ht.RDS")
+
 ```
 
 ```{r r-square-functions, echo=FALSE, warning=FALSE, message=FALSE, include=FALSE}
@@ -65,7 +67,7 @@ table_rsq <- function(list_model) {
 ```{r r-squares, echo=FALSE, warning=FALSE, message=FALSE}
 list_model <- list(output_stan_model0, output_stan_model1,
                    output_stan_model2, output_stan_model3,
-                   output_stan_model4)
+                   output_stan_model4, output_stan_model4_ht)
 
 table_rsq(list_model)
 #plot_rsq(list_model)
@@ -91,12 +93,16 @@ loo_3 <- loo(log_lik_3, r_eff = r_eff_3, save_psis = TRUE)
 log_lik_4 <- extract_log_lik(output_stan_model4, merge_chains = FALSE)
 r_eff_4 <- relative_eff(exp(log_lik_4))
 loo_4 <- loo(log_lik_4, r_eff = r_eff_4, save_psis = TRUE)
+
+log_lik_4_ht <- extract_log_lik(output_stan_model4_ht, merge_chains = FALSE)
+r_eff_4_ht <- relative_eff(exp(log_lik_4_ht))
+loo_4_ht <- loo(log_lik_4_ht, r_eff = r_eff_4_ht, save_psis = TRUE)
 ```
 
 ## Loo-compare the models
 ```{r compare_loo, echo=FALSE, warning=FALSE, message=FALSE}
 loo_compare(list(model_0 = loo_0, model_1 = loo_1, model_2 = loo_2,
-            model_3 = loo_3, model_4 = loo_4))
+            model_3 = loo_3, model_4 = loo_4, model_4_ht = loo_4_ht))
 ```
 
 ```{r wrangling_yrep, echo=FALSE, warning=FALSE, message=FALSE, include=FALSE}
@@ -105,6 +111,7 @@ yrep_1 <- rstan::extract(output_stan_model1, pars = "y_rep")[[1]]
 yrep_2 <- rstan::extract(output_stan_model2, pars = "y_rep")[[1]]
 yrep_3 <- rstan::extract(output_stan_model3, pars = "y_rep")[[1]]
 yrep_4 <- rstan::extract(output_stan_model4, pars = "y_rep")[[1]]
+yrep_4_ht <- rstan::extract(output_stan_model4_ht, pars = "y_rep")[[1]]
 
 dataset <- dataset |>
            dplyr::mutate(
@@ -112,7 +119,8 @@ dataset <- dataset |>
             yrep_1_mean = apply(yrep_1, 2, mean),
             yrep_2_mean = apply(yrep_2, 2, mean),
             yrep_3_mean = apply(yrep_3, 2, mean),
-            yrep_4_mean = apply(yrep_4, 2, mean)
+            yrep_4_mean = apply(yrep_4, 2, mean),
+            yrep_4_ht_mean = apply(yrep_4_ht, 2, mean)
            )
 ```
 
@@ -176,6 +184,18 @@ qq_plot4 <- ppc_loo_pit_qq(
   yrep = yrep_4,
   lw = weights(loo_4$psis_object)
 ) + labs(title = "Model 4")
+
+# Plots for model 4_ht
+ppc_plot4_ht <- ppc_loo_pit_overlay(
+  y = log(dataset$pred_flow),
+  yrep = yrep_4_ht,
+  lw = weights(loo_4_ht$psis_object)
+) + labs(title = "Model 4_ht")
+qq_plot4_ht <- ppc_loo_pit_qq(
+  y = log(dataset$pred_flow),
+  yrep = yrep_4_ht,
+  lw = weights(loo_4_ht$psis_object)
+) + labs(title = "Model 4_ht")
 ```
 
 ## Posterior predictive checks with loo
@@ -185,11 +205,13 @@ ppc_plot1
 ppc_plot2
 ppc_plot3
 ppc_plot4
+ppc_plot4_ht
 qq_plot0
 qq_plot1
 qq_plot2
 qq_plot3
 qq_plot4
+qq_plot4_ht
 ```
 
 ## Density plot of observations against simulations
@@ -199,37 +221,5 @@ bayesplot::ppc_dens_overlay(log(dataset$pred_flow), yrep_1[1:500, ]) + labs(titl
 bayesplot::ppc_dens_overlay(log(dataset$pred_flow), yrep_2[1:500, ]) + labs(title = "Model 2")
 bayesplot::ppc_dens_overlay(log(dataset$pred_flow), yrep_3[1:500, ]) + labs(title = "Model 3")
 bayesplot::ppc_dens_overlay(log(dataset$pred_flow), yrep_4[1:500, ]) + labs(title = "Model 4")
+bayesplot::ppc_dens_overlay(log(dataset$pred_flow), yrep_4_ht[1:500, ]) + labs(title = "Model 4_ht")
 ```
-<!--
-## Check parameterized bodymass vs observed bodymass
-```{r bodymass, echo=FALSE, warning=FALSE, message=FALSE, include=FALSE}
-#bodymass <- unique(dataset[,c("pred_id","bodymass_mean_predator")])$bodymass_mean_predator |> log()
-#
-#test <- output_stan_model_bm1_andrew |>
-#        tidybayes::gather_rvars(bm[pred_id]) |>
-#          dplyr::left_join(unique(dataset[,c("pred_id","bodymass_mean_predator")]))
-#
-#test |> ggplot(aes(x = log(bodymass_mean_predator), dist=.value)) +
-#        stat_dist_pointinterval() +
-#        geom_abline(intercept = 0, slope = 1) +
-#        theme_minimal() +
-#        xlim(c(-17,5)) + ylim(c(-17,5)) +
-#        theme(
-#         legend.title = element_blank(),
-#         plot.title = element_text(size = 15),
-#         axis.title.y = element_text(size = 15),
-#         axis.title.x = element_text(size = 15),
-#         axis.text.x = element_text(size = 13),
-#         axis.text.y = element_text(size = 13)
-#        )
-#
-#bm1 <- summary(output_stan_model_bm1, pars = "bm")$summary
-#bm1_andrew <- summary(output)
-#bm2 <- summary(output_stan_model_bm2, pars = "bm")$summary[,"mean"]
-#
-#plot(bm1 ~ bodymass, xlim=c(-16,16), ylim=c(-16,16))
-#abline(0, 1)
-#plot(bm2 ~ bodymass, xlim=c(-16,16), ylim=c(-16,16))
-#abline(0, 1)
-```
--->
