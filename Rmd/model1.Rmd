@@ -7,6 +7,7 @@ date: "`r paste('Last updated on', format(Sys.time(), '%d %B, %Y'))`"
 <!-- Load nedeed libraries -->
 ```{r, echo = FALSE, message=FALSE, warning=FALSE}
 suppressPackageStartupMessages(library(rstan))
+suppressPackageStartupMessages(library(loo))
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(tidybayes))
 suppressPackageStartupMessages(library(bayesplot))
@@ -15,11 +16,14 @@ suppressPackageStartupMessages(library(ggdist))
 suppressPackageStartupMessages(library(ggridges))
 suppressPackageStartupMessages(library(hrbrthemes))
 suppressPackageStartupMessages(library(viridis))
+suppressPackageStartupMessages(library(gridExtra))
+suppressPackageStartupMessages(library(patchwork))
 ```
 <!-- Load the data --> 
 ```{r load_model1, echo = FALSE, include = FALSE}
 dataset <- readRDS("../data/clean/new_dataset.RDS")
 output_stan_model1 <- readRDS("../results/model_outputs/output_stan_model1.RDS")
+source("../R/10_plot_func.R")
 ```
 
 # Model 1
@@ -45,51 +49,51 @@ general_params <- output_stan_model1 |>
 kable(summary(output_stan_model1, pars = c("a_pop","sigma"))$summary, caption = "Summary table model 1")
 ```
 
-## Exploring parameters posterior distribution
-### General parameters
-```{r general-ridgeplots, echo=FALSE, message=FALSE, fig.height=10, fig.width=13}
-# Plot the global parameters
-general_params |>
-  ggplot(aes(x = `.value`, y = `.variable`)) +
-  geom_density_ridges_gradient(scale = 1, rel_min_height = 0.0001, fill = "lightskyblue3") +
-  labs(title = "Posterior distribution of global parameters") +
-  theme_ipsum() +
-  theme(
-    legend.position = "none",
-    axis.title.y = element_text(size = 20),
-    axis.title.x = element_text(size = 20),
-    plot.title = element_text(size = 30),
-    axis.text.x = element_text(size = 15),
-    axis.text.y = element_text(size = 15)
-  ) +
-   xlab("log-values") +
-   ylab("Parameter ID")
+```{r compute_loo, echo=FALSE, include=FALSE, warning=FALSE, message=FALSE, include=FALSE}
+log_lik_1 <- extract_log_lik(output_stan_model1, merge_chains = FALSE)
+r_eff_1 <- relative_eff(exp(log_lik_1))
+loo_1 <- loo(log_lik_1, r_eff = r_eff_1, save_psis = TRUE)
 ```
 
-## Traceplots
-```{r trace plots, echo = FALSE}
-traceplot(output_stan_model1, pars = c("a_pop","sigma"))
+## Posterior predictive checks
+```{r wrangling_yrep, echo=FALSE, warning=FALSE, message=FALSE, include=FALSE}
+yrep_1 <- rstan::extract(output_stan_model1, pars = "y_rep")[[1]]
+
+dataset <- dataset |>
+           dplyr::mutate(
+            yrep_1_mean = apply(yrep_1, 2, mean)
+           )
 ```
 
-## Simulated data vs observed data
-```{r sim_plot, echo=FALSE, warning=FALSE, message=FALSE, fig.height=10, fig.width=13}
-dataset$sim_pred_flow <- summary(output_stan_model1, pars = "mu")$summary[,"mean"]
-
-dataset |>
-  ggplot(aes(x = log(pred_flow), y = sim_pred_flow)) +
-  geom_point() +
-  labs(title = "Simulated by observed biomass flows (log-scaled)") +
-  theme_ipsum() +
-  theme(
-    legend.position = "none",
-    axis.title.y = element_text(size = 20),
-    axis.title.x = element_text(size = 20),
-    plot.title = element_text(size = 30),
-    axis.text.x = element_text(size = 15),
-    axis.text.y = element_text(size = 15)
-  ) +
-  xlab("Observed biomass flows") +
-  ylab("Simulated biomass flows") +
-  geom_abline(intercept = 0, slope = 1)
+```{r ppc_plots, echo=FALSE, warning=FALSE, message=FALSE, include=FALSE}
+# Plots for model 0
+ppc_plot1 <- ppc_loo_pit_overlay(
+  y = log(dataset$pred_flow),
+  yrep = yrep_1,
+  lw = weights(loo_1$psis_object)
+) + labs(title = "Model 1")
+qq_plot1 <- ppc_loo_pit_qq(
+  y = log(dataset$pred_flow),
+  yrep = yrep_1,
+  lw = weights(loo_1$psis_object)
+) + labs(title = "Model 1")
 ```
 
+```{r plot_ppc_qq, echo=FALSE, warning=FALSE, message=FALSE}
+ppc_plot1
+qq_plot1
+```
+
+```{r ppc_dens, echo=FALSE, warning=FALSE, message=FALSE}
+bayesplot::ppc_dens_overlay(log(dataset$pred_flow), yrep_1[1:500, ]) + labs(title = "Model 0")
+```
+
+## One-one plot of simulation against data
+```{r one-one-plot, echo=FALSE, warning=FALSE, message=FALSE}
+one_one_plot(dataset, 1) + xlim(c(-16,16)) + ylim(c(-16,16))
+```
+
+```{r sim_plot, echo=FALSE, warning=FALSE, message=FALSE, fig.width=15, fig.height=12}
+plot_sim_noerror(output_stan_model1)
+plot_sim_error(output_stan_model1)
+```

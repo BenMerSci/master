@@ -7,6 +7,7 @@ date: "`r paste('Last updated on', format(Sys.time(), '%d %B, %Y'))`"
 <!-- Load nedeed libraries -->
 ```{r, echo = FALSE, message=FALSE, warning=FALSE}
 suppressPackageStartupMessages(library(rstan))
+suppressPackageStartupMessages(library(loo))
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(tidybayes))
 suppressPackageStartupMessages(library(bayesplot))
@@ -15,11 +16,14 @@ suppressPackageStartupMessages(library(ggdist))
 suppressPackageStartupMessages(library(ggridges))
 suppressPackageStartupMessages(library(hrbrthemes))
 suppressPackageStartupMessages(library(viridis))
+suppressPackageStartupMessages(library(gridExtra))
+suppressPackageStartupMessages(library(patchwork))
 ```
 <!-- Load the data --> 
 ```{r load_model1, echo = FALSE, fig.height=15, fig.width=10}
 dataset <- readRDS("../data/clean/new_dataset.RDS")
 output_stan_model2 <- readRDS("../results/model_outputs/output_stan_model2.RDS")
+source("../R/10_plot_func.R")
 ```
 
 # Model 2
@@ -33,7 +37,7 @@ F_{ij}^{real} &= \alpha_{j} * B_i * \frac{B_j}{M_j}
 
 This model was fit with a hierarchy implemented on the alpha parameter. A global alpha was estimated, with 118 respective unique alphas for each predators.
 
-```{r structure_data, echo = FALSE}
+```{r structure_data, echo = FALSE, warning=FALSE, message=FALSE}
 # Recover types
 output_stan_model2 <- recover_types(output_stan_model2)
 # Draw the posterior for all parameters
@@ -59,28 +63,8 @@ kable(summary(output_stan_model2, pars = c("a_pop","a_sd","sigma"))$summary, cap
 ```
 
 ## Exploring parameters posterior distribution
-### General parameters
-```{r general-ridgeplots, echo=FALSE, message=FALSE, fig.height=10, fig.width=13}
-# Plot the global parameters
-general_params |>
-  ggplot(aes(x = `.value`, y = `.variable`)) +
-  geom_density_ridges_gradient(scale = 1, rel_min_height = 0.0001, fill = "lightskyblue3") +
-  labs(title = "Posterior distribution of global parameters") +
-  theme_ipsum() +
-  theme(
-    legend.position = "none",
-    axis.title.y = element_text(size = 20),
-    axis.title.x = element_text(size = 20),
-    plot.title = element_text(size = 30),
-    axis.text.x = element_text(size = 15),
-    axis.text.y = element_text(size = 15)
-  ) +
-   xlab("log-values") +
-   ylab("Parameter ID")
-```
-
 ### Respective predator alphas
-```{r alphas-ridgeplots, echo=FALSE, message=FALSE, fig.height=13, fig.width=13}
+```{r alphas-ridgeplots, echo=FALSE, warning=FALSE, message=FALSE, fig.height=13, fig.width=13}
 # Plot the unique alphas by predator
 ggplot(a_grp, aes(x = `.value`, y = pred_id, fill = habitat_type)) +
   geom_density_ridges_gradient(scale = 5, rel_min_height = 0.01) +
@@ -104,31 +88,52 @@ ggplot(a_grp, aes(x = `.value`, y = pred_id, fill = habitat_type)) +
 
 ```
 
-## Rhats
-### Examining Rhats to see if all parameters have converge
-```{r rhats, echo=FALSE, message=FALSE}
-rhat(output_stan_model2) |>
-mcmc_rhat_hist()
+```{r compute_loo, echo=FALSE, include=FALSE, warning=FALSE, message=FALSE, include=FALSE}
+log_lik_2 <- extract_log_lik(output_stan_model2, merge_chains = FALSE)
+r_eff_2 <- relative_eff(exp(log_lik_2))
+loo_2 <- loo(log_lik_2, r_eff = r_eff_2, save_psis = TRUE)
 ```
 
-## Simulated data vs observed data
-```{r sim_plot, echo=FALSE, warning=FALSE, message=FALSE, fig.height=10, fig.width=13}
-dataset$sim_pred_flow <- summary(output_stan_model2, pars = "mu")$summary[,"mean"]
+```{r wrangling_yrep, echo=FALSE, warning=FALSE, message=FALSE, include=FALSE}
+yrep_2 <- rstan::extract(output_stan_model2, pars = "y_rep")[[1]]
 
-dataset |>
-  ggplot(aes(x = log(pred_flow), y = sim_pred_flow)) +
-  geom_point() +
-  labs(title = "Simulated by observed biomass flows (log-scaled)") +
-  theme_ipsum() +
-  theme(
-    legend.position = "none",
-    axis.title.y = element_text(size = 20),
-    axis.title.x = element_text(size = 20),
-    plot.title = element_text(size = 30),
-    axis.text.x = element_text(size = 15),
-    axis.text.y = element_text(size = 15)
-  ) +
-  xlab("Observed biomass flows") +
-  ylab("Simulated biomass flows") +
-  geom_abline(intercept = 0, slope = 1)
+dataset <- dataset |>
+           dplyr::mutate(
+            yrep_2_mean = apply(yrep_2, 2, mean)
+           )
 ```
+
+```{r ppc_plots, echo=FALSE, warning=FALSE, message=FALSE, include=FALSE}
+# Plots for model 2
+ppc_plot2 <- ppc_loo_pit_overlay(
+  y = log(dataset$pred_flow),
+  yrep = yrep_2,
+  lw = weights(loo_2$psis_object)
+) + labs(title = "Model 2")
+qq_plot2 <- ppc_loo_pit_qq(
+  y = log(dataset$pred_flow),
+  yrep = yrep_2,
+  lw = weights(loo_2$psis_object)
+) + labs(title = "Model 2")
+```
+
+```{r plot_ppc_qq, echo=FALSE, warning=FALSE, message=FALSE}
+ppc_plot2
+qq_plot2
+```
+
+```{r ppc_dens, echo=FALSE, warning=FALSE, message=FALSE}
+bayesplot::ppc_dens_overlay(log(dataset$pred_flow), yrep_2[1:500, ]) + labs(title = "Model 2")
+```
+
+
+## One-one plot of simulation against data
+```{r one-one-plot, echo=FALSE, warning=FALSE, message=FALSE}
+one_one_plot(dataset, 2) + xlim(c(-13,13)) + ylim(c(-13,13))
+```
+
+```{r sim_plot, echo=FALSE, warning=FALSE, message=FALSE, fig.width=15, fig.height=12}
+plot_sim_noerror(output_stan_model2)
+plot_sim_error(output_stan_model2)
+```
+
