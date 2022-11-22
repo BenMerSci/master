@@ -49,12 +49,6 @@ df_coords <- cbind(df_coords, centroids) |>
 enviro_df <- merge(enviro_df, df_coords, by.x = "model_name", by.y = "model_name", all.x = TRUE) |>
 		dplyr::select(c("model_name","model_year","ecosystem_type","currency_units","habitat_type",
 		"lon","lat"))
-
-
-test <- read.delim("data/legagneux/BPQ_all.txt") |>
-		dplyr::select(c("Site","Mean.temperature", "Lat")) |>
-		dplyr::group_by(Site) |>
-		dplyr::summarize(mean_temp = mean(Mean.temperature), latitude = mean(Lat))
 		
 # Manually adding the coordinates of the Arctic networks
 enviro_df[which(enviro_df$model_name == "Arctic islands, Alert"), c("lon","lat")] <- c(-62.3, 82)

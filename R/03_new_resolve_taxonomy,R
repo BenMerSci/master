@@ -7,9 +7,9 @@ prelem_sp_list <- tibble::enframe(x = unique(c(inter_table$prey, inter_table$pre
 #write.csv(prelem_sp_list, "data/intermediate/new/sp_list.csv")
 
 # Temporary store names that make the function bug
-temp <- prelem_sp_list[which(prelem_sp_list$original_name == "Nereidae"),"original_name"]
-index <- which(prelem_sp_list$original_name == "Nereidae")
-prelem_sp_list[which(prelem_sp_list$original_name == "Nereidae"),"original_name"] <- NA
+temp <- prelem_sp_list[which(prelem_sp_list$original_name %in% c("Litopenaeus","Nereidae","Medium cephalopod")),"original_name"]
+index <- which(prelem_sp_list$original_name %in% c("Litopenaeus","Nereidae","Medium cephalopod"))
+prelem_sp_list[which(prelem_sp_list$original_name %in% c("Litopenaeus","Nereidae","Medium cephalopod")),"original_name"] <- NA
 
  # Resolve the names
 # If file of resolved_names doesn't exist it creates it, otherwise it loads it
@@ -33,7 +33,7 @@ if(!file.exists("data/intermediate/resolved_names.RDS")) {
 resolved_names[which(is.na(resolved_names$scientificName)), "scientificName"] <- resolved_names[which(is.na(resolved_names$scientificName)),"verbatimScientificName"]
 
 # Rename columns
-resolved_names <- dplyr::rename( resolved_names,
+resolved_names <- dplyr::rename(resolved_names,
                     original = "verbatimScientificName",
                     resolved = "scientificName"
                   )

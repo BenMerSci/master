@@ -8,16 +8,16 @@ model_list <- plyr::ldply(XML::xmlToList(data), data.frame)
 # Load the .csv file that matches my model names to their database model names
 # Merge it with the corresponding models
 # 64 models
-name_match <- read.csv("data/raw/new_name_match.csv") |>
+name_match <- read.csv("data/raw/last_name_match.csv") |>
               base::merge(model_list, by.x = "name_from_db",
                by.y = "model.model_name", all.x = TRUE
               ) #82 models, has to keep unique ones
 
 # Verified manually the duplicate one to keep the right one
-name_match <- name_match[-c(6), ]
+name_match <- name_match[-c(7), ]
 
 # Load the interactions table
-ecopath_metadata <- readRDS("data/intermediate/new/resolved_inter_table.RDS") |>
+ecopath_metadata <- readRDS("data/intermediate/resolved_inter_table.RDS") |>
                     base::merge(name_match, by.x = "model_name",
                      by.y = "model_name", all.x = TRUE) |>
                     dplyr::select(
@@ -39,6 +39,10 @@ ecopath_metadata[which(ecopath_metadata$model_name == "Arctic islands, Nenetsky"
 ecopath_metadata[which(ecopath_metadata$model_name == "Arctic islands, Svalbard"), "model_year"] <- "2008"
 ecopath_metadata[which(ecopath_metadata$model_name == "Arctic islands, Zackenberg"), "model_year"] <- "2008"
 ecopath_metadata[which(ecopath_metadata$model_name == "Arctic islands, Bylot"), "model_year"] <- "2008"
+ecopath_metadata[which(ecopath_metadata$model_name == "Chantuto"), "model_year"] <- "2015"
+
+# Make currency uniform
+ecopath_metadata[which(ecopath_metadata$currency_units == "WetWeight"),"currency_units"] <- "Wet weight (t/km^2)"
 
 # Write the list as a .Rdata file
 saveRDS(ecopath_metadata, file = "data/intermediate/ecopath_metadata.RDS")

@@ -4,6 +4,19 @@ Group_name <- readRDS("data/intermediate/Group_name.RDS")
 load("data/raw/ecopath/data/DIET.Rdata")
 load("data/raw/ecopath/data/Q_vec.Rdata")
 load("data/raw/ecopath/data/B_vec.Rdata")
+ecobase_biomass <- readRDS("data/raw/ecobase_data/biomasses.RDS")
+
+# Change the comas in matrices by dots
+ecobase_matrice <- list.files(path="./data/raw/ecobase_data", pattern = "(matrix)+(.csv)", full.names = T) |>
+    purrr::map(~read.csv(., check.names = FALSE))
+
+ecobase_matrice <- ecobase_matrice |>
+      purrr::map(function(x){
+          apply(x, 2, function(x) as.numeric(gsub(pattern = ",", replacement = ".", x)))
+      })
+
+# Append ecobase_biomass to B_vec
+B_vec <- c(B_vec, ecobase_biomass)
 biomass_data <- purrr::map(B_vec, ~tibble::enframe(. ,name = "pred_id", value = "biomass"))
 
 # Use the Group_name indices to subset the other object and keep
@@ -21,7 +34,8 @@ biomass_data <- biomass_data[ntw_indices]
 
 # First we compute the fluxes for every community
 # Calculation taken from Claire Jacquet scripts
-for (i in seq_len(length(DIET))) {
+# Removed 4 for the already computed matrices from Ecobase
+for (i in seq_len(length(DIET)-4)) {
 
   D <- DIET[[i]] # Diet matrix
   B <- as.numeric(B_vec[[i]]) # Species biomass (t/km^2)
@@ -32,6 +46,9 @@ for (i in seq_len(length(DIET))) {
   # To remove the column names of last networks
   colnames(DIET[[i]]) <- seq_len(ncol(DIET[[i]]))
 }
+
+# Add back the 4 matrices
+DIET[c(17,18,19,20)] <- ecobase_matrice
 
 # Compute the degree (number of preys) for each consumer
 # and bind it to Group_name
@@ -57,7 +74,11 @@ interactions <- purrr::map2(DIET, sp_data, .f = function(.x, .y) {
   return(.x)
 })
 
-
+# Remove cannibalism from these networks
+interactions <- purrr::map(interactions, function(x) {
+          x <- x[which(x$prey != x$predator), ]
+          return(x)
+})
 
 interactions <- purrr::map2(interactions, sp_data, .f = function(.x, .y) {
           dplyr::left_join(.x, .y, by = c("predator" = "scientific_name")) |>
@@ -79,15 +100,3 @@ inter_table <- do.call("rbind", interactions)
 
 # Save the data
 saveRDS(inter_table, file = "data/intermediate/inter_table.RDS")
-
-# Andrew's checking
-# Check to see if there is a causation between
-# not taxonomically resolved and numbers of degrees
-#pred_summaries <- dplyr::bind_rows(sp_data, .id = "comm") |>
-#                   dplyr::as_tibble() |>
-#                    dplyr::mutate(is_resolved = !is.na(scientific_name)) |>
-#                     dplyr::group_by(comm, is_resolved) |>
-#                      dplyr::summarise(n = dplyr::n(),
-#                       mean_deg = median(degree))
-#pred_summaries |> dplyr::select(-n) |> tidyr::pivot_wider(names_from = is_resolved, values_from = mean_deg) |> dplyr::arrange(desc(`FALSE`))
-#dplyr::bind_rows(sp_data, .id = "comm") |> dplyr::count(original_name)|> dplyr::arrange(dplyr::desc(n)) |> head(15)

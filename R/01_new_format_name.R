@@ -1,4 +1,5 @@
-# Modify the order of the models so they fit the data
+# Overhead section to format the basic data
+## Reorder the terrestrial network so they refer to the good one
 load("data/raw/ecopath/data/Ecopath_models.Rdata")
 temp <- Ecopath_models[c(110:116), ]
 Ecopath_models[111, ] <- temp[6, ]
@@ -7,82 +8,76 @@ Ecopath_models[113, ] <- temp[7, ]
 Ecopath_models[114, ] <- temp[4, ]
 Ecopath_models[115, ] <- temp[2, ]
 Ecopath_models[116, ] <- temp[5, ]
+
+## Join the networks from Ecobase
+Ecobase_models <- data.frame(c("Chantuto","Mediterranea","Nicoya","Srilanka"), c("marine","marine","marine","marine"))
+colnames(Ecobase_models) <- colnames(Ecopath_models)
+Ecopath_models <- rbind(Ecopath_models, Ecobase_models)
+
+## Save it back
 save(Ecopath_models, file = "data/raw/ecopath/data/Ecopath_models_modif.Rdata")
 
-# Load the name of each "species" in each 116 networks
-# Group_name, list of length 116 for 116 networks
+
+## Load the Ecobase networks biomass
+Ecobase_files <- list.files(path="./data/raw/ecobase_data", pattern = "(biomass)+(.csv)", full.names = T) |>
+    purrr::map(~read.csv(.))
+
+# Structure biomass data for ecobase model and save it
+ecobase_biomass <- purrr::map(Ecobase_files, function(x) {
+    df <- x$"Biomass..t.km.." |>
+          gsub(pattern = ",", replacement = ".") |>
+          as.numeric()
+    return(df)
+     })
+
+saveRDS(ecobase_biomass, "data/raw/ecobase_data/biomasses.RDS")
+
+## Combine 116 networks with 4 from Ecobase
 load("data/raw/ecopath/data/GroupName.Rdata")
+
+Ecobase_files <- purrr::map(Ecobase_files, ~.$Group.name)
+
+Group_name <- c(GroupName, Ecobase_files)
 
 # Transform each list of names into a DataFrame
 # Add an empty column to each DataFrame
 # original_name is the name initially found in the 116 Ecopath models
 # scientific_name are the names that are retrieved from
 # each article related to the model
-Group_name <- lapply(GroupName, function(x) as.data.frame(x)) |>
+Group_name <- lapply(Group_name, function(x) as.data.frame(x)) |>
              lapply(function(x) tibble::add_column(x, scientific_name = NA)) |>
              lapply(function(x) dplyr::rename(x, original_name = x))
 
-# Web 4 - article OK
-# Set bodymasses
-#Group_name[[4]][which(Group_name[[4]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
-#Group_name[[4]][which(Group_name[[4]][,"original_name"] == "Zooplankton"),"scientific_name"] <- "Zooplankton"
-#Group_name[[4]][which(Group_name[[4]][,"original_name"] == "Macrozoobenthos"),"scientific_name"] <- "Macrozoobenthos"
-#Group_name[[4]][which(Group_name[[4]][,"original_name"] == "Bent fauna"),"scientific_name"] <- "Meiofauna"
-#Group_name[[4]][which(Group_name[[4]][,"original_name"] == "Cephalopods"),"scientific_name"] <- "Cephalopods"
-#Group_name[[4]][which(Group_name[[4]][,"original_name"] == "Other small pelagics"),"scientific_name"] <- "Small pelagic fish"
-#Group_name[[4]][which(Group_name[[4]][,"original_name"] == "Scads"),"scientific_name"] <- "Decapterus"
-#Group_name[[4]][which(Group_name[[4]][,"original_name"] == "Lemuru"),"scientific_name"] <- "Sardinella lemuru"
-#Group_name[[4]][which(Group_name[[4]][,"original_name"] == "Medium pelagics"),"scientific_name"] <- "Medium pelagic fish"
-#Group_name[[4]][which(Group_name[[4]][,"original_name"] == "Demersal fish"),"scientific_name"] <- "Demersal fish"
-#Group_name[[4]][which(Group_name[[4]][,"original_name"] == "Seabirds"),"scientific_name"] <- "Seabirds"
-#Group_name[[4]][which(Group_name[[4]][,"original_name"] == "Res dolphins"),"scientific_name"] <- "Small cetacea"
-#Group_name[[4]][which(Group_name[[4]][,"original_name"] == "Transient whales"),"scientific_name"] <- "Large cetacea"
-
-# Web 9 - article OK
-# 
-Group_name[[9]][which(Group_name[[9]][,"original_name"] == "Copepoda"),"scientific_name"] <- "Copepoda" # Calanoid
-Group_name[[9]][which(Group_name[[9]][,"original_name"] == "Worms"),"scientific_name"] <- "Nereidae" # Polychaete
-Group_name[[9]][which(Group_name[[9]][,"original_name"] == "Molluscs"),"scientific_name"] <- "Mollusca" # Bivalvia & Gastropod
-Group_name[[9]][which(Group_name[[9]][,"original_name"] == "Microcrustacean"),"scientific_name"] <- "Microcrustacean" # Euphausiacea, Sergestida, Amphipoda, Isopoda. Tanaidacea, Mysidacea. Ostracoda, Stomatopoda, Cumacea
-Group_name[[9]][which(Group_name[[9]][,"original_name"] == "Decapoda"),"scientific_name"] <- "Decapoda"
-Group_name[[9]][which(Group_name[[9]][,"original_name"] == "O. chrysoptera"),"scientific_name"] <- "Orthopristis chrysoptera"
-Group_name[[9]][which(Group_name[[9]][,"original_name"] == "L. rhomboides"),"scientific_name"] <- "Lagodon rhomboides"
-Group_name[[9]][which(Group_name[[9]][,"original_name"] == "O. oglinum"),"scientific_name"] <- "Opisthonema oglinum"
-Group_name[[9]][which(Group_name[[9]][,"original_name"] == "H. jaguana"),"scientific_name"] <- "Harengula jaguana"
-Group_name[[9]][which(Group_name[[9]][,"original_name"] == "A. rhomboidalis"),"scientific_name"] <- "Archosargus rhomboidalis"
-Group_name[[9]][which(Group_name[[9]][,"original_name"] == "Catfish"),"scientific_name"] <- "Arius" # Arius felis, Arius melanopus
-Group_name[[9]][which(Group_name[[9]][,"original_name"] == "Mojarra"),"scientific_name"] <- "Eucinostomus" # Eucinostomus gula, Eucinostomus argenteus
-Group_name[[9]][which(Group_name[[9]][,"original_name"] == "H. plumieri"),"scientific_name"] <- "Haemulon plumieri"
-Group_name[[9]][which(Group_name[[9]][,"original_name"] == "B. chrysoura"),"scientific_name"] <- "Bairdiella chrysoura"
-Group_name[[9]][which(Group_name[[9]][,"original_name"] == "A. quadricornis"),"scientific_name"] <- "Acanthostracion quadricornis"
-Group_name[[9]][which(Group_name[[9]][,"original_name"] == "Other fishes"),"scientific_name"] <- "Other fish1" # Engraulidae, Syngnathidae, nguillidae, Synodontidae, Sparidae, Carangidae
-Group_name[[9]][which(Group_name[[9]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
-Group_name[[9]][which(Group_name[[9]][,"original_name"] == "Benthic prod."),"scientific_name"] <- "Benthic producer"
-
-# Web 17 - article OK
-#Group_name[[17]][which(Group_name[[17]][,"original_name"] == "Blue marlin"),"scientific_name"] <- "Makaira mazara"
-#Group_name[[17]][which(Group_name[[17]][,"original_name"] == "Other billfish"),"scientific_name"] <- "Billfish" # Other than Blue marlin and Swordfish
-#Group_name[[17]][which(Group_name[[17]][,"original_name"] == "Large sharks"),"scientific_name"] <- "Large shark" # mako shark and white shark
-#Group_name[[17]][which(Group_name[[17]][,"original_name"] == "Swordfish"),"scientific_name"] <- "Xiphias gladius"
-#Group_name[[17]][which(Group_name[[17]][,"original_name"] == "Blue shark"),"scientific_name"] <- "Prionace glauca"
-#Group_name[[17]][which(Group_name[[17]][,"original_name"] == "Brown sharks"),"scientific_name"] <- "Medium shark" # oceanic white tip and silky sharks
-#Group_name[[17]][which(Group_name[[17]][,"original_name"] == "Yellowfin tuna"),"scientific_name"] <- "Thunnus albacares"
-#Group_name[[17]][which(Group_name[[17]][,"original_name"] == "Bigeye tuna"),"scientific_name"] <- "Thunnus obesus"
-#Group_name[[17]][which(Group_name[[17]][,"original_name"] == "Albacore tuna"),"scientific_name"] <- "Thunnus alalunga"
-#Group_name[[17]][which(Group_name[[17]][,"original_name"] == "Mahimahi"),"scientific_name"] <- "Coryphaena hippurus"
-#Group_name[[17]][which(Group_name[[17]][,"original_name"] == "Skipjack tuna"),"scientific_name"] <- "Katsuwonus pelamis"
-#Group_name[[17]][which(Group_name[[17]][,"original_name"] == "Small scombrids"),"scientific_name"] <- "Auxis" # Auxis sp.
-#Group_name[[17]][which(Group_name[[17]][,"original_name"] == "Flying squid"),"scientific_name"] <- "Ommastephes bartrami"
-#Group_name[[17]][which(Group_name[[17]][,"original_name"] == "Lancetfish"),"scientific_name"] <- "Alepisaurus ferox"
-#Group_name[[17]][which(Group_name[[17]][,"original_name"] == "Squids"),"scientific_name"] <- "Cephalopods"
-#Group_name[[17]][which(Group_name[[17]][,"original_name"] == "Flying fish"),"scientific_name"] <- "Flying fish"
-#Group_name[[17]][which(Group_name[[17]][,"original_name"] == "Mesopelagic fishes"),"scientific_name"] <- "Mesopelagic fish" # http://earthguide.ucsd.edu/fishes/environment/0_images/Original/myctophids/salvanes_01.pdf
-#Group_name[[17]][which(Group_name[[17]][,"original_name"] == "Epipelagic fishes"),"scientific_name"] <- "Epipelagic fish"
-#Group_name[[17]][which(Group_name[[17]][,"original_name"] == "Epipelagic micronekton"),"scientific_name"] <- "Epipelagic micronekton"
-#Group_name[[17]][which(Group_name[[17]][,"original_name"] == "Mseopelagic micronekton"),"scientific_name"] <- "Mesopelagic micronekton"
-#Group_name[[17]][which(Group_name[[17]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
+# Web 34 - article OK
+# Huizache Caimanero
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Sciaenidae"),"scientific_name"] <- "Sciaenidae" # Cynoscion xanthulum
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Elopidae"),"scientific_name"] <- "Elops affinis" # Elops affinis
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Lutjanidae"),"scientific_name"] <- "Lutjanidae" # Lutjanus novemfasciatus, Lutjanus argentiventris
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Carangidae"),"scientific_name"] <- "Carangidae" # Caranx hippos
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Centropomidae"),"scientific_name"] <- "Snook" # Centropomus robalito, Centropomus nigrescens
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Ariidae"),"scientific_name"] <- "Small catfish" # Arius guatemalensis
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Haemulidae"),"scientific_name"] <- "Haemulidae" # Anisotremus interreptus, Haemulon sexfasciatum
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Peces de fondo"),"scientific_name"] <- "Cynoglossus zanzibarensis" # Cynoglossus zanzibarensis
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Callinectes"),"scientific_name"] <- "Crabs" # Callinectes arcuatus
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Peces aguja"),"scientific_name"] <- "Hemiramphus" # Hemiramphus balao, Hemiramphus brasilienis
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Pel\xe1gicos menor"),"scientific_name"] <- "Clupeidei" # Atherinomuros stipes, Engraulis mordax, Dorosoma petense
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Gerreidae"),"scientific_name"] <- "Gerreidae" # Diapterus peruvians
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Poeciliidae"),"scientific_name"] <- "Poeciliidae"
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Gobios"),"scientific_name"] <- "Dormitator latifrons" # Dormitator latifrons
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Mugilidae"),"scientific_name"] <- "Mugilidae" # Mugil cephalus 
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Palaemonidae"),"scientific_name"] <- "Macrobrachium" # Macrobranchium sp.
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Penaeidae"),"scientific_name"] <- "Litopenaeus" # Penaeus sp.
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Bivalvia"),"scientific_name"] <- "Bivalvia"
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Microcrust\xe1ceos"),"scientific_name"] <- "Microcrustacean"
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Zooplancton"),"scientific_name"] <- "Zooplankton"
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Chanidae"),"scientific_name"] <- "Chanos chanos" # Chanos chanos 
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Gusanos"),"scientific_name"] <- "Nereidae" # Polychaete
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Gastropoda"),"scientific_name"] <- "Mollusca" # Gastropoda
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Fitoplancton"),"scientific_name"] <- "Phytoplankton"
+Group_name[[34]][which(Group_name[[34]][,"original_name"] == "Prod. Prim. Ben"),"scientific_name"] <- "Macrophytes"
 
 # Web 45 - article OK
+# Lake George
 Group_name[[45]][which(Group_name[[45]][,"original_name"] == "Birds"),"scientific_name"] <- "Fishing birds" # Fishing eagles (aliaeetus vocifer), kingfishers (Ceryle rudis as example), cormorants, pelicans
 Group_name[[45]][which(Group_name[[45]][,"original_name"] == "H. squamipinnis"),"scientific_name"] <- "Haplochromis squamipinnis"
 Group_name[[45]][which(Group_name[[45]][,"original_name"] == "Bagrus dogmac"),"scientific_name"] <- "Bagrus dogmac"
@@ -98,6 +93,7 @@ Group_name[[45]][which(Group_name[[45]][,"original_name"] == "Phytoplankton"),"s
 Group_name[[45]][which(Group_name[[45]][,"original_name"] == "Benthic prod."),"scientific_name"] <- "Benthic producer"
 
 # Web 46 - article OK
+# Lake kariba
 Group_name[[46]][which(Group_name[[46]][,"original_name"] == "H. vittatus"),"scientific_name"] <- "Hydrocynus vittatus"
 Group_name[[46]][which(Group_name[[46]][,"original_name"] == "L. miodon"),"scientific_name"] <- "Limnothrissa miodon"
 Group_name[[46]][which(Group_name[[46]][,"original_name"] == "S. zambezensis"),"scientific_name"] <- "Synodontis zambezensis"
@@ -109,6 +105,7 @@ Group_name[[46]][which(Group_name[[46]][,"original_name"] == "Macrophytes"),"sci
 Group_name[[46]][which(Group_name[[46]][,"original_name"] == "Periphyton"),"scientific_name"] <- "Periphyton"
 
 # Web 49 - article OK
+# Lake Malawi 2
 Group_name[[49]][which(Group_name[[49]][,"original_name"] == "Opsaridium"),"scientific_name"] <- "Opsaridium microcephalus"
 Group_name[[49]][which(Group_name[[49]][,"original_name"] == "Rhamphochromis"),"scientific_name"] <- "Rhamphochromis longiceps"
 Group_name[[49]][which(Group_name[[49]][,"original_name"] == "Diplotaxodon"),"scientific_name"] <- "Diplotaxodon"
@@ -118,15 +115,8 @@ Group_name[[49]][which(Group_name[[49]][,"original_name"] == "Haplochromis"),"sc
 Group_name[[49]][which(Group_name[[49]][,"original_name"] == "Zooplankton"),"scientific_name"] <- "Zooplankton"
 Group_name[[49]][which(Group_name[[49]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
 
-# Web 50 - article OK
-Group_name[[50]][which(Group_name[[50]][,"original_name"] == "Large predators"),"scientific_name"] <- "Lates" # L. mariae, L. microlepis and L.angustifrons
-Group_name[[50]][which(Group_name[[50]][,"original_name"] == "Small predators"),"scientific_name"] <- "Luciolates stappersii"
-Group_name[[50]][which(Group_name[[50]][,"original_name"] == "Limnothrissa"),"scientific_name"] <- "Limnothrissa miodon"
-Group_name[[50]][which(Group_name[[50]][,"original_name"] == "Stolothrissa"),"scientific_name"] <- "Stolothrissa tanganyicae"
-Group_name[[50]][which(Group_name[[50]][,"original_name"] == "Zooplankton"),"scientific_name"] <- "Zooplankton"
-Group_name[[50]][which(Group_name[[50]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
-
 # Web 51 - article OK
+# Lake Tanganyka 1981
 Group_name[[51]][which(Group_name[[51]][,"original_name"] == "Large predators"),"scientific_name"] <- "Lates" # L. mariae, L. microlepis and L.angustifrons
 Group_name[[51]][which(Group_name[[51]][,"original_name"] == "Small predators"),"scientific_name"] <- "Luciolates stappersii"
 Group_name[[51]][which(Group_name[[51]][,"original_name"] == "Limnothrissa"),"scientific_name"] <- "Limnothrissa miodon"
@@ -134,16 +124,8 @@ Group_name[[51]][which(Group_name[[51]][,"original_name"] == "Stolothrissa"),"sc
 Group_name[[51]][which(Group_name[[51]][,"original_name"] == "Zooplankton"),"scientific_name"] <- "Zooplankton"
 Group_name[[51]][which(Group_name[[51]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
 
-# Web 52 - article OK
-Group_name[[52]][which(Group_name[[52]][,"original_name"] == "Tigerfish"),"scientific_name"] <- "Hydrocynus forskalii"
-Group_name[[52]][which(Group_name[[52]][,"original_name"] == "Lates spp."),"scientific_name"] <- "Lates" # L, niloticus and L. longispinis
-Group_name[[52]][which(Group_name[[52]][,"original_name"] == "Synod. schall"),"scientific_name"] <- "Synodontis schall"
-Group_name[[52]][which(Group_name[[52]][,"original_name"] == "Small pelagic"),"scientific_name"] <- "Alepisaurus" # A. minutus and A. ferox
-Group_name[[52]][which(Group_name[[52]][,"original_name"] == "Benthic fish"),"scientific_name"] <- "Benthic fish" # Labeo horie, Barbus bynni, Citharinus citharis and Distichodus niloticus
-Group_name[[52]][which(Group_name[[52]][,"original_name"] == "Zooplankton"),"scientific_name"] <- "Zooplankton"
-Group_name[[52]][which(Group_name[[52]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
-
 # Web 53 - article OK
+# Lake Turkana 1987
 Group_name[[53]][which(Group_name[[53]][,"original_name"] == "Tigerfish"),"scientific_name"] <- "Hydrocynus forskalii"
 Group_name[[53]][which(Group_name[[53]][,"original_name"] == "Lates spp."),"scientific_name"] <- "Lates" # L, niloticus and L. longispinis
 Group_name[[53]][which(Group_name[[53]][,"original_name"] == "Synod. schall"),"scientific_name"] <- "Synodontis schall"
@@ -152,24 +134,9 @@ Group_name[[53]][which(Group_name[[53]][,"original_name"] == "Benthic fish"),"sc
 Group_name[[53]][which(Group_name[[53]][,"original_name"] == "Zooplankton"),"scientific_name"] <- "Zooplankton"
 Group_name[[53]][which(Group_name[[53]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
 
-# Web 54 - article OK
-Group_name[[54]][which(Group_name[[54]][,"original_name"] == "Nile perch"),"scientific_name"] <- "Lates niloticus"
-Group_name[[54]][which(Group_name[[54]][,"original_name"] == "Predat. d.bream"),"scientific_name"] <- "Predatory haplochromines"
-Group_name[[54]][which(Group_name[[54]][,"original_name"] == "Catfishes"),"scientific_name"] <- "Large catfish" # Bagrus and Clarias
-Group_name[[54]][which(Group_name[[54]][,"original_name"] == "Snoutf./squeek."),"scientific_name"] <- "Snout" # Synodontis and mormyrids
-Group_name[[54]][which(Group_name[[54]][,"original_name"] == "Lungfish"),"scientific_name"] <- "Protopterus aethiopicus"
-Group_name[[54]][which(Group_name[[54]][,"original_name"] == "Benthiv.d.bream"),"scientific_name"] <- "Benthivorous haplochromines"
-Group_name[[54]][which(Group_name[[54]][,"original_name"] == "Dagaa"),"scientific_name"] <- "Rastrineobola argentea"
-Group_name[[54]][which(Group_name[[54]][,"original_name"] == "Lake prawn"),"scientific_name"] <- "Caridina nilotica"
-Group_name[[54]][which(Group_name[[54]][,"original_name"] == "Macrozoobenthos"),"scientific_name"] <- "Macrozoobenthos"
-Group_name[[54]][which(Group_name[[54]][,"original_name"] == "Nile tilapia"),"scientific_name"] <- "Oreochromis niloticus"
-Group_name[[54]][which(Group_name[[54]][,"original_name"] == "Other tilapiine"),"scientific_name"] <- "Oreochromis"
-Group_name[[54]][which(Group_name[[54]][,"original_name"] == "Zooplankton"),"scientific_name"] <- "Zooplankton"
-Group_name[[54]][which(Group_name[[54]][,"original_name"] == "Plankt. d.bream"),"scientific_name"] <- "Planktivorous haplochromines"
-Group_name[[54]][which(Group_name[[54]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
-Group_name[[54]][which(Group_name[[54]][,"original_name"] == "Benthic prod."),"scientific_name"] <- "Benthic producer"
-
 # Web 55 - article OK
+# Lake Victoria 1985
+# Verify Haplochromis groups
 Group_name[[55]][which(Group_name[[55]][,"original_name"] == "Nile perch"),"scientific_name"] <- "Lates niloticus"
 Group_name[[55]][which(Group_name[[55]][,"original_name"] == "Predat. d.bream"),"scientific_name"] <- "Predatory haplochromines"
 Group_name[[55]][which(Group_name[[55]][,"original_name"] == "Catfishes"),"scientific_name"] <- "Large catfish" # Bagrus and Clarias
@@ -188,87 +155,31 @@ Group_name[[55]][which(Group_name[[55]][,"original_name"] == "Benthic prod."),"s
 
 
 # Web 60 - article OK
-Group_name[[60]][which(Group_name[[60]][,"original_name"] == "Sharks"),"scientific_name"] <- "Carcharhinus melanopterus"
-Group_name[[60]][which(Group_name[[60]][,"original_name"] == "Scombridae"),"scientific_name"] <- "Scombridae"
-Group_name[[60]][which(Group_name[[60]][,"original_name"] == "Small pelagics"),"scientific_name"] <- "Small pelagic fish" # Hilsa kelee
+# Maputo Bay
+Group_name[[60]][which(Group_name[[60]][,"original_name"] == "Sharks"),"scientific_name"] <- "Carcharhinus melanopterus" # Carcharhinus melanopterus
+Group_name[[60]][which(Group_name[[60]][,"original_name"] == "Scombridae"),"scientific_name"] <- "Scombridae" # Euthynnus affinis, Rastrelliger kanagurta
+Group_name[[60]][which(Group_name[[60]][,"original_name"] == "Small pelagics"),"scientific_name"] <- "Small pelagic fish" # Hilsa kelee, Pellona ditchela
 Group_name[[60]][which(Group_name[[60]][,"original_name"] == "Demersal fish"),"scientific_name"] <- "Demersal fish" # Pornadasys maculatus, Otolithes ruber,Johnius dussumieri, Johniops sina
-Group_name[[60]][which(Group_name[[60]][,"original_name"] == "Crab,clam,shrim"),"scientific_name"] <- "Crustacea and Molluscs"
+Group_name[[60]][which(Group_name[[60]][,"original_name"] == "Crab,clam,shrim"),"scientific_name"] <- "Crustacea and Molluscs" # Scylla serrata, Eumarcia paupercula, Modiolus philippinarum, Penaeus indicus, Metapenaeus monoceros
 Group_name[[60]][which(Group_name[[60]][,"original_name"] == "Het.benthos"),"scientific_name"] <- "Heterotrophic benthos"
 Group_name[[60]][which(Group_name[[60]][,"original_name"] == "Zooplankton"),"scientific_name"] <- "Zooplankton"
 Group_name[[60]][which(Group_name[[60]][,"original_name"] == "Benthic prod"),"scientific_name"] <- "Benthic producer"
 Group_name[[60]][which(Group_name[[60]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
 
-# Web 72 - article OK
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Minke whales"),"scientific_name"] <- "Balaenoptera acutorostrata"
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Fin whales"),"scientific_name"] <- "Balaenoptera physalus"
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Humpback whales"),"scientific_name"] <- "Megaptera novaeangliae"
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Brydes whales"),"scientific_name"] <- "Balaenoptera edeni"
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Sei whales"),"scientific_name"] <- "Balaenoptera borealis"
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Baleen whales"),"scientific_name"] <- ""
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Beaked whales"),"scientific_name"] <- ""
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Sperm whales"),"scientific_name"] <- "Physeter macrocephalus"
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Killer whales"),"scientific_name"] <- "Orcinus orca"
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Dolphins"),"scientific_name"] <- ""
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Seabirds"),"scientific_name"] <- ""
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Large pelagics"),"scientific_name"] <- ""
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Mesopelagic predators"),"scientific_name"] <- ""
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Bathydeersal predators"),"scientific_name"] <- ""
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Sharks"),"scientific_name"] <- ""
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Rays"),"scientific_name"] <- ""
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Coastal tunas"),"scientific_name"] <- ""
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Coastal demersal"),"scientific_name"] <- ""
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Clupeids"),"scientific_name"] <- ""
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Other coastal pelagics"),"scientific_name"] <- ""
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Cephalopods"),"scientific_name"] <- ""
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Crustaceans"),"scientific_name"] <- ""
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Benthos"),"scientific_name"] <- ""
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Benthic producers"),"scientific_name"] <- ""
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Zooplankton"),"scientific_name"] <- "Zooplankton"
-#Group_name[[72]][which(Group_name[[72]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
-
-# Web 81 - article OK
-Group_name[[81]][which(Group_name[[81]][,"original_name"] == "Dicentrarchus labrax(fish)"),"scientific_name"] <- "Dicentrarchus labrax"
-Group_name[[81]][which(Group_name[[81]][,"original_name"] == "Pomatoschistus microps (suprabenthos)"),"scientific_name"] <- "Pomatoschistus microps"
-Group_name[[81]][which(Group_name[[81]][,"original_name"] == "Other fishes"),"scientific_name"] <- "Other fish2" # Trisopterus luscus, Pleuronectes platessa, Clupea harengus, Sprattus sprattus, Solea vulgaris, Pomatoschistus microps
-Group_name[[81]][which(Group_name[[81]][,"original_name"] == "Platichthys flesus (fish)"),"scientific_name"] <- "Platichthys flesus"
-Group_name[[81]][which(Group_name[[81]][,"original_name"] == "Birds"),"scientific_name"] <- "Seabirds" # Limicolous, Rallidae, Anatidae and Laridae plus two minor groups like Podicipedidae and Phalocrocoracidae. Calidris alpina,Haemotopus ostrealegus,Numenius aquatus,Fulica atra,Anas crecca,Anas plathyrhynchus,Larus ridibundus,Larus argentus, Podiceps cristatus, Phalocrocorax carbo
-Group_name[[81]][which(Group_name[[81]][,"original_name"] == "Crangon crangon (suprabenthos)"),"scientific_name"] <- "Crangon crangon"
-Group_name[[81]][which(Group_name[[81]][,"original_name"] == "Palaemon longirostris (suprabenthos)"),"scientific_name"] <- "Palaemon longirostris"
-Group_name[[81]][which(Group_name[[81]][,"original_name"] == "Neomysis integer (suprabenthos)"),"scientific_name"] <- "Neomysis integer"
-Group_name[[81]][which(Group_name[[81]][,"original_name"] == "Omnivorous & bentjhic predators"),"scientific_name"] <- "Benthic predators" # Nereis diversicolor, Nephtys hombergii
-Group_name[[81]][which(Group_name[[81]][,"original_name"] == "Zooplankton"),"scientific_name"] <- "Zooplankton" # marine copepods (Pseudocalanus elongatus, Paracalanus parvus and Temora longicornis) and Ctenophores (Pleurobrachia pileus)
-Group_name[[81]][which(Group_name[[81]][,"original_name"] == "Benthic suspension feeders"),"scientific_name"] <- "Benthic suspension feeders" # Cerastoderma edule and Abra alba
-Group_name[[81]][which(Group_name[[81]][,"original_name"] == "Benthic deposit feeders"),"scientific_name"] <- "Benthic deposit feeders" # Pectinaria koreni, Macoma balthica and Owenia fusiformis
-Group_name[[81]][which(Group_name[[81]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
-Group_name[[81]][which(Group_name[[81]][,"original_name"] == "Phytobenthos"),"scientific_name"] <- "Phytobenthos" # Macroalgae, Chlorophytes (green algae) and Pheophytes (brown algae), Rhodophytes (red algae)
-
-## Web 94 - article OK
-#Group_name[[94]][which(Group_name[[94]][,"original_name"] == "Zooplankton"),"scientific_name"] <- "Zooplankton" # ok
-#Group_name[[94]][which(Group_name[[94]][,"original_name"] == "B. chrysoura"),"scientific_name"] <- "Bairdiella chrysoura" # ok
-#Group_name[[94]][which(Group_name[[94]][,"original_name"] == "Anchovies"),"scientific_name"] <- "Anchovy" # ok
-#Group_name[[94]][which(Group_name[[94]][,"original_name"] == "D. auratus"),"scientific_name"] <- "Diapterus auratus" # ok
-#Group_name[[94]][which(Group_name[[94]][,"original_name"] == "M. curema"),"scientific_name"] <- "Mugil curema" # ok
-#Group_name[[94]][which(Group_name[[94]][,"original_name"] == "O. saurus"),"scientific_name"] <- "Oligoplites saurus" # ok
-#Group_name[[94]][which(Group_name[[94]][,"original_name"] == "Shrimp"),"scientific_name"] <- "Penaeus duorarum" # ok
-#Group_name[[94]][which(Group_name[[94]][,"original_name"] == "Other decapods"),"scientific_name"] <- "Decapods" #ok 
-#Group_name[[94]][which(Group_name[[94]][,"original_name"] == "Other fishes"),"scientific_name"] <- "Other fish"
-#Group_name[[94]][which(Group_name[[94]][,"original_name"] == "Benthos"),"scientific_name"] <- "Benthos" #ok 
-#Group_name[[94]][which(Group_name[[94]][,"original_name"] == "S. notata"),"scientific_name"] <- "Strongylura notata" #ok 
-#Group_name[[94]][which(Group_name[[94]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton" # ok
-
 # Web 96 - article OK
+# Tampamachoco Lagoon
 Group_name[[96]][which(Group_name[[96]][,"original_name"] == "Snapper"),"scientific_name"] <- "Lutjanus griseus"
 Group_name[[96]][which(Group_name[[96]][,"original_name"] == "Jack"),"scientific_name"] <- "Carangidae" #Hemicaranx amblyrrinchus, Caranx hippos, C. latus, C. crysos
 Group_name[[96]][which(Group_name[[96]][,"original_name"] == "Toadfish"),"scientific_name"] <- "Opsanus beta"
-Group_name[[96]][which(Group_name[[96]][,"original_name"] == "Bay whiff"),"scientific_name"] <- "Citharichthys spilopterus" # Citharichthys spiloterus, Achirus lineatus
+Group_name[[96]][which(Group_name[[96]][,"original_name"] == "Bay whiff"),"scientific_name"] <- "Pleuronectiforms" # Citharichthys spiloterus, Achirus lineatus
 Group_name[[96]][which(Group_name[[96]][,"original_name"] == "Snook"),"scientific_name"] <- "Snook" # Centropomus undecimalis, C. paralellus, C. poeyi
 Group_name[[96]][which(Group_name[[96]][,"original_name"] == "Croaker"),"scientific_name"] <- "Croaker" # Bairdiella chrysura, B. ronchus, Micropogon undulatus
 Group_name[[96]][which(Group_name[[96]][,"original_name"] == "Portunid crab"),"scientific_name"] <- "Crabs" # Callinectes danae, C. boucorti, C. sapidus
 Group_name[[96]][which(Group_name[[96]][,"original_name"] == "Catfish"),"scientific_name"] <- "Small catfish" # Arius felis, Cathorops melanopus
 Group_name[[96]][which(Group_name[[96]][,"original_name"] == "Shrimp"),"scientific_name"] <- "Shrimps" # Penaeus setiferus, P. aztecus
-Group_name[[96]][which(Group_name[[96]][,"original_name"] == "Anchovy"),"scientific_name"] <- "Anchoa"
+Group_name[[96]][which(Group_name[[96]][,"original_name"] == "Anchovy"),"scientific_name"] <- "Anchoa" # Anchoa sp.
 Group_name[[96]][which(Group_name[[96]][,"original_name"] == "Mojarra"),"scientific_name"] <- "Gerreidae" # Eucinostomus melanopterus, Diapterus rhombeus, D. auratus, Eugerres plumieri
-Group_name[[96]][which(Group_name[[96]][,"original_name"] == "Goby"),"scientific_name"] <- "Goby" # Bathygobius soporator, Gobionellus boleosoma
+Group_name[[96]][which(Group_name[[96]][,"original_name"] == "Goby"),"scientific_name"] <- "Gobiidae" # Bathygobius soporator, Gobionellus boleosoma
 Group_name[[96]][which(Group_name[[96]][,"original_name"] == "Shhepshead"),"scientific_name"] <- "Sheephead" # Archosargus probatocephalus, Lagodon romboides
 Group_name[[96]][which(Group_name[[96]][,"original_name"] == "Crustaceans"),"scientific_name"] <- "Crustacea" # Clivanarius vittatus, decapod, amphipod
 Group_name[[96]][which(Group_name[[96]][,"original_name"] == "White mullet"),"scientific_name"] <- "Mugil curema"
@@ -279,59 +190,6 @@ Group_name[[96]][which(Group_name[[96]][,"original_name"] == "Zooplankton"),"sci
 Group_name[[96]][which(Group_name[[96]][,"original_name"] == "Meiofauna"),"scientific_name"] <- "Meiofauna"
 Group_name[[96]][which(Group_name[[96]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
 Group_name[[96]][which(Group_name[[96]][,"original_name"] == "Benthis producers"),"scientific_name"] <- "Benthic producer"
-
-# Web 100 - article OK
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "P maculatus"),"scientific_name"] <- "Pimelodus maculatus"
-##Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Hypostomus spp"),"scientific_name"] <- "Hypostomus"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Schizodon borelii"),"scientific_name"] <- "Schizodon borelii"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Loricariichthys platymetopon"),"scientific_name"] <- "Loricariichthys platymetopon"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Prochilodus lineatus"),"scientific_name"] <- "Prochilodus lineatus"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Cyphocharax modesta"),"scientific_name"] <- "Cyphocharax modesta"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Steindacchnerina insculpta"),"scientific_name"] <- "Steindachnerina insculpta"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Iheringichthys labrosus"),"scientific_name"] <- "Iheringichthys labrosus"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Schizodon altoparanae"),"scientific_name"] <- "Schizodon altoparanae"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Hypophthalmus edentatus"),"scientific_name"] <- "Hypophthalmus edentatus"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Trachydoras paraguayensis"),"scientific_name"] <- "Trachydoras paraguayensis"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Hoplosternum littorale"),"scientific_name"] <- "Hoplosternum littorale"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Leporinus friderici"),"scientific_name"] <- "Leporinus friderici"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Leporinus obtusidens"),"scientific_name"] <- "Leporinus obtusidens"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Parauchenipterus galeatus"),"scientific_name"] <- "Parauchenipterus galeatus"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Pterodoras granulosus"),"scientific_name"] <- "Pterodoras granulosus"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Astyanax altiparanae"),"scientific_name"] <- "Astyanax altiparanae"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Auchenipterus nuchalis"),"scientific_name"] <- "Auchenipterus nuchalis"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Brycon orbignyanus"),"scientific_name"] <- "Brycon orbignyanus"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Acestrorhyncus lacustris"),"scientific_name"] <- "Acestrorhynchus lacustris"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Hoplias malabaricus"),"scientific_name"] <- "Hoplias malabaricus"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Plagioscion squamisissimus"),"scientific_name"] <- "Plagioscion squamisissimus"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Pseudoplatystoma corruscans"),"scientific_name"] <- "Pseudoplatystoma corruscans"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Rhaphiodon vulpinis"),"scientific_name"] <- "Rhaphiodon vulpinis"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Serrasalmus marginatus"),"scientific_name"] <- "Serrasalmus marginatus"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Hemisorubin platyrhynchos"),"scientific_name"] <- "Hemisorubim platyrhynchos"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Salminus brasiliensis"),"scientific_name"] <- "Salminus brasiliensis"
-#Group_name[[100]][which(Group_name[[100]][,"original_name"] == "Serrasalmus spiloptera"),"scientific_name"] <- "Serrasalmus spiloptera"
-
-# Web 107 - article OK
-#Group_name[[107]][which(Group_name[[107]][,"original_name"] == "Span. mackerel"),"scientific_name"] <- "Scomberomorus maculatus"
-#Group_name[[107]][which(Group_name[[107]][,"original_name"] == "King mackerel"),"scientific_name"] <- "Scomberomorus cavalla"
-#Group_name[[107]][which(Group_name[[107]][,"original_name"] == "Red grouper"),"scientific_name"] <- "Epinephelus morio"
-#Group_name[[107]][which(Group_name[[107]][,"original_name"] == "Red snapper"),"scientific_name"] <- "Lutjanus campechanus"
-#Group_name[[107]][which(Group_name[[107]][,"original_name"] == "Zooplankton"),"scientific_name"] <- "Zooplankton"
-#Group_name[[107]][which(Group_name[[107]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
-
-# Web 108 - article OK
-#Group_name[[108]][which(Group_name[[108]][,"original_name"] == "Grl. Halibut"),"scientific_name"] <- "Reinhardtius hippoglossoides"
-##Group_name[[108]][which(Group_name[[108]][,"original_name"] == "Red fish"),"scientific_name"] <- "Sebastes"
-#Group_name[[108]][which(Group_name[[108]][,"original_name"] == "Northern shrimp"),"scientific_name"] <- "Pandalus borealis"
-#Group_name[[108]][which(Group_name[[108]][,"original_name"] == "Polar cod"),"scientific_name"] <- "Boreogadus suida"
-#Group_name[[108]][which(Group_name[[108]][,"original_name"] == "Cod"),"scientific_name"] <- "Gadus morhua"
-#Group_name[[108]][which(Group_name[[108]][,"original_name"] == "Zooplankton"),"scientific_name"] <- "Zooplankton"
-#Group_name[[108]][which(Group_name[[108]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
-
-# Web 109 - article OK
-#Group_name[[109]][which(Group_name[[109]][,"original_name"] == "Red grouper"),"scientific_name"] <- "Epinephelus morio"
-#Group_name[[109]][which(Group_name[[109]][,"original_name"] == "King mackerel"),"scientific_name"] <- "Scomberomorus cavalla"
-#Group_name[[109]][which(Group_name[[109]][,"original_name"] == "Zooplankton"),"scientific_name"] <- "Zooplankton"
-#Group_name[[109]][which(Group_name[[109]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
 
 # Web 110 - article OK
 Group_name[[110]][which(Group_name[[110]][,"original_name"] == "Mosses"),"scientific_name"] <- "Mosses"
@@ -494,6 +352,151 @@ Group_name[[116]][which(Group_name[[116]][,"original_name"] == "Snowy_owl"),"sci
 Group_name[[116]][which(Group_name[[116]][,"original_name"] == "Gulls"),"scientific_name"] <- "Larus hyperboreus"
 Group_name[[116]][which(Group_name[[116]][,"original_name"] == "Jaegers"),"scientific_name"] <- "Jaegers" # Stercorarius longicaudus, S. parasiticus
 Group_name[[116]][which(Group_name[[116]][,"original_name"] == "Brown_bear"),"scientific_name"] <- "Ursus horribilis"
+
+## Chantuto network
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Water birds"),"scientific_name"] <- "Seabirds" # Podicipediformes, Pelecaniformes, Ciconiiformes, Anseriformes, Falconiformes, Gruiformes, Charadriiformes
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Crocodilians"),"scientific_name"] <- "Crocodilians" # Caiman crocodilus, Crocodylus acutus
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Dormitator latifrons"),"scientific_name"] <- "Dormitator latifrons"
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Eleotrids"),"scientific_name"] <- "Eleotridae" # Eleotris picta, Gobiomorus maculatus
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Sciades guatemalensis"),"scientific_name"] <- "Sciades guatemalensis"
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Ariid catfishes"),"scientific_name"] <- "Small catfish" # Cathorops liropus, C. steindachneri, Notarius kessleri
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Jacks"),"scientific_name"] <- "Carangidae" # Caranx caninus, C. sexfasciatus, Hemicaranx zelotes, Oligoplites altus, O. saurus, Selene brevoorti
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Snooks"),"scientific_name"] <- "Snook" # Centropomus medius, C. nigrescens, C robalito, C. viridi
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Anchovies"),"scientific_name"] <- "Anchoa" # Anchoa lucida, A. mundeola, A. starksi, A. ischana, Anchovia macrolepidota
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Sciaenids"),"scientific_name"] <- "Sciaenidae" # Cynoscion albus, Bairdiella armata, Micropogonias altipinnis, Stellifer cf. walkeri
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Gobiids"),"scientific_name"] <- "Gobiidae" # Aboma etheostoma, Ctenogobius sagittula, Gobionellus microdon
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Mugilids"),"scientific_name"] <- "Mugilidae" # Mugil curema, M. cephalus, M. hospes
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Gerreids"),"scientific_name"] <- "Gerreidae" # Diapterus brevirostris, Eucinostomus currani, E. dowii, Gerres simillimus
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Pleuronectiforms"),"scientific_name"] <- "Pleuronectiforms" # Achirus mazatlanus, Citharichthys gilberti, Trinectes fonsecensis
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Poeciliids"),"scientific_name"] <- "Poeciliidae" # Poecilia nelsoni, P. sphenops, Poeciliopsis turrubarensis
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Sphoeroides annulatus"),"scientific_name"] <- "Sphoeroides annulatus"
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Cichlids"),"scientific_name"] <- "Cichlids" # Amphilophus trimaculatus, Astatheros macracanthus, Oreochromis niloticus
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Snappers"),"scientific_name"] <- "Lutjanidae" # Lutjanus argentiventris, Lutjanus colorado
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Atractosteus tropicus"),"scientific_name"] <- "Atractosteus tropicus" # Atractosteus tropicus
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Plactivore fishes"),"scientific_name"] <- "Planktivore fish" # Atherinella guatemalensis, Lile gracilis, L. nigrofasciata, Membras gilberti, Hippocampus ingens, Hyporhamphus snyderi
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Carnivore fishes"),"scientific_name"] <- "Carnivore fish" # Elops affinis, Roeboides bouchellei, Synodus scituliceps
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Omnivore fishes"),"scientific_name"] <- "Omnivore fish" # Anableps dowei, Astyanax aeneus, Kyphosus elegans, Polydactylus approximans, Rhamdia guatemalensis
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Litopenaeus"),"scientific_name"] <- "Litopenaeus" # Litopenaeus stylirostris, L. vannamei, L. occidentalis
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Macrobrachium"),"scientific_name"] <- "Macrobrachium" # Macrobrachium americanum, M. tenellum, Palaemonetes ritteri
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Other shrimps"),"scientific_name"] <- "Shrimps" # Alpheus sp., Farfantepenaeus brevirostris, Hyppolyte williamsi, Sergestes pestafer, Sicyonia aliaffinis
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Callinectes"),"scientific_name"] <- "Crabs" # Callinectes arcuatus, C. toxotes
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Grapsids"),"scientific_name"] <- "Grapsid" # Clibanarius panamensis, Sesarma rhizophorae, Uca sp
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Insects"),"scientific_name"] <- "Insects" # Formicidae, Odonata, unidentified larvae
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Polychaetes"),"scientific_name"] <- "Nereidae" # Polychaeta, Sipunculids
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Infauna"),"scientific_name"] <- "Infauna" # Tanaidacea, Isopoda, Ostracoda, Cumacea, Amphipoda
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Bivalves"),"scientific_name"] <- "Bivalvia" # Bivalvia
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Zooplankton"),"scientific_name"] <- "Zooplankton" # Cnidarians, gastropods and polychaetes larvae, cladocerans, copepods, cirripedia larvae, decapod larvae, fish eggs
+Group_name[[117]][which(Group_name[[117]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton" # Diatoms, dinoflagellates, euglenophytes, cyanophytes, chlorophytes, silicoflagellates
+
+## Huizache network
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Sciaenids"),"scientific_name"] <- "Sciaenidae" # Cynoscion xanthulum
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Elopids"),"scientific_name"] <- "Elops affinis" # Elops affinis
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Lutjanids"),"scientific_name"] <- "Lutjanidae" # Lutjanus novemfasciatus, Lutjanus argentiventris
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Carangids"),"scientific_name"] <- "Carangidae" # Caranx hippos
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Centropomids"),"scientific_name"] <- "Snook" # Centropomus robalito, Centropomus nigrescens
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Ariids"),"scientific_name"] <- "Small catfish" # Arius guatemalensis
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Haemulids"),"scientific_name"] <- "Haemulidae" # Anisotremus interreptus, Haemulon sexfasciatum
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Pleuronectoidei"),"scientific_name"] <- "Cynoglossus zanzibarensis" # Cynoglossus zanzibarensis
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Callinectes"),"scientific_name"] <- "Crabs" # Callinectes arcuatus
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Belonoidei"),"scientific_name"] <- "Hemiramphus" # Hemiramphus balao, Hemiramphus brasilienis
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Clupeidei"),"scientific_name"] <- "Clupeidei" # Atherinomuros stipes, Engraulis mordax, Dorosoma petense
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Gerreids"),"scientific_name"] <- "Gerreidae" # Diapterus peruvians
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Poeciliids"),"scientific_name"] <- "Poeciliidae"
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Gobioidei"),"scientific_name"] <- "Dormitator latifrons" # Dormitator latifrons
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Mugilids"),"scientific_name"] <- "Mugilidae" # Mugil cephalus 
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Palaemonids"),"scientific_name"] <- "Macrobrachium" # Macrobranchium sp.
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Penaeids"),"scientific_name"] <- "Litopenaeus" # Penaeus sp.
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Bivalvs"),"scientific_name"] <- "Bivalvia"
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Microcrustaceans"),"scientific_name"] <- "Microcrustacean"
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Zooplankton"),"scientific_name"] <- "Zooplankton"
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Chanids"),"scientific_name"] <- "Chanos chanos" # Chanos chanos 
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Polychaets"),"scientific_name"] <- "Nereidae" # Polychaete
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Gastropods"),"scientific_name"] <- "Mollusca" # Gastropoda
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
+#Group_name[[?]][which(Group_name[[?]][,"original_name"] == "Macrophytes"),"scientific_name"] <- "Macrophytes"
+
+## Meditarreanea network
+Group_name[[118]][which(Group_name[[118]][,"original_name"] == "Bluntnose sixgill shark"),"scientific_name"] <- "Hexanchus griseus" # Hexanchus griseus
+Group_name[[118]][which(Group_name[[118]][,"original_name"] == "Demersal sharks"),"scientific_name"] <- "Demersal shark" # Galeus melastomus, Etmopterus spinax, Dalatias licha
+Group_name[[118]][which(Group_name[[118]][,"original_name"] == "Monkfish"),"scientific_name"] <- "Lophius piscatorius" # Lophius piscatorius
+Group_name[[118]][which(Group_name[[118]][,"original_name"] == "Phycis blennoides"),"scientific_name"] <- "Phycis blennoides" # Phycis blennoides
+Group_name[[118]][which(Group_name[[118]][,"original_name"] == "Lepidion lepidion"),"scientific_name"] <- "Lepidion lepidion" # Lepidion lepidion
+Group_name[[118]][which(Group_name[[118]][,"original_name"] == "Macrourids"),"scientific_name"] <- "Macrouridae" # Nezumia aequalis, Coelorinchus mediterraneus, Coryphaenoides guentheri, Trachyrincus scabrus
+Group_name[[118]][which(Group_name[[118]][,"original_name"] == "Mora moro"),"scientific_name"] <- "Mora moro" # Mora moro
+Group_name[[118]][which(Group_name[[118]][,"original_name"] == "Alepocephalus rostratus"),"scientific_name"] <- "Alepocephalus rostratus"
+Group_name[[118]][which(Group_name[[118]][,"original_name"] == "Other demersal, small"),"scientific_name"] <- "Demersal fish2" # Cataetyx alleni, Bathypterois mediterraneus, Notacanthus bonaparte, Nettastoma melanurum
+Group_name[[118]][which(Group_name[[118]][,"original_name"] == "Cephalopods"),"scientific_name"] <- "Medium cephalopod" # Bathypolipus sponsalis, Opistoteuthis calypso, Todarodes sagittatus
+Group_name[[118]][which(Group_name[[118]][,"original_name"] == "Aristeus antennatus"),"scientific_name"] <- "Aristeus antennatus" # Aristeus antennatus
+Group_name[[118]][which(Group_name[[118]][,"original_name"] == "Mesopelagic crustacea"),"scientific_name"] <- "Shrimps" # Acantephyra eximia, A. pelagica, Pasiphaea multidentata, P. sivado, Sergestes arcticus, Sergia robusta
+Group_name[[118]][which(Group_name[[118]][,"original_name"] == "Benthopelagic fish"),"scientific_name"] <- "Benthopelagic fish" # Cyclothone braueri, Argyropelecus hemigymnus, Lampanyctus crocodilus
+Group_name[[118]][which(Group_name[[118]][,"original_name"] == "Benthic invertebrates, crustacea"),"scientific_name"] <- "Crustacea" # decapod crustaceans: Geryon longipes, Munida tenuimana, Pagurus alatus, Paromola cuvieri and Polycheles typhlops.
+Group_name[[118]][which(Group_name[[118]][,"original_name"] == "Benthic invertebrates, other"),"scientific_name"] <- "Macrozoobenthos" # non-crustacean megabenthos and macrobenthos invertebrate
+Group_name[[118]][which(Group_name[[118]][,"original_name"] == "Zooplankton, gelatinous"),"scientific_name"] <- "Zooplankton gelatinous" # Pelagia noctiluca, Nausithoe sp., Salpa sp. and Pyrosoma atlanticum
+Group_name[[118]][which(Group_name[[118]][,"original_name"] == "Zooplankton, BBL"),"scientific_name"] <- "Zooplankton"
+Group_name[[118]][which(Group_name[[118]][,"original_name"] == "Meiobenthos"),"scientific_name"] <- "Meiobenthos"
+
+
+## Nicoya network
+Group_name[[119]][which(Group_name[[119]][,"original_name"] == "Phytoplankton"),"scientific_name"] <- "Phytoplankton"
+Group_name[[119]][which(Group_name[[119]][,"original_name"] == "Microphytobenthos"),"scientific_name"] <- "Phytobenthos"
+Group_name[[119]][which(Group_name[[119]][,"original_name"] == "Mangroves"),"scientific_name"] <- "Mangroves"
+Group_name[[119]][which(Group_name[[119]][,"original_name"] == "Zooplankton"),"scientific_name"] <- "Zooplankton"
+Group_name[[119]][which(Group_name[[119]][,"original_name"] == "Shrimp"),"scientific_name"] <- "Shrimps" # Penaeus sp, Trachypenaeus sp., Sicyonya
+Group_name[[119]][which(Group_name[[119]][,"original_name"] == "Squids"),"scientific_name"] <- "Small cephalopod" # Loliolopsis diomedeae, Lolliguncula panamensis
+Group_name[[119]][which(Group_name[[119]][,"original_name"] == "Small pelagics"),"scientific_name"] <- "Small pelagic fish" # Neopisthopterus tropicus, Anchoa lucida, 
+Group_name[[119]][which(Group_name[[119]][,"original_name"] == "Carangids & others"),"scientific_name"] <- "Carangidae" # Caranx caninus, C. otrynter, C. speciosus, C. vinctus, Peprilus medius, P. snyderi, Selene brevortii, S. oerstedii, S, peruviana, Trachinotus paitensis
+Group_name[[119]][which(Group_name[[119]][,"original_name"] == "Small demersal fish"),"scientific_name"] <- "Small demersal fish" # Sciaenids, Haemulids, Triglids, Gerreids, Serranids,Scorpionids, Gobies
+Group_name[[119]][which(Group_name[[119]][,"original_name"] == "Flatfish"),"scientific_name"] <- "Pleuronectiforms" # Achirus kluzingeri, Syacium ovale, S. latifrons, Symphurus chahanaudi, S. callopterus, S. elongatus, Cyclopsetta querna, Etropus crossotus, Citharichtys platophrys
+Group_name[[119]][which(Group_name[[119]][,"original_name"] == "Catfish"),"scientific_name"] <- "Small catfish" # Arius dasycephalus, Arius dovi, Arius platypogon, Arius osculus
+Group_name[[119]][which(Group_name[[119]][,"original_name"] == "Snappers & Grunts"),"scientific_name"] <- "Snapper Grunts" # Lutjanus guttatus, Haemulon scuderi, Anisotrema dovii, calanus brachisomis
+Group_name[[119]][which(Group_name[[119]][,"original_name"] == "Lizardfish"),"scientific_name"] <- "Synodus sp" # Synodus scituliceps, Synodus evemanni, Synotus sechurae
+Group_name[[119]][which(Group_name[[119]][,"original_name"] == "Large Scianids"),"scientific_name"] <- "Large scianidae" # Cynoscion albus, Cynoscion phoxocephalus
+Group_name[[119]][which(Group_name[[119]][,"original_name"] == "Rays & Sharks"),"scientific_name"] <- "Rays Sharks" # Dasyatiis longus, Urotrygon chilensis, Raya velezi, Rhinobates leucorhynchus, Narcine brasiliensis, Mustelus lunulatus
+Group_name[[119]][which(Group_name[[119]][,"original_name"] == "Morays & eels"),"scientific_name"] <- "Cynoponctius coniceps" # Cynoponctius coniceps and others
+Group_name[[119]][which(Group_name[[119]][,"original_name"] == "Endobenthos"),"scientific_name"] <- "Nereidae" # Polychaete
+Group_name[[119]][which(Group_name[[119]][,"original_name"] == "Epibenthos"),"scientific_name"] <- "Epibenthos" # Gastropoda, Bivalvia, Sea urchins, Sea stars
+Group_name[[119]][which(Group_name[[119]][,"original_name"] == "Predatory crabs"),"scientific_name"] <- "Crabs" # Callinectes toxotes, Callinectes sapidus, Callinectes arcuatus, Portunus asper, Portunus iridescens, Portunus acuminatus, Euphylax robustus, 
+Group_name[[119]][which(Group_name[[119]][,"original_name"] == "Sea/shore birds"),"scientific_name"] <- "Seabirds" # Pelicanus sp., Podiceps dominicus, Sula sp., Phalacrocorax olivaceus, Oceanodroma microsoma, Fregata magnificens, Anhinga anhinga
+
+## Srilanka network
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "Large tunas"),"scientific_name"] <- "Scomberomorus commerson"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "medium tunas"),"scientific_name"] <- "Katsuwonus pelamis"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "small barracudas"),"scientific_name"] <- "Sphyraena obtusata"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "small tunas"),"scientific_name"] <- "Auxis thazard thazard"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "large barracudas"),"scientific_name"] <- "Sphyraena jello"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "wolf herrings"),"scientific_name"] <- "Chirocentrus dorab"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "needlefish"),"scientific_name"] <- "Strongylura leiura"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "other carangids"),"scientific_name"] <- "Carangoides malabaricus"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "pomfrets, torps"),"scientific_name"] <- "Parastromateus niger"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "false trevallie"),"scientific_name"] <- "Lactarius lactarius"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "yellowstripe"),"scientific_name"] <- "Selaroides leptolepis"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "dolphinfishes"),"scientific_name"] <- "Coryphaena hippurus"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "cephalopods"),"scientific_name"] <- "Medium cephalopod"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "sea cat fish"),"scientific_name"] <- "Arius bilineatus"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "ribbonfish"),"scientific_name"] <- "Lepturacanthus savala"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "ponyfishes"),"scientific_name"] <- "Leiognathus brevirostris"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "soles"),"scientific_name"] <- "Euryglossa orientalis"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "indian mackerel"),"scientific_name"] <- "Rastrelliger kanagurta"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "terapontids"),"scientific_name"] <- "Terapon theraps"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "anchovies"),"scientific_name"] <- "Stolephorus heterolobus"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "drums"),"scientific_name"] <- "Otolithes ruber"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "other clupeids"),"scientific_name"] <- "Hilsa kelee"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "sardines"),"scientific_name"] <- "Sardinella gibbosa"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "thrissa spp"),"scientific_name"] <- "Thryssa setirostris"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "herrings"),"scientific_name"] <- "Amblygaster sirm"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "crabs"),"scientific_name"] <- "Crabs"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "flying fishes"),"scientific_name"] <- "Hirundichthys oxycephalus"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "milk fish "),"scientific_name"] <- "Chanos chanos"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "shrimps"),"scientific_name"] <- "Shrimps"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "bigeye scad"),"scientific_name"] <- "Selar crumenophthalmus"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "halfbeaks"),"scientific_name"] <- "Rhynchorhamphus malabaricus"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "mugilids"),"scientific_name"] <- "Mugil cephalus"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "annelids"),"scientific_name"] <- "Polychaeta"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "zoobenthos"),"scientific_name"] <- "Zoobenthos"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "zooplankton"),"scientific_name"] <- "Zooplankton"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "molluscs"),"scientific_name"] <- "Mollusca"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "phytoplankton"),"scientific_name"] <- "Phytoplankton"
+Group_name[[120]][which(Group_name[[120]][,"original_name"] == "phytobenthos"),"scientific_name"] <- "Phytobenthos"
 
 # Write the list as a .RDS file
 saveRDS(Group_name, file = "data/intermediate/Group_name.RDS")
