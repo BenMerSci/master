@@ -36,7 +36,7 @@ model {
   a_grp ~ normal(a_pop, a_sd);
   a_sd ~ exponential(3);
   sigma ~ exponential(5);
-  h_j ~ normal(1,5);
+  h_j ~ normal(-1,6);
 
   // Computing predators part for the numerator and denominator
 
