@@ -143,3 +143,32 @@ one_one_plot(dataset, "4_ht") + xlim(c(-13,13)) + ylim(c(-13,13))
 plot_sim_noerror(output_stan_model4_ht)
 plot_sim_error(output_stan_model4_ht)
 ```
+
+# Alphas against predator bodymass
+## Check if there is a relation between how big a predator is and its space clearance rate
+```r{alpha_mass, echo=FALSE, warning=FALSE, message=FALSE}
+alpha_bodymass <- summary(output_stan_model4_ht, pars = "a_grp")$summary |>
+                    as.data.frame() |>
+                    dplyr::mutate(pred_id = c(1:169)) |>
+                    dplyr::select(pred_id, mean) |>
+                    dplyr::left_join(dataset, by="pred_id") |>
+                    dplyr::select(pred_id, mean, bodymass_mean_predator) |>
+                    unique()
+
+alpha_bodymass |>
+ggplot(aes(x = log(bodymass_mean_predator), y = mean)) +
+        geom_point() +
+        theme_minimal() +
+        theme(
+         legend.title = element_blank(),
+         plot.title = element_text(size = 15),
+         axis.title.y = element_text(size = 15),
+         axis.title.x = element_text(size = 15),
+         axis.text.x = element_text(size = 13),
+         axis.text.y = element_text(size = 13)
+        ) +
+        labs(title = "Relation of space clearance rate and bodymass") +
+        xlab("Log bodymass value") +
+        ylab("Alpha values") +
+        geom_abline(intercept = 0, slope = 1)
+```
