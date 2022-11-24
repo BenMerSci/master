@@ -23,9 +23,9 @@ suppressPackageStartupMessages(library(gridExtra))
 dataset <- readRDS("../data/clean/new_dataset.RDS")
 output_stan_model0 <- readRDS("../results/model_outputs/output_stan_model0.RDS")
 output_stan_model1 <- readRDS("../results/model_outputs/output_stan_model1.RDS")
-output_stan_model2 <- readRDS("../results/model_outputs/output_stan_model2.RDS")
-output_stan_model3 <- readRDS("../results/model_outputs/output_stan_model3.RDS")
-output_stan_model4 <- readRDS("../results/model_outputs/output_stan_model4.RDS")
+output_stan_model2 <- readRDS("results/model_outputs/output_stan_model2.RDS")
+output_stan_model3 <- readRDS("results/model_outputs/output_stan_model3.RDS")
+output_stan_model4 <- readRDS("results/model_outputs/output_stan_model4.RDS")
 output_stan_model4_ht <- readRDS("../results/model_outputs/output_stan_model4_ht.RDS")
 
 ```
@@ -110,10 +110,11 @@ loo_compare(list(model_0 = loo_0, model_1 = loo_1, model_2 = loo_2,
 a_model2 <- summary(output_stan_model2, pars = "a_grp")$summary[,"mean"]
 a_model3 <- summary(output_stan_model3, pars = "a_grp")$summary[,"mean"]
 a_model4 <- summary(output_stan_model4, pars = "a_grp")$summary[,"mean"]
-df_alpha <- as.data.frame(cbind(a_model2, a_model3, a_model4))
+a_model4_ht <- summary(output_stan_model4_ht, pars = "a_grp")$summary[,"mean"]
+df_alpha <- as.data.frame(cbind(a_model2, a_model3, a_model4, a_model4_ht))
 ```
 
-```{r plot_alpha, eco=FALSE, warning=FALSE, message=FALSE}
+```{r plot_alpha, echo=FALSE, warning=FALSE, message=FALSE}
       df_alpha |>
         ggplot(aes(x = a_model2, y = a_model3)) +
         geom_point() +
@@ -126,8 +127,8 @@ df_alpha <- as.data.frame(cbind(a_model2, a_model3, a_model4))
          axis.text.x = element_text(size = 13),
          axis.text.y = element_text(size = 13)
         ) +
-        xlim(c(-15,1)) +
-        ylim(c(-15,1)) +
+        xlim(c(-19,1)) +
+        ylim(c(-19,1)) +
         labs(title = "alpha comparisons") +
         xlab("Model 2 alphas") +
         ylab("Model 3 alphas") +
@@ -145,11 +146,30 @@ df_alpha <- as.data.frame(cbind(a_model2, a_model3, a_model4))
          axis.text.x = element_text(size = 13),
          axis.text.y = element_text(size = 13)
         ) +
-        xlim(c(-15,1)) +
-        ylim(c(-15,1)) +
+        xlim(c(-19,1)) +
+        ylim(c(-19,1)) +
         labs(title = "alpha comparisons") +
         xlab("Model 2 alphas") +
         ylab("Model 4 alphas") +
+        geom_abline(intercept = 0, slope = 1)
+
+      df_alpha |>
+        ggplot(aes(x = a_model2, y = a_model4_ht)) +
+        geom_point() +
+        theme_minimal() +
+        theme(
+         legend.title = element_blank(),
+         plot.title = element_text(size = 15),
+         axis.title.y = element_text(size = 15),
+         axis.title.x = element_text(size = 15),
+         axis.text.x = element_text(size = 13),
+         axis.text.y = element_text(size = 13)
+        ) +
+        xlim(c(-19,1)) +
+        ylim(c(-19,1)) +
+        labs(title = "alpha comparisons") +
+        xlab("Model 2 alphas") +
+        ylab("Model 4_ht alphas") +
         geom_abline(intercept = 0, slope = 1)
 
       df_alpha |>
@@ -164,10 +184,48 @@ df_alpha <- as.data.frame(cbind(a_model2, a_model3, a_model4))
          axis.text.x = element_text(size = 13),
          axis.text.y = element_text(size = 13)
         ) +
-        xlim(c(-15,1)) +
-        ylim(c(-15,1)) +
+        xlim(c(-18,1)) +
+        ylim(c(-18,1)) +
         labs(title = "alpha comparisons") +
         xlab("Model 3 alphas") +
         ylab("Model 4 alphas") +
+        geom_abline(intercept = 0, slope = 1)
+
+      df_alpha |>
+        ggplot(aes(x = a_model3, y = a_model4_ht)) +
+        geom_point() +
+        theme_minimal() +
+        theme(
+         legend.title = element_blank(),
+         plot.title = element_text(size = 15),
+         axis.title.y = element_text(size = 15),
+         axis.title.x = element_text(size = 15),
+         axis.text.x = element_text(size = 13),
+         axis.text.y = element_text(size = 13)
+        ) +
+        xlim(c(-18,1)) +
+        ylim(c(-18,1)) +
+        labs(title = "alpha comparisons") +
+        xlab("Model 3 alphas") +
+        ylab("Model 4_ht alphas") +
+        geom_abline(intercept = 0, slope = 1)
+
+      df_alpha |>
+        ggplot(aes(x = a_model4, y = a_model4_ht)) +
+        geom_point() +
+        theme_minimal() +
+        theme(
+         legend.title = element_blank(),
+         plot.title = element_text(size = 15),
+         axis.title.y = element_text(size = 15),
+         axis.title.x = element_text(size = 15),
+         axis.text.x = element_text(size = 13),
+         axis.text.y = element_text(size = 13)
+        ) +
+        xlim(c(-18,1)) +
+        ylim(c(-18,1)) +
+        labs(title = "alpha comparisons") +
+        xlab("Model 4 alphas") +
+        ylab("Model 4_ht alphas") +
         geom_abline(intercept = 0, slope = 1)
 ```
