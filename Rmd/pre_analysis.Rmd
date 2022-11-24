@@ -48,8 +48,6 @@ ggplot() + geom_map(data = world, map = world, aes(x = long, y = lat, map_id=reg
 
 ```{r prelim-fig, echo=FALSE, warning=FALSE, message=FALSE}
 # Compute predators abundances
-dataset$abundance_predator <- dataset$biomass_predator/dataset$bodymass_mean_predator
-
 terrestrial <- dataset[which(dataset$habitat_type == "terrestrial"), ]
 freshwater <- dataset[which(dataset$habitat_type == "freshwater"), ]
 marine <- dataset[which(dataset$habitat_type == "marine"), ]
@@ -60,7 +58,7 @@ x_exp_log <- expression(log(B[i]) + log(N[j]))
 
 # terrestrial
 plot1 <- ggplot(data = terrestrial, aes(x = (biomass_prey *
-         (biomass_predator / bodymass_mean_predator)), y = pred_flow)) +
+         abundance_predator), y = pred_flow)) +
          geom_point(color = "olivedrab") +
          theme(legend.position = "none") +
          labs(y = "Flux biomasse (g/m²/année)", x = x_exp) +
@@ -68,7 +66,7 @@ plot1 <- ggplot(data = terrestrial, aes(x = (biomass_prey *
          theme_bw()
 # freshwater
 plot2 <- ggplot(data = freshwater, aes(x = (biomass_prey *
-         (biomass_predator / bodymass_mean_predator)), y = pred_flow)) +
+         abundance_predator), y = pred_flow)) +
          geom_point(color = "sandybrown") +
          theme(legend.position = "none", axis.title.y = element_blank()) +
          labs(y = "", x = x_exp) +
@@ -76,7 +74,7 @@ plot2 <- ggplot(data = freshwater, aes(x = (biomass_prey *
          theme_bw()
 # marine
 plot3 <- ggplot(data = marine, aes(x = (biomass_prey *
-         (biomass_predator / bodymass_mean_predator)), y = pred_flow)) +
+         abundance_predator), y = pred_flow)) +
          geom_point(color = "deepskyblue3") +
          theme(legend.position = "none", axis.title.y = element_blank()) +
          labs(y = "", x = x_exp) +
@@ -113,12 +111,13 @@ plots <- gridExtra::grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, nrow 
 ```{r randomforest, echo=FALSE, warning=FALSE, message=FALSE}
 # randomForest model
 ## Dataset for randomForest
-RF_datasetsub <- dataset[ , c("pred_flow", "biomass_prey", "bodymass_mean_prey",
+RF_datasetsub <- dataset[, c("pred_flow", "biomass_prey", "bodymass_mean_prey",
                   "metabolism_prey", "biomass_predator", "bodymass_mean_predator",
-                  "metabolism_predator", "ecosystem_type", "habitat_type",
-                   "water_temperature", "air_temperature")]
+                  "metabolism_predator", "habitat_type", "flux_units",
+                  "water_temperature", "air_temperature")]
 
-RF_datasetsub <- RF_datasetsub |> dplyr::mutate(abundance_prey = biomass_prey / bodymass_mean_prey, abundance_predator = biomass_predator / bodymass_mean_predator)
+RF_datasetsub <- RF_datasetsub |> dplyr::mutate(abundance_prey = biomass_prey / bodymass_mean_prey)
+RF_datasetsub[which(is.na(RF_datasetsub$flux_units)),"flux_units"] <- "Dry weight (g/m^2)"
 
 m1 <- randomForest(
   formula = pred_flow ~ .,
