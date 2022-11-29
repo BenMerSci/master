@@ -64,5 +64,61 @@ dataset <- dataset |>
             dplyr::summarise(sum_biomass_prey = sum(biomass_prey)) |>
               dplyr::left_join(dataset, by = "pred_id_by_web")
 
+# Define predator trophic guilds
+## Plankton
+dataset[grep("plankton", dataset$predator), "trophic_guild"] <- "Plankton"
+
+## Reptiles
+dataset[which(dataset$predator == "Crocodilians"), "trophic_guild"] <- "Reptiles"
+
+## Birds
+dataset[which(dataset$class_predator == "Aves"), "trophic_guild"] <- "Non-predatory birds"
+dataset[which(dataset$family_predator %in% c("Laridae","Stercorariidae","Accipitridae","Strigidae","Falconidae")), "trophic guild"] <- "Predatory birds"
+dataset[which(dataset$predator %in% c("Seabirds","Fishing birds","Jaegers")), "trophic_guild"] <- "Predatory birds"
+
+## Mammals
+dataset[which(dataset$predator %in% c("Mustela erminea")), "trophic_guild"] <- "Small mammal predator"
+dataset[which(dataset$predator %in% c("Vulpes vulpes","Gulo gulo","Vulpes lagopus")), "trophic_guild"] <- "Medium mammal predator"
+dataset[which(dataset$predator %in% c("Ursus arctos","Canis lupus arctos")), "trophic_guild"] <- "Large mammal predator"
+dataset[which(dataset$predator %in% c("Lemmings","Microtus oeconomus","Lemmus trimucronatus","Lepus arcticus","Dicrostonyx groenlandicus")), "trophic_guild"] <- "Small mammal herbivore"
+dataset[which(dataset$predator %in% c("Ovibos moschatus","Rangifer tarandus")), "trophic_guild"] <- "Large mammal herbivore"
+
+## Reef-coast associated
+dataset[which(dataset$predator %in% c("Snapper Grunts","Selaroides leptolepis","Carangoides malabaricus",
+                                     "Sphyraena obtusata","Selar crumenophthalmus","Parastromateus niger",
+                                     "Lutjanus griseus","Gobiidae","Amblygaster sirm","Encrasicholina heteroloba",
+                                     "Sphoeroides annulatus","Terapon theraps")), "trophic_guild"] <- "Small reef-coast"
+
+dataset[which(dataset$predator %in% c("Chirocentrus dorab","Sphyraena jello","Strongylura leiura","Carangidae",
+                                     "Lutjanidae","Chaetodipterus faber","Sheephead")), "trophic_guild"] <- "Medium reef-coast"
+
+## Shark
+dataset[which(dataset$predator %in% c("Carcharhinus melanopterus","Demersal shark","Hexanchus griseus","Rays Sharks")), "trophic_guild"] <- "Sharks"
+
+
+## Pelagic
+dataset[which(dataset$predator %in% c("Hemiramphus","Lactarius lactarius","Haplochromis squamipinnis","Rhamphochromis longiceps","Predatory haplochromines","Synodontis schall","Rastrelliger kanagurta","Synodontis zambezensis")), "trophic_guild"] <- "Small pelagic carnivore"
+dataset[which(dataset$predator %in% c("Elops affinis","Lepidion lepidion","Scomberomorus commerson","Katsuwonus pelamis","Auxis thazard","Bagrus docmak","Hydrocynus forskahlii","Alepisaurus","Benthic fish","Large scianidae")), "trophic_guild"] <- "Medium pelagic carnivore"
+dataset[which(dataset$predator %in% c("Diplotaxodon","Limnothrissa miodon","Stolothrissa tanganicae","Anchoa","Clupeidei","Copadichromis azureus","Haplochromis angustifrons","Haplochromis nigripinnis","Hilsa kelee","Hirundichthys oxycephalus","Oreochromis leucostictus","Oreochromis niloticus","Oreochromis","Planktivore fish","Planktivorous haplochromines","Poeciliidae","Rastrineobola argentea","Rhynchorhamphus malabaricus","Sardinella gibbosa","Small pelagic fish","Thryssa setirostris")), "trophic_guild"] <- "Small pelagic omnivore"
+dataset[which(dataset$predator %in% c("Coryphaena hippurus","Scombridae","Chanos chanos","Mugil cephalus","Mugilidae","Otolithes ruber")), "trophic_guild"] <- "Medium pelagic omnivore"
+
+## Demersal
+dataset[which(dataset$predator %in% c("Haemulidae","Small demersal fish","Cichlids","Omnivore fish","Gerreidae","Lates stappersii","Dormitator latifrons","Small catfish")), "trophic_guild"] <- "Small demersal omnivore"
+dataset[which(dataset$predator %in% c("Clarias gariepinus","Lepturacanthus savala","Snook","Lates","Protopterus aethiopicus")), "trophic_guild"] <- "Medium demersal omnivore"
+dataset[which(dataset$predator %in% c("Netuma bilineata","Leiognathus brevirostris","Micropogon undulatus","Eleotridae","Ariopsis guatemalensis","Pleuronectiforms","Cynoglossus zanzibarensis","Carnivore fish","Opsaridium microcephalum","Snout","Alepocephalus rostratus","Benthivorous haplochromines","Benthopelagic fish","Brachirus orientalis","Croaker","Demersal fish2","Engraulicypris sardella","Macrouridae","Opsanus beta")), "trophic_guild"] <- "Small demersal carnivore"
+dataset[which(dataset$predator %in% c("Demersal fish","Lophius piscatorius","Mora moro","Phycis blennoides","Cynoponctius coniceps","Synodus sp","Sciaenidae","Atractosteus tropicus","Hydrocynus vittatus","Lates niloticus","Large catfish")), "trophic_guild"] <- "Medium demersal carnivore"
+
+## Shrimps
+dataset[which(dataset$predator %in% c("Aristeus antennatus","Caridina nilotica","Macrobrachium","Litopenaeus","Shrimps")), "trophic_guild"] <- "Shrimps"
+
+## Mollusc and crustacea
+dataset[which(dataset$predator %in% c("Bivalvia","Crabs","Crassostrea virginica","Crustacea and Molluscs","Crustacea","Grapsid","Microcrustacean","Mollusca")), "trophic_guild"] <- "Mollusc and crustacea"
+
+## Invertebrates
+dataset[which(dataset$predator %in% c("Epibenthos","Chaoborus edulis","Heterotrophic benthos","Infauna","Insects","Macrozoobenthos","Meiofauna","Nereidae","Polychaeta","Zoobenthos")), "trophic_guild"] <- "Invertebrates"
+
+## Cephalopods
+dataset[which(dataset$predator %in% c("Medium cephalopod","Small cephalopod")), "trophic_guild"] <- "Cephalopods"
+
 # Save the dataset
 saveRDS(dataset, "data/clean/new_dataset.RDS")
