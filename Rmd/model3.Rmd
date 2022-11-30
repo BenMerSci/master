@@ -21,9 +21,9 @@ suppressPackageStartupMessages(library(patchwork))
 ```
 <!-- Load the data --> 
 ```{r load_model3, echo = FALSE, include = FALSE}
-dataset <- readRDS("../data/clean/new_dataset.RDS")
-output_stan_model3 <- readRDS("../results/model_outputs/output_stan_model3.RDS")
-source("../R/10_plot_func.R")
+dataset <- readRDS("data/clean/new_dataset.RDS")
+output_stan_model3 <- readRDS("results/model_outputs/output_stan_model3.RDS")
+source("R/10_plot_func.R")
 ```
 
 # Model 3
@@ -46,16 +46,18 @@ general_params <- output_stan_model3 |>
                    tidybayes::gather_draws(a_pop, a_sd, sigma)
 
 a_grp <- output_stan_model3 |> tidybayes::gather_draws(a_grp[pred_id])
-         # dplyr::arrange(pred_id)
-          #dplyr::mutate(pred_id = as.factor(pred_id))
 
 # Get pred_id & habitat_type to join with the stan output
-pred_ids <- unique(dataset[, c("pred_id", "habitat_type")])
-a_grp <- dplyr::left_join(a_grp, pred_ids, by = "pred_id") |>
-          dplyr::arrange(pred_id) |>
-          dplyr::mutate(pred_id = as.factor(pred_id))
-#alphas2_mean <- plyr::ddply(alphas2, "parameters", dplyr::summarise, grp.mean = mean(value))
-#other_params2_mean <- plyr::ddply(other_params2, "parameters", dplyr::summarise, grp.mean = mean(value)) |> dplyr::filter(!parameters %in% c("lp__"))
+pred_ids <- unique(dataset[, c("pred_id", "habitat_type", "trophic_guild")])
+
+a_grp <-  dplyr::left_join(a_grp, pred_ids, by = "pred_id") |>
+          dplyr::mutate(pred_id = as.factor(pred_id),
+                        habitat_type = as.factor(habitat_type),
+                        trophic_guild = as.factor(trophic_guild))
+
+pred_ids <- pred_ids |> dplyr::mutate(pred_id = as.factor(pred_id),
+                                      habitat_type = as.factor(habitat_type),
+                                      trophic_guild = as.factor(trophic_guild))
 ```
 
 ## Summary table
@@ -65,11 +67,12 @@ kable(summary(output_stan_model3, pars = c("a_pop","a_sd","sigma"))$summary, cap
 
 ### Respective predator alphas
 ```{r alphas-ridgeplots, echo=FALSE, message=FALSE, fig.height=13, fig.width=13}
-# Plot the unique alphas by predator
+# Plot the unique alphas by predator grouped by habitat_type
+pred_ids_habitat <- pred_ids |> dplyr::arrange(habitat_type)
+
 ggplot(a_grp, aes(x = `.value`, y = pred_id, fill = habitat_type)) +
   geom_density_ridges_gradient(scale = 5, rel_min_height = 0.01) +
-   #scale_fill_viridis(option = "C") +
-    labs(title = "Posterior distribution of predators alpha") +
+    labs(title = "Predators space clearance rate by habitat type (log scale)") +
      theme_ipsum() +
       theme(
        legend.title = element_text(size = 15),
@@ -80,12 +83,31 @@ ggplot(a_grp, aes(x = `.value`, y = pred_id, fill = habitat_type)) +
        axis.text.x = element_text(size = 15),
        axis.text.y = element_text(size = 15)
       ) +
-       ylab("Parameters ID") +
-       xlab("log-values") +
-        scale_y_discrete(guide = guide_axis(n.dodge = 2)) +
+       ylab("Predators ID") +
+       xlab("Space clearance rate") +
          scale_fill_manual("Ecosystem type",values = c("terrestrial" = "olivedrab",
-          "freshwater" = "sandybrown", "marine" = "deepskyblue3","marine_freshwater" = "slateblue4")) 
+          "freshwater" = "sandybrown", "marine" = "deepskyblue3","marine_freshwater" = "slateblue4")) +
+       scale_y_discrete(guide = guide_axis(n.dodge = 2), limits = pred_ids_habitat$pred_id)
 
+# Plot the unique alphas by predator grouped by trophic_guild
+pred_ids_guild <- pred_ids |> dplyr::arrange(trophic_guild)
+
+ggplot(a_grp, aes(x = `.value`, y = pred_id, fill = trophic_guild)) +
+  geom_density_ridges_gradient(scale = 5, rel_min_height = 0.01) +
+    labs(title = "Predators space clearance rate by trophic guilds (log scale)") +
+     theme_ipsum() +
+      theme(
+       legend.title = element_text(size = 15),
+       legend.text = element_text(size = 13),
+       axis.title.y = element_text(size = 20),
+       axis.title.x = element_text(size = 20),
+       plot.title = element_text(size = 30),
+       axis.text.x = element_text(size = 15),
+       axis.text.y = element_text(size = 15)
+      ) +
+       ylab("Predators ID") +
+       xlab("Space clearance rate") +
+        scale_y_discrete(guide = guide_axis(n.dodge = 2), limits = pred_ids_guild$pred_id)
 ```
 
 ```{r compute_loo, echo=FALSE, include=FALSE, warning=FALSE, message=FALSE, include=FALSE}
