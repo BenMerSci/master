@@ -45,7 +45,8 @@ dataset <- dplyr::left_join(dataset, tibble::rownames_to_column(as.data.frame(un
 
 # Change Zooplankton habitat_type to marine_freshwater
 dataset$habitat_type <- as.character(dataset$habitat_type)
-dataset[which(dataset$predator == "Zooplankton"), "habitat_type"] <- "marine_freshwater"
+dataset[which(dataset$predator %in% c("Zooplankton","Cichlids","Bivalvia",
+                                      "Macrozoobenthos","Zoobenthos")), "habitat_type"] <- "marine_freshwater"
 
 # Compute predators abundances
 dataset <- dataset |>
@@ -73,7 +74,7 @@ dataset[which(dataset$predator == "Crocodilians"), "trophic_guild"] <- "Reptiles
 
 ## Birds
 dataset[which(dataset$class_predator == "Aves"), "trophic_guild"] <- "Non-predatory birds"
-dataset[which(dataset$family_predator %in% c("Laridae","Stercorariidae","Accipitridae","Strigidae","Falconidae")), "trophic guild"] <- "Predatory birds"
+dataset[which(dataset$family_predator %in% c("Laridae","Stercorariidae","Accipitridae","Strigidae","Falconidae")), "trophic_guild"] <- "Predatory birds"
 dataset[which(dataset$predator %in% c("Seabirds","Fishing birds","Jaegers")), "trophic_guild"] <- "Predatory birds"
 
 ## Mammals
