@@ -23,9 +23,9 @@ suppressPackageStartupMessages(library(gridExtra))
 dataset <- readRDS("../data/clean/new_dataset.RDS")
 output_stan_model0 <- readRDS("../results/model_outputs/output_stan_model0.RDS")
 output_stan_model1 <- readRDS("../results/model_outputs/output_stan_model1.RDS")
-output_stan_model2 <- readRDS("results/model_outputs/output_stan_model2.RDS")
-output_stan_model3 <- readRDS("results/model_outputs/output_stan_model3.RDS")
-output_stan_model4 <- readRDS("results/model_outputs/output_stan_model4.RDS")
+output_stan_model2 <- readRDS("../results/model_outputs/output_stan_model2.RDS")
+output_stan_model3 <- readRDS("../results/model_outputs/output_stan_model3.RDS")
+output_stan_model4 <- readRDS("../results/model_outputs/output_stan_model4.RDS")
 output_stan_model4_ht <- readRDS("../results/model_outputs/output_stan_model4_ht.RDS")
 
 ```
