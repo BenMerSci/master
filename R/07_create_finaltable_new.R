@@ -96,7 +96,6 @@ dataset[which(dataset$predator %in% c("Chirocentrus dorab","Sphyraena jello","St
 ## Shark
 dataset[which(dataset$predator %in% c("Carcharhinus melanopterus","Demersal shark","Hexanchus griseus","Rays Sharks")), "trophic_guild"] <- "Sharks"
 
-
 ## Pelagic
 dataset[which(dataset$predator %in% c("Hemiramphus","Lactarius lactarius","Haplochromis squamipinnis","Rhamphochromis longiceps","Predatory haplochromines","Synodontis schall","Rastrelliger kanagurta","Synodontis zambezensis")), "trophic_guild"] <- "Small pelagic carnivore"
 dataset[which(dataset$predator %in% c("Elops affinis","Lepidion lepidion","Scomberomorus commerson","Katsuwonus pelamis","Auxis thazard","Bagrus docmak","Hydrocynus forskahlii","Alepisaurus","Benthic fish","Large scianidae")), "trophic_guild"] <- "Medium pelagic carnivore"
@@ -120,6 +119,11 @@ dataset[which(dataset$predator %in% c("Epibenthos","Chaoborus edulis","Heterotro
 
 ## Cephalopods
 dataset[which(dataset$predator %in% c("Medium cephalopod","Small cephalopod")), "trophic_guild"] <- "Cephalopods"
+
+# Keeping only wet weight interactions
+# not sure about dry wet
+# waiting to see if we can convert to back to wet weight
+dataset <- dataset |> dplyr::filter(flux_units == "Wet weight (t/km^2)")
 
 # Save the dataset
 saveRDS(dataset, "data/clean/new_dataset.RDS")
