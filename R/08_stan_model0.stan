@@ -9,17 +9,17 @@ transformed data {
 
 parameters {
   real Intercept;  // temporary intercept for centered predictors
-  //real<lower=0> sigma;  // dispersion parameter
+  real<lower=0> sigma;  // dispersion parameter
 }
 
 model {
 
   // Prios:
   Intercept ~ normal(0,1.5);
-  //sigma ~ exponential(5);
+  sigma ~ exponential(5);
 
 
-  log_pred_flow ~ normal(Intercept, 1);
+  log_pred_flow ~ normal(Intercept, sigma);
   
 }
 
@@ -33,12 +33,12 @@ generated quantities {
   
   for (i in 1:n) {
 
-    log_lik[i] = normal_lpdf(log_pred_flow[i] | log_pred_flow_hat[i], 1);
+    log_lik[i] = normal_lpdf(log_pred_flow[i] | log_pred_flow_hat[i], sigma);
 
-    y_rep[i] = normal_rng(log_pred_flow_hat[i], 1);
+    y_rep[i] = normal_rng(log_pred_flow_hat[i], sigma);
 
   }
 
-  Rsq_0 = variance(log_pred_flow_hat) / (variance(log_pred_flow_hat) + square(1));
+  Rsq_0 = variance(log_pred_flow_hat) / (variance(log_pred_flow_hat) + square(sigma));
 
 }
