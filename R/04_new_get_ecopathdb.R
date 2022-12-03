@@ -43,6 +43,10 @@ ecopath_metadata[which(ecopath_metadata$model_name == "Chantuto"), "model_year"]
 
 # Make currency uniform
 ecopath_metadata[which(ecopath_metadata$currency_units == "WetWeight"),"currency_units"] <- "Wet weight (t/km^2)"
+ecopath_metadata[which(is.na(ecopath_metadata$currency_units)),"currency_units"] <- "Wet weight (t/km^2)"
+
+# Add terrestrial netwokr ecosystem_type
+ecopath_metadata[which(is.na(ecopath_metadata$ecosystem_type)), "ecosystem_type"] <- "Tundra"
 
 # Write the list as a .Rdata file
 saveRDS(ecopath_metadata, file = "data/intermediate/ecopath_metadata.RDS")
