@@ -6,6 +6,27 @@ load("data/raw/ecopath/data/Q_vec.Rdata")
 load("data/raw/ecopath/data/B_vec.Rdata")
 ecobase_biomass <- readRDS("data/raw/ecobase_data/biomasses.RDS")
 
+# Convert terrestrial Arctic networks from kg/km2 to tons/km2
+B_vec[110:116] <- lapply(B_vec[110:116], function(x){x/1000})
+Q_vec[110:116] <- lapply(Q_vec[110:116], function(x){x/1000})
+
+# Convert terrestrial back from dry weight to wet weight
+# Plants were 90% water and other organisms 68%
+B_vec[[110]][1:4] <- B_vec[[110]][1:4]/0.10
+B_vec[[110]][5:length(B_vec[[110]])] <- B_vec[[110]][5:length(B_vec[[110]])]/0.32
+B_vec[[111]][1:5] <- B_vec[[111]][1:5]/0.10
+B_vec[[111]][6:length(B_vec[[111]])] <- B_vec[[111]][6:length(B_vec[[111]])]/0.32
+B_vec[[112]][1:5] <- B_vec[[112]][1:5]/0.10
+B_vec[[112]][6:length(B_vec[[112]])] <- B_vec[[112]][6:length(B_vec[[112]])]/0.32
+B_vec[[113]][1:5] <- B_vec[[113]][1:5]/0.10
+B_vec[[113]][6:length(B_vec[[113]])] <- B_vec[[113]][6:length(B_vec[[113]])]/0.32
+B_vec[[114]][1:5] <- B_vec[[114]][1:5]/0.10
+B_vec[[114]][6:length(B_vec[[114]])] <- B_vec[[114]][6:length(B_vec[[114]])]/0.32
+B_vec[[115]][1:4] <- B_vec[[115]][1:4]/0.10
+B_vec[[115]][5:length(B_vec[[115]])] <- B_vec[[115]][5:length(B_vec[[115]])]/0.32
+B_vec[[116]][1:5] <- B_vec[[116]][1:5]/0.10
+B_vec[[116]][6:length(B_vec[[116]])] <- B_vec[[116]][6:length(B_vec[[116]])]/0.32
+
 # Change the comas in matrices by dots
 ecobase_matrice <- list.files(path="./data/raw/ecobase_data", pattern = "(matrix)+(.csv)", full.names = T) |>
     purrr::map(~read.csv(., check.names = FALSE))
@@ -48,7 +69,7 @@ for (i in seq_len(length(DIET)-4)) {
 }
 
 # Add back the 4 matrices
-DIET[c(17,18,19,20)] <- ecobase_matrice
+DIET[c(16,17,18,19)] <- ecobase_matrice
 
 # Compute the degree (number of preys) for each consumer
 # and bind it to Group_name
@@ -97,6 +118,16 @@ interactions <- purrr::map2(asplit(Ecopath_models, 1), interactions, .f = functi
                 })
 
 inter_table <- do.call("rbind", interactions)
+
+# Remove interactions from terrestrial with Arthropoda
+# Have to remove every interactions of a predator that consume
+# Arthropoda because of model 4 where we need the total biomass
+# sum of the prey of a predator, and we didn't have a good
+# relation for going back from dry weight to wet weight
+# Names of terrestrial predators to remove that eats "Arthropoda"
+arthropoda_predators <- c("Waterfowl","Ptarmigan","Passerines","Shorebirds","Jaegers","Stercorarius longicaudus","Gulls","Plectrophenax nivalis")
+
+inter_table <- inter_table[-which(inter_table$predator %in% arthropoda_predators),]
 
 # Save the data
 saveRDS(inter_table, file = "data/intermediate/inter_table.RDS")
