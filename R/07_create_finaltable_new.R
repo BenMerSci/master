@@ -28,11 +28,6 @@ dataset <- merge(interactions, traits, by.x = "prey",
             "metabolism_predator", "model_name", "model_year", "ecosystem_type",
             "habitat_type", "water_temperature", "air_temperature")
 
-# Keeping only wet weight interactions
-# not sure about dry wet
-# waiting to see if we can convert to back to wet weight
-dataset <- dataset |> dplyr::filter(flux_units == "Wet weight (t/km^2)")
-
 # Change species mass from grams to tons
 dataset$bodymass_min_prey <- dataset$bodymass_min_prey * 0.000001
 dataset$bodymass_mean_prey <- dataset$bodymass_mean_prey * 0.000001
