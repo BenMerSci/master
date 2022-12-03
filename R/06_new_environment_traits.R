@@ -3,7 +3,7 @@ ecopath_metadata <- readRDS("data/intermediate/ecopath_metadata.RDS")
 
 # Load Ecopath_models_modif to get the habitat type
 load("data/raw/ecopath/data/Ecopath_models_modif.Rdata")
-	
+
 # Merge them
 enviro_df <- merge(ecopath_metadata, Ecopath_models,
               by.x = "model_name", by.y = "Model name", all.y = FALSE) |>
@@ -59,10 +59,7 @@ enviro_df[which(enviro_df$model_name == "Arctic islands, Nenetsky"), c("lon","la
 enviro_df[which(enviro_df$model_name == "Arctic islands, Svalbard"), c("lon","lat")] <- c(16.3, 78.9)
 enviro_df[which(enviro_df$model_name == "Arctic islands, Zackenberg"), c("lon","lat")] <- c(-21.0, 74.5)
 
-# Add ecosystem type to the one missing (arctic ones)
-enviro_df[which(is.na(enviro_df$ecosystem_type)),"ecosystem_type"] <- "terrestrial"
-
-#Transform the years into numeric
+# Transform the years into numeric
 enviro_df$model_year <- as.numeric(enviro_df$model_year)
 
 #### Climate data ####
