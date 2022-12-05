@@ -22,7 +22,13 @@ one_one_plot <- function(dataset, num_model) {
 plot_sim_noerror <- function(model) {
   df <- model |>
         tidybayes::gather_rvars(log_pred_flow_hat[id]) |>
-        dplyr::left_join(dataset |> mutate(id = row_number()))
+        dplyr::left_join(dataset |> mutate(id = row_number())) |>
+        dplyr::mutate(habitat_type = as.factor(habitat_type))
+  
+  levels(df$habitat_type) <- list("Terrestre" = "terrestrial",
+                                         "Aquatique" = "freshwater",
+                                         "Marin" = "marine",
+                                         "Marin & aquatique" = "marine_freshwater")
 
   df |> ggplot(aes(x= log(biomass_prey) + log(abundance_predator), dist=.value), col="Posterior distribution") +
         stat_dist_pointinterval() +
@@ -38,17 +44,23 @@ plot_sim_noerror <- function(model) {
          axis.text.x = element_text(size = 13),
          axis.text.y = element_text(size = 13)
         ) +
-        labs(title = "Observed against simulated from posterior distribution biomass flows (log-scaled)") +
-        xlab(expression(B[i] * N[j])) +
-        ylab("Biomass flow") +
-        scale_colour_manual(name="Line color", values=c(`Posterior distribution`="black", "terrestrial"="olivedrab",
-                            "freshwater" = "sandybrown", "marine"="deepskyblue3", "marine_freshwater"="purple"))
+        labs(title = "Flux de biomasse observés vs prédits (échelle log)") +
+        xlab(expression(log(B[i] * N[j]))) +
+        ylab("Flux de biomasse (tonnes/km²*année)") +
+        scale_colour_manual(name="Line color", values=c(`Posterior distribution`="black", "Terrestre"="olivedrab",
+                            "Aquatique" = "sandybrown", "Marin"="deepskyblue3", "Marin & aquatique"="purple"))
 }
 
 plot_sim_error <- function(model) {
   df <- model |>
         tidybayes::gather_rvars(y_rep[id]) |>
-        dplyr::left_join(dataset |> mutate(id = row_number()))
+        dplyr::left_join(dataset |> mutate(id = row_number())) |>
+        dplyr::mutate(habitat_type = as.factor(habitat_type))
+
+  levels(df$habitat_type) <- list("Terrestre" = "terrestrial",
+                                         "Aquatique" = "freshwater",
+                                         "Marin" = "marine",
+                                         "Marin & aquatique" = "marine_freshwater")
 
   df |> ggplot(aes(x= log(biomass_prey) + log(abundance_predator), dist=.value), col="Posterior distribution") +
         stat_dist_pointinterval() +
@@ -64,9 +76,9 @@ plot_sim_error <- function(model) {
          axis.text.x = element_text(size = 13),
          axis.text.y = element_text(size = 13)
         ) +
-        labs(title = "Observed against simulated from posterior distribution biomass flows (log-scaled)") +
-        xlab(expression(B[i] * N[j])) +
-        ylab("Biomass flow") +
-        scale_colour_manual(name="Line color", values=c(`Posterior distribution`="black", "terrestrial"="olivedrab",
-                            "freshwater" = "sandybrown", "marine"="deepskyblue3", "marine_freshwater"="purple"))
+        labs(title = "Flux de biomasse observés vs prédits (échelle log)") +
+        xlab(expression(log(B[i] * N[j]))) +
+        ylab("Flux de biomasse (tonnes/km²*année)") +
+        scale_colour_manual(name="Line color", values=c(`Posterior distribution`="black", "Terrestre"="olivedrab",
+                            "Aquatique" = "sandybrown", "Marin"="deepskyblue3", "Marin & aquatique"="purple"))
 }
