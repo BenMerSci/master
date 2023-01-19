@@ -4,6 +4,7 @@ data/
 seminaire1/*
 /.history
 results/*
+Rmd/*
 
 # Files to ignore
 *.jpg
