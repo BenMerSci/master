@@ -16,6 +16,6 @@ Rmd/*
 *.lot
 *.lof
 *.rds
-R/rencontre_dom_andrew.html
-R/rencontre_dom_andrew.Rmd
-Rmd/test_model.*
+index.html
+index.Rmd
+
