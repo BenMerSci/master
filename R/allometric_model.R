@@ -8,12 +8,12 @@ dataset <- readRDS("data/clean/new_dataset.RDS")
 
 # Select desired variables
 dataset <- dataset |>
-             dplyr::select(pred_flow, biomass_prey,
+             dplyr::select(biomass_flow, biomass_prey,
               abundance_predator, bodymass_mean_predator,
               predator, pred_id)
 
 # Fit the model
-output_stan_model2 <- rstan::stan(
+output_stan_model_allometric <- rstan::stan(
   file = "R/allometric_model.stan",
   iter = 4000,
   chains = 4,
@@ -22,4 +22,4 @@ output_stan_model2 <- rstan::stan(
 )
 
 # Save it RDS
-saveRDS(output_stan_model2, "results/model_outputs/output_allometric_model.RDS")
+saveRDS(output_stan_model_allometric, "results/model_outputs/output_stan_model_allometric.RDS")

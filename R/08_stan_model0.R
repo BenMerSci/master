@@ -8,7 +8,7 @@ dataset <- readRDS("data/clean/new_dataset.RDS")
 
 # Select desired variables
 dataset <- dataset |>
-            dplyr::select(pred_flow)
+            dplyr::select(biomass_flow)
 
 # Fit the model
 output_stan_model0 <- stan(

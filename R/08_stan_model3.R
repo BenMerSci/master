@@ -8,7 +8,7 @@ dataset <- readRDS("data/clean/new_dataset.RDS")
 
 # Select desired variables
 dataset <- dataset |>
-             dplyr::select(pred_flow, biomass_prey,
+             dplyr::select(biomass_flow, biomass_prey,
               abundance_predator, predator, pred_id,
               degree_predator)
 
