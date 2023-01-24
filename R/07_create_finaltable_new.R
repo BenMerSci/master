@@ -19,7 +19,7 @@ dataset <- merge(interactions, traits, by.x = "prey",
            merge(enviro, by.x = "model_name", by.y = "model_name",
             all.x = TRUE) |>
            dplyr::rename(c(flux_units = "currency_units")) |>
-           dplyr::select("prey", "predator", "pred_flow",
+           dplyr::select("prey", "predator", "biomass_flow",
             "flux_units", "biomass_prey", "bodymass_min_prey",
             "bodymass_mean_prey", "bodymass_max_prey", "class_prey",
             "family_prey", "metabolism_prey", "degree_predator",

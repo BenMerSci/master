@@ -105,8 +105,8 @@ interactions <- purrr::map2(DIET, sp_data, .f = function(.x, .y) {
   .x <- as.data.frame(.x) |>
          tibble::rownames_to_column("prey") |>
           tidyr::pivot_longer(!prey, names_to = "predator",
-           values_to = "pred_flow") |>
-            dplyr::filter(pred_flow > 0)
+           values_to = "biomass_flow") |>
+            dplyr::filter(biomass_flow > 0)
   return(.x)
 })
 
@@ -118,10 +118,10 @@ interactions <- purrr::map(interactions, function(x) {
 
 interactions <- purrr::map2(interactions, sp_data, .f = function(.x, .y) {
           dplyr::left_join(.x, .y, by = c("predator" = "scientific_name")) |>
-          dplyr::select(c("prey","predator","pred_flow","biomass","degree")) |>
+          dplyr::select(c("prey","predator","biomass_flow","biomass","degree")) |>
           dplyr::rename(biomass_predator = "biomass", degree_predator = "degree") |>
           dplyr::left_join(.y, by = c("prey" = "scientific_name")) |>
-          dplyr::select(c("prey","predator","pred_flow","degree_predator","biomass_predator","biomass")) |>
+          dplyr::select(c("prey","predator","biomass_flow","degree_predator","biomass_predator","biomass")) |>
           dplyr::rename(biomass_prey = "biomass")
         })
 

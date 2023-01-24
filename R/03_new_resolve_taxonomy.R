@@ -48,13 +48,13 @@ resolved_names[which(resolved_names$original == "Crustacea and Molluscs"), "reso
 resolved_inter_table <- base::merge(inter_table, resolved_names, by.x = "prey",
                           by.y = "original", all.x = TRUE) |>
                         dplyr::select(c("model_name", "resolved", "predator",
-                          "pred_flow", "biomass_prey",
+                          "biomass_flow", "biomass_prey",
                           "biomass_predator", "degree_predator")) |>
                         dplyr::rename(prey = "resolved") |>
                         base::merge(resolved_names, by.x = "predator",
                           by.y = "original", all.x = TRUE) |>
                         dplyr::select("model_name", "prey", "resolved",
-                          "pred_flow", "biomass_prey",
+                          "biomass_flow", "biomass_prey",
                           "biomass_predator", "degree_predator") |>
                         dplyr::rename(predator = "resolved")
 
