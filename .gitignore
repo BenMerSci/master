@@ -18,4 +18,5 @@ Rmd/*
 *.rds
 index.html
 index.Rmd
+_site.yml
 
