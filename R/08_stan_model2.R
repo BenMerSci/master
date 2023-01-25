@@ -107,3 +107,30 @@ ggplot(alpha, aes(x = `.value`, y = pred_id, fill = trophic_guild)) +
         #                            ))
 
 plot_sim_error(output_stan_model2)
+
+
+# allometric relation
+alpha_bodymass <- summary(output_stan_model2, pars = "alpha")$summary |>
+                    as.data.frame() |>
+                    dplyr::mutate(pred_id = c(1:154)) |>
+                    dplyr::select(pred_id, mean) |>
+                    dplyr::left_join(dataset, by="pred_id") |>
+                    dplyr::select(pred_id, mean, bodymass_mean_predator) |>
+                    unique()
+
+alpha_bodymass |>
+ggplot(aes(x = log(bodymass_mean_predator), y = mean)) +
+        geom_point() +
+        theme_minimal() +
+        theme(
+         legend.title = element_blank(),
+         plot.title = element_text(size = 15),
+         axis.title.y = element_text(size = 15),
+         axis.title.x = element_text(size = 15),
+         axis.text.x = element_text(size = 13),
+         axis.text.y = element_text(size = 13)
+        ) +
+        labs(title = "Relation of space clearance rate and bodymass") +
+        xlab("Log bodymass value") +
+        ylab("Alpha values") +
+        geom_abline(intercept = 0, slope = 1)
