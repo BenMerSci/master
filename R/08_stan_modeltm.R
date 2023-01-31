@@ -13,8 +13,8 @@ dataset <- dataset |>
               bodymass_mean_predator, bodymass_mean_prey)
 
 # Fit the model
-output_stan_model_tm <- rstan::stan(
-  file = "R/09_stan_model2_tm.stan",
+output_stan_modeltm <- rstan::stan(
+  file = "R/08_stan_modeltm.stan",
   iter = 4000,
   chains = 4,
   cores = 3,
@@ -22,4 +22,4 @@ output_stan_model_tm <- rstan::stan(
 )
 
 # Save it RDS
-saveRDS(output_stan_model_tm, "results/model_outputs/output_stan_model_tm.RDS")
+saveRDS(output_stan_modeltm, "results/model_outputs/output_stan_modeltm.RDS")
