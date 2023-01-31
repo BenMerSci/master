@@ -13,7 +13,7 @@ dataset <- dataset |>
 
 # Fit the model
 output_stan_model2 <- rstan::stan(
-  file = "R/08_stan_model2.stan",
+  file = "stan/08_stan_model2.stan",
   iter = 4000,
   chains = 4,
   cores = 3,

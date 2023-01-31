@@ -14,7 +14,7 @@ dataset <- dataset |>
 
 # Fit the model
 output_stan_modeltm <- rstan::stan(
-  file = "R/08_stan_modeltm.stan",
+  file = "stan/08_stan_modeltm.stan",
   iter = 4000,
   chains = 4,
   cores = 3,

@@ -14,7 +14,7 @@ dataset <- dataset |>
 
 # Fit the model
 output_stan_model_allometric <- rstan::stan(
-  file = "R/08_stan_model_allometric.stan",
+  file = "stan/08_stan_model_allometric.stan",
   iter = 4000,
   chains = 4,
   cores = 3,
