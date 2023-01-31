@@ -13,8 +13,8 @@ dataset <- dataset |>
                 degree_predator, sum_biomass_prey)
 
 # Fit the model
-output_stan_model4 <- stan(
-  file = "R/08_stan_model4.stan",
+output_stan_model3 <- stan(
+  file = "R/08_stan_model3.stan",
   iter = 4000,
   chains = 4,
   cores = 3,
@@ -22,4 +22,4 @@ output_stan_model4 <- stan(
 )
 
 # Save it RDS
-saveRDS(output_stan_model4, "results/model_outputs/output_stan_model4.RDS")
+saveRDS(output_stan_model3, "results/model_outputs/output_stan_model3.RDS")
