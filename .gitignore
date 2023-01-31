@@ -1,22 +1,9 @@
 # Folder to ignore
-propose/
-data/
-seminaire1/*
-/.history
+data/*
+.history/*
 results/*
-Rmd/*
 
 # Files to ignore
-*.jpg
-*.log
-*.blg
-*.bbl
-*.aux
-*.toc
-*.lot
-*.lof
 *.rds
-index.html
-index.Rmd
-_site.yml
+
 
