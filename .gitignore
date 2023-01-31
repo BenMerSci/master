@@ -2,6 +2,7 @@
 data/*
 .history/*
 results/*
+notes/.obsidian/*
 
 # Files to ignore
 *.rds
