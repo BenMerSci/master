@@ -3,18 +3,18 @@ library(rstan)
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
-# The data
+# Load dataset
 dataset <- readRDS("data/clean/new_dataset.RDS")
 
 # Select desired variables
 dataset <- dataset |>
-             dplyr::select(biomass_flow, biomass_prey,
-              abundance_predator, predator, pred_id,
-              degree_predator)
+                dplyr::select(biomass_flow, biomass_prey,
+                abundance_predator, predator, pred_id,
+                degree_predator, sum_biomass_prey)
 
 # Fit the model
-output_stan_model3 <- stan(
-  file = "R/08_stan_model3.stan",
+output_stan_model4 <- stan(
+  file = "R/08_stan_model4.stan",
   iter = 4000,
   chains = 4,
   cores = 3,
@@ -22,4 +22,4 @@ output_stan_model3 <- stan(
 )
 
 # Save it RDS
-saveRDS(output_stan_model3, "results/model_outputs/output_stan_model3.RDS")
+saveRDS(output_stan_model4, "results/model_outputs/output_stan_model4.RDS")
