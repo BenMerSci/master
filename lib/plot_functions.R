@@ -22,7 +22,7 @@ one_one_plot <- function(dataset, num_model) {
 plot_sim_noerror <- function(model) {
   df <- model |>
         tidybayes::gather_rvars(log_biomass_flow_hat[id]) |>
-        dplyr::left_join(dataset |> mutate(id = row_number())) |>
+        dplyr::left_join(dataset |> dplyr::mutate(id = dplyr::row_number())) |>
         dplyr::mutate(habitat_type = as.factor(habitat_type))
 
   levels(df$habitat_type) <- list("Terrestrial" = "terrestrial",
@@ -36,18 +36,18 @@ plot_sim_noerror <- function(model) {
          y=log(biomass_flow), col=habitat_type), inherit.aes=FALSE, size=3, alpha=0.8) +
         theme_minimal() +
         theme(
-         legend.position = "right",
+         legend.position = "bottom",
          legend.title = element_blank(),
-         legend.text = element_text(size = 30),
-         plot.title = element_blank(),
-         axis.title.y = element_text(size = 30),
-         axis.title.x = element_text(size = 30),
-         axis.text.x = element_text(size = 25),
-         axis.text.y = element_text(size = 25)
+         legend.text = element_text(size = 15),
+         plot.title = element_text(size = 18),
+         axis.title.y = element_text(size = 17),
+         axis.title.x = element_text(size = 17),
+         axis.text.x = element_text(size = 15),
+         axis.text.y = element_text(size = 15)
         ) +
-        labs(title = "Biomass flow observed vs prediction (log-scale)") +
+        labs(title = "Observation biomass flow vs predicted (log-scale)") +
         xlab(expression(log(B[i] * N[j]))) +
-        ylab("log(Biomass flow (tons/km²*year))") +
+        ylab(expression(log(F[ij]) (ton/km^2*year))) +
         scale_colour_manual(values=c("Model predictions"="black", "Terrestrial"="olivedrab",
                             "Freshwater" = "sandybrown", "Marine"="deepskyblue3", "Marine & freshwater"="purple"),
                             limits= c("Model predictions","Terrestrial","Freshwater","Marine","Marine & freshwater"))
@@ -57,7 +57,7 @@ plot_sim_error <- function(model) {
       
   df <- model |>
         tidybayes::gather_rvars(y_rep[id]) |>
-        dplyr::left_join(dataset |> mutate(id = row_number())) |>
+        dplyr::left_join(dataset |> dplyr::mutate(id = dplyr::row_number())) |>
         dplyr::mutate(habitat_type = as.factor(habitat_type))
 
   levels(df$habitat_type) <- list("Terrestrial" = "terrestrial",
@@ -74,12 +74,13 @@ plot_sim_error <- function(model) {
          legend.title = element_blank(),
          legend.text = element_text(size = 15),
          legend.position = "bottom",
+         plot.title = element_text(size = 18),
          axis.title.y = element_text(size = 17),
          axis.title.x = element_text(size = 17),
          axis.text.x = element_text(size = 15),
          axis.text.y = element_text(size = 15)
         ) +
-        #labs(title = "Modèle 0 - Flux de biomasse observés vs prédits (échelle log)") +
+        labs(title = "Observation biomass flow vs predicted (log-scale)") +
         xlab(expression(log(B[i] * N[j]))) +
         ylab(expression(log(F[ij]) (ton/km^2*year))) +
         scale_colour_manual(values=c("Model predictions"="black", "Terrestrial"="olivedrab",
