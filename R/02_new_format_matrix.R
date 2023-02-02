@@ -8,7 +8,6 @@ ecobase_biomass <- readRDS("data/raw/ecobase_data/biomasses.RDS")
 
 # Convert terrestrial Arctic networks from kg/km2 to tons/km2
 B_vec[110:116] <- lapply(B_vec[110:116], function(x){x/1000})
-Q_vec[110:116] <- lapply(Q_vec[110:116], function(x){x/1000})
 
 # Convert terrestrial back from dry weight to wet weight
 # Plants were 90% water and other organisms 68%
@@ -27,20 +26,20 @@ B_vec[[115]][5:length(B_vec[[115]])] <- B_vec[[115]][5:length(B_vec[[115]])]/0.3
 B_vec[[116]][1:5] <- B_vec[[116]][1:5]/0.10
 B_vec[[116]][6:length(B_vec[[116]])] <- B_vec[[116]][6:length(B_vec[[116]])]/0.32
 
-Q_vec[[110]][1:4] <- Q_vec[[110]][1:4]/0.10
-Q_vec[[110]][5:length(Q_vec[[110]])] <- Q_vec[[110]][5:length(Q_vec[[110]])]/0.32
-Q_vec[[111]][1:5] <- Q_vec[[111]][1:5]/0.10
-Q_vec[[111]][6:length(Q_vec[[111]])] <- Q_vec[[111]][6:length(Q_vec[[111]])]/0.32
-Q_vec[[112]][1:5] <- Q_vec[[112]][1:5]/0.10
-Q_vec[[112]][6:length(Q_vec[[112]])] <- Q_vec[[112]][6:length(Q_vec[[112]])]/0.32
-Q_vec[[113]][1:5] <- Q_vec[[113]][1:5]/0.10
-Q_vec[[113]][6:length(Q_vec[[113]])] <- Q_vec[[113]][6:length(Q_vec[[113]])]/0.32
-Q_vec[[114]][1:5] <- Q_vec[[114]][1:5]/0.10
-Q_vec[[114]][6:length(Q_vec[[114]])] <- Q_vec[[114]][6:length(Q_vec[[114]])]/0.32
-Q_vec[[115]][1:4] <- Q_vec[[115]][1:4]/0.10
-Q_vec[[115]][5:length(Q_vec[[115]])] <- Q_vec[[115]][5:length(Q_vec[[115]])]/0.32
-Q_vec[[116]][1:5] <- Q_vec[[116]][1:5]/0.10
-Q_vec[[116]][6:length(Q_vec[[116]])] <- Q_vec[[116]][6:length(Q_vec[[116]])]/0.32
+#Q_vec[[110]][1:4] <- Q_vec[[110]][1:4]/0.10
+#Q_vec[[110]][5:length(Q_vec[[110]])] <- Q_vec[[110]][5:length(Q_vec[[110]])]/0.32
+#Q_vec[[111]][1:5] <- Q_vec[[111]][1:5]/0.10
+#Q_vec[[111]][6:length(Q_vec[[111]])] <- Q_vec[[111]][6:length(Q_vec[[111]])]/0.32
+#Q_vec[[112]][1:5] <- Q_vec[[112]][1:5]/0.10
+#Q_vec[[112]][6:length(Q_vec[[112]])] <- Q_vec[[112]][6:length(Q_vec[[112]])]/0.32
+#Q_vec[[113]][1:5] <- Q_vec[[113]][1:5]/0.10
+#Q_vec[[113]][6:length(Q_vec[[113]])] <- Q_vec[[113]][6:length(Q_vec[[113]])]/0.32
+#Q_vec[[114]][1:5] <- Q_vec[[114]][1:5]/0.10
+#Q_vec[[114]][6:length(Q_vec[[114]])] <- Q_vec[[114]][6:length(Q_vec[[114]])]/0.32
+#Q_vec[[115]][1:4] <- Q_vec[[115]][1:4]/0.10
+#Q_vec[[115]][5:length(Q_vec[[115]])] <- Q_vec[[115]][5:length(Q_vec[[115]])]/0.32
+#Q_vec[[116]][1:5] <- Q_vec[[116]][1:5]/0.10
+#Q_vec[[116]][6:length(Q_vec[[116]])] <- Q_vec[[116]][6:length(Q_vec[[116]])]/0.32
 
 # Change the comas in matrices by dots
 ecobase_matrice <- list.files(path="./data/raw/ecobase_data", pattern = "(matrix)+(.csv)", full.names = T) |>
