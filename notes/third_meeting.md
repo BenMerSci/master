@@ -1,7 +1,7 @@
 notes:
 
 - reprendre modèle de Krebbs, jeu de données Arctic (Pierre)
-- le offset des terrestres -> confirm pawar selon quoi ecosystem et dimensionalnité/complexité jouerait sur la pred
+- le offset des terrestres -> confirm pawar selon quoi ecosystem et dimensionalité/complexité jouerait sur la predation
 - relations between parameters and biomass of species involved
 - h_t -> see DeLong and Beardsell -> not that important parameter
 
@@ -38,3 +38,16 @@ methode d'écriture:
 outline des paragraphes, mettre 1er phrase de chaque paragraphe.
 
 bien identifier table et figures.
+
+# Autre meeting dom 16 fevrier
+
+- ajouter graph des 4 fig de predictiosn
+- accoucher d'un draft dégeux, pas se soucier des autres etudes
+- attention d'être plus convaincant sur le plan conceptuel/theorique
+- l'intro peut etre relativement cliché:
+- poisot 2017, prob B (jiurnal): effort pour passer a une structure predictive pour les reseaux ecologiques. bien fonctionner avec modele de niche et matching centrality, aussi modele empirique. etape suivante serait darriver a un truc quantitatif.
+- transition vers 2e paragraphe: pour atteindre l'objectif de faire ds predictions quantita, on doit sinspirer de fondation theorique -> theorie actuelle sur reponse fonctionnelle : 1er action de masse, 2e: vitesse de rencontre, ils sont dependant de taille corpo, ensuite 3e mecanisme: saturation.
+- discu: autre truc allometrique pas abordé
+- Hein et Martin: capacité a reflechir et sensorielle a detecter les proies. est-ce qu'on a besoin d'aller plus loin que de l'action de masse? peut-être pas. peut-être que oui, si on pense à des plus gros mammifères comme des félins dans la Savanne africaine. Dans notre cas où on a bcp de poisson etc, capacité sensorielle et reflexion sur l'action de predation est limité, p-e que action de masse est meilleur.
+
+
