@@ -10,7 +10,7 @@ output_stan_model1 <- readRDS("results/model_outputs/output_stan_model1.RDS")
 source("lib/plot_functions.R")
 
 # Recover types
-output_stan_model1 <- recover_types(output_stan_model1)
+output_stan_model1 <- tidybayes::recover_types(output_stan_model1)
 # Draw the posterior for all parameters
 general_params <- output_stan_model1 |>
                    tidybayes::gather_draws(alpha, sigma)
@@ -33,4 +33,6 @@ ggplot(general_params, aes(x = `.value`, y = .variable)) +
 
 # Predictions vs observed data
 plot_sim_noerror(output_stan_model1)
-plot_sim_error(output_stan_model1)
+plot_pred1 <- plot_sim_error(output_stan_model1)
+
+ggsave("figures/plot_pred1.png", plot = plot_pred1, dpi = "retina", bg = "white")

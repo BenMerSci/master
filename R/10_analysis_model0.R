@@ -33,4 +33,6 @@ ggplot(general_params, aes(x = `.value`, y = .variable)) +
 
 # Predictions vs observed data
 plot_sim_noerror(output_stan_model0)
-plot_sim_error(output_stan_model0)
+plot_pred0 <- plot_sim_error(output_stan_model0)
+
+ggsave("figures/plot_pred0.png", plot = plot_pred0, dpi = "retina", bg = "white")

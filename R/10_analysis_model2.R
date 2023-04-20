@@ -70,7 +70,7 @@ ggplot(alpha, aes(x = `.value`, y = pred_id, fill = habitat_type)) +
 # Plot the unique alphas by predator grouped by trophic_guild
 pred_ids_guild <- pred_ids |> dplyr::arrange(trophic_guild)
 
-ggplot(alpha, aes(x = `.value`, y = pred_id, fill = trophic_guild)) +
+alpha_trophic <- ggplot(alpha, aes(x = `.value`, y = pred_id, fill = trophic_guild)) +
   geom_density_ridges_gradient(scale = 5, rel_min_height = 0.01) +
     labs(title = "Predators space clearance rate by trophic guilds (log scale)") +
      theme_ipsum() +
@@ -86,6 +86,8 @@ ggplot(alpha, aes(x = `.value`, y = pred_id, fill = trophic_guild)) +
        ylab("") +
        xlab("Space clearance rate") +
         scale_y_discrete(guide = guide_axis(n.dodge = 2), limits = pred_ids_guild$pred_id)
+
+ggsave("figures/alpha2_trophic.png", plot = alpha_trophic, dpi = "retina", bg = "white")
 
 # Predictions vs observed data
 plot_sim_noerror(output_stan_model2)
