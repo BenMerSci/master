@@ -13,23 +13,23 @@ ggplot() + geom_map(data = world, map = world, aes(x = long, y = lat, map_id=reg
       geom_point(data=coords_habitat, aes(x=lon, y=lat, color=habitat_type), size = 3) +
       scale_color_manual(values= c("marine" = "deepskyblue3", "freshwater" = "sandybrown", "terrestrial" = "olivedrab")) +
       coord_map("rectangular", lat0=0, xlim=c(-180,180), ylim=c(-90, 90)) +
-      labs(title="Global distribution of the Ecopath networks", x="Longitude", y="Latitude") +
+      labs(x="Longitude", y="Latitude") +
       labs(color = "Ecosystem") +
       scale_x_continuous(breaks = seq(-200, 200, 50)) +
       scale_y_continuous(breaks = seq(-90, 90, 30)) +
       theme_bw() +
       theme(
          legend.title = element_blank(),
-         legend.text = element_text(size = 15),
+         legend.text = element_text(size = 18),
          legend.position = "bottom",
-         plot.title = element_text(size = 18),
-         axis.title.y = element_text(size = 15),
-         axis.title.x = element_text(size = 15),
-         axis.text.x = element_text(size = 14),
-         axis.text.y = element_text(size = 14)
+         plot.title = element_blank(),
+         axis.title.y = element_text(size = 17),
+         axis.title.x = element_text(size = 17),
+         axis.text.x = element_text(size = 16),
+         axis.text.y = element_text(size = 16)
       )
 
-ggsave("figures/network_map.png", dpi = "retina")
+ggsave("figures/network_map.png", dpi = "retina", width = 15, height = 10)
 
 # Check biomass flow relation with prey biomass and predator abundances
 terrestrial <- dataset[which(dataset$habitat_type == "terrestrial"), ]
