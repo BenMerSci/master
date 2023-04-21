@@ -8,10 +8,12 @@ output_stan_model2 <- readRDS("results/model_outputs/output_stan_model2.RDS") |>
                         tidybayes::recover_types()
 output_stan_model3 <- readRDS("results/model_outputs/output_stan_model3.RDS") |>
                         tidybayes::recover_types()
-output_stan_modeltm <- readRDS("results/model_outputs/output_stan_modeltm.RDS") |>
-                         tidybayes::recover_types()
-output_stan_model_allometric <- readRDS("results/model_outputs/output_stan_model_allometric.RDS") |>
-                                  tidybayes::recover_types()
+output_stan_model4 <- readRDS("results/model_outputs/output_stan_model4.RDS") |>
+                        tidybayes::recover_types()
+#output_stan_modeltm <- readRDS("results/model_outputs/output_stan_modeltm.RDS") |>
+#                         tidybayes::recover_types()
+#output_stan_model_allometric <- readRDS("results/model_outputs/output_stan_model_allometric.RDS") |>
+#                         tidybayes::recover_types()
 
 # Source useful functions
 source("lib/rsq.R")
@@ -19,7 +21,8 @@ source("lib/rsq.R")
 # Compute the R²
 list_model <- list(output_stan_model0, output_stan_model1,
                    output_stan_model2, output_stan_model3,
-                   output_stan_modeltm, output_stan_model_allometric)
+                   output_stan_model4, output_stan_modeltm,
+                   output_stan_model_allometric)
 
 table_rsq(list_model)
 
@@ -40,13 +43,17 @@ log_lik_3 <- loo::extract_log_lik(output_stan_model3, merge_chains = FALSE)
 r_eff_3 <- loo::relative_eff(exp(log_lik_3))
 loo_3 <- loo::loo(log_lik_3, r_eff = r_eff_3, save_psis = TRUE)
 
-log_lik_tm <- loo::extract_log_lik(output_stan_modeltm, merge_chains = FALSE)
-r_eff_tm <- loo::relative_eff(exp(log_lik_tm))
-loo_tm <- loo::loo(log_lik_tm, r_eff = r_eff_tm, save_psis = TRUE)
+log_lik_4 <- loo::extract_log_lik(output_stan_model4, merge_chains = FALSE)
+r_eff_4 <- loo::relative_eff(exp(log_lik_4))
+loo_4 <- loo::loo(log_lik_4, r_eff = r_eff_4, save_psis = TRUE)
 
-log_lik_allometric <- loo::extract_log_lik(output_stan_model_allometric, merge_chains = FALSE)
-r_eff_allometric <- loo::relative_eff(exp(log_lik_allometric))
-loo_allometric <- loo::loo(log_lik_allometric, r_eff = r_eff_allometric, save_psis = TRUE)
+#log_lik_tm <- loo::extract_log_lik(output_stan_modeltm, merge_chains = FALSE)
+#r_eff_tm <- loo::relative_eff(exp(log_lik_tm))
+#loo_tm <- loo::loo(log_lik_tm, r_eff = r_eff_tm, save_psis = TRUE)
+
+#log_lik_allometric <- loo::extract_log_lik(output_stan_model_allometric, merge_chains = FALSE)
+#r_eff_allometric <- loo::relative_eff(exp(log_lik_allometric))
+#loo_allometric <- loo::loo(log_lik_allometric, r_eff = r_eff_allometric, save_psis = TRUE)
 
 # Rank the models with loo compare
 loo::loo_compare(list(model_0 = loo_0, model_1 = loo_1, model_2 = loo_2,
