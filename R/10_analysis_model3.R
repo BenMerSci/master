@@ -6,18 +6,18 @@ library(ggdist)
 
 # Load data
 dataset <- readRDS("data/clean/new_dataset.RDS")
-output_stan_model4 <- readRDS("results/model_outputs/output_stan_model4.RDS")
+output_stan_model3 <- readRDS("results/model_outputs/output_stan_model3.RDS")
 source("lib/plot_functions.R")
 
 # Recover types
-output_stan_model4 <- tidybayes::recover_types(output_stan_model4)
+output_stan_model3 <- tidybayes::recover_types(output_stan_model3)
 # Draw the posterior for all parameters
-general_params <- output_stan_model4 |>
+general_params <- output_stan_model3 |>
                    tidybayes::gather_draws(mu_alpha, sd_alpha, sigma)
 
-alpha <- output_stan_model4 |> tidybayes::gather_draws(alpha[pred_id])
+alpha <- output_stan_model3 |> tidybayes::gather_draws(alpha[pred_id])
 
-h_j <- output_stan_model4 |> tidybayes::gather_draws(h_j[pred_id])
+h_j <- output_stan_model3 |> tidybayes::gather_draws(h_j[pred_id])
 
 # Get pred_id & habitat_type to join with the stan output
 pred_ids <- unique(dataset[, c("pred_id", "habitat_type", "trophic_guild")])
@@ -133,11 +133,11 @@ ggplot(h_j, aes(x = `.value`, y = pred_id, fill = trophic_guild)) +
        scale_y_discrete(guide = guide_axis(n.dodge = 2), limits = pred_ids_guild$pred_id)
 
 # Predictions vs observed data
-plot_sim_noerror(output_stan_model4)
-plot_sim_error(output_stan_model4)
+plot_sim_noerror(output_stan_model3)
+plot_sim_error(output_stan_model3)
 
 # Allometric relation between alpha and bodymass
-alpha_bodymass <- output_stan_model4 |> tidybayes::gather_rvars(alpha[pred_id]) |>
+alpha_bodymass <- output_stan_model3 |> tidybayes::gather_rvars(alpha[pred_id]) |>
                     dplyr::left_join(dataset, by = "pred_id") |>
                     dplyr::select(pred_id, .value, bodymass_mean_predator, trophic_guild, habitat_type) |>
                     dplyr::distinct() |>
