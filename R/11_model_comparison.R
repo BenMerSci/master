@@ -21,8 +21,7 @@ source("lib/rsq.R")
 # Compute the R²
 list_model <- list(output_stan_model0, output_stan_model1,
                    output_stan_model2, output_stan_model3,
-                   output_stan_model4, output_stan_modeltm,
-                   output_stan_model_allometric)
+                   output_stan_model4)
 
 table_rsq(list_model)
 
@@ -57,7 +56,7 @@ loo_4 <- loo::loo(log_lik_4, r_eff = r_eff_4, save_psis = TRUE)
 
 # Rank the models with loo compare
 loo::loo_compare(list(model_0 = loo_0, model_1 = loo_1, model_2 = loo_2,
-            model_3 = loo_3, model_tm = loo_tm, model_allometric = loo_allometric))
+            model_3 = loo_3, model_4 = loo_4))
 
 # Compare model 2 and model 3 alphas
 library(ggplot2)
