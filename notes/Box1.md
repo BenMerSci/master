@@ -1,0 +1,12 @@
+
+Functional response describes how consumers feeding rates vary with resource availability. First described by \cite{Solomon1949} and formalized by \cite{Holling1959b}, there are now multiple different iterations of functional response. Here we focus on the two principal original ones: the type I and the type II functional response. Usually described on a per capita basis, here we will take a population-wise approach to the functional response. The type I functional response describes how the consumption rates (FRI) of a consumers population of density C varies with resources population of density R scaled by the space clearance rate parameters $\alpha$ of consumers C.
+
+EQUATION 1
+
+The type II functional response similarly relates the consumption rates (FRII) of consumers population of density C to the resources population of density R scaled by the consumers space clearance rate $\alpha$, but also saturates the consumption rates with the consumers handling time $h_t$. The idea of saturation behind the handling time comes from the premise that it takes a certain time for a consumer to capture, kill, consume and digest a resource during which it can not search for other resources \cite{Delong2021}.
+
+EQUATION 2
+
+The type I functional response is linear and reflects a process of mass action or gas law (Delong2021; O'Dwyer2019) where the consumption rates will basically represent consumers dans resources encoutering each other leading to consumption. Consumers feeding rates increases linearly up to a certain maximum, with resource availability and how it searches its environment based on the $\alpha$ parameter. The space clearance parameter, historically referred as search or attack rate, describes the area cleared by a consumer per time unit (unit). The $\alpha$ parameter also decomposes into several other parameters and depend upon consumers and resources velocity, the distance between them and a probability of attack and of success \citep{Delong2021}. A few models were developped based on functional response incorporating allometric relationships for these parameers and para
+
+\cite{Brose} and \cite{Pawar} developped models based on functional response incorporating allometric relationships for these parameters and parametrized them in a classical functional response framework based on number of resources consummed. In this study, we aim to do the same in a biomass flow framework.
