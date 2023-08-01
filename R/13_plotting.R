@@ -116,21 +116,20 @@ ggsave("figures/oneone_plots.png", plot = plots, dpi = "retina")
 
 alpha_bm2 <- alpha_bodymass_plot(output_stan_model2, dataset = dataset) + theme(legend.position = "bottom") + labs(title = "Model 2")
 
-alpha_bm3 <- alpha_bodymass_plot(output_stan_model3, dataset = dataset) +
-                                 theme(legend.position = "none", axis.title.y = element_blank(),
-                                      axis.text.y = element_blank()) +
-                                 labs(title = "Model 3")
+ggsave("figures/alpha_bodymass2.png", plot = alpha_bm2, dpi = "retina")
+
+alpha_bm3 <- alpha_bodymass_plot(output_stan_model3, dataset = dataset) + theme(legend.position = "bottom") + labs(title = "Model 3")
 
 alpha_bm4 <- alpha_bodymass_plot(output_stan_model4, dataset = dataset) +
                                  theme(legend.position = "none", axis.title.y = element_blank(),
                                  axis.text.y = element_blank()) +
                                  labs(title = "Model 4")
 
-mylegend <- g_legend(alpha_bm2)
+mylegend <- g_legend(alpha_bm3)
 
-plots <- gridExtra::grid.arrange(alpha_bm2 + theme(legend.position = "none"), alpha_bm3, alpha_bm4, bottom = mylegend, nrow = 1, ncol = 3)
+plots <- gridExtra::grid.arrange(alpha_bm3 + theme(legend.position = "none"), alpha_bm4, bottom = mylegend, nrow = 1, ncol = 2)
 
-ggsave("figures/alpha_bodymass.png", plot = plots, dpi = "retina")
+ggsave("figures/alpha_bodymass3_4.png", plot = plots, dpi = "retina")
 
 # handling time
 ht_bm3 <- ht_bodymass_plot(output_stan_model3, dataset = dataset) + theme(legend.position = "bottom") + labs(title = "Model 3")
@@ -144,4 +143,4 @@ mylegend <- g_legend(ht_bm3)
 
 plots <- gridExtra::grid.arrange(ht_bm3 + theme(legend.position = "none"), ht_bm4, bottom = mylegend, nrow = 1, ncol = 2)
 
-ggsave("figures/ht_bodymass.png", plot = plots, dpi = "retina")
+ggsave("figures/ht_bodymass3_4.png", plot = plots, dpi = "retina")
