@@ -6,16 +6,14 @@ library(ggdist)
 
 # Load data
 dataset <- readRDS("data/clean/new_dataset.RDS")
-output_stan_model2 <- readRDS("results/model_outputs/output_stan_model2.RDS")
+fit2 <- readRDS("results/model_outputs/stanfit_model2.RDS")
 source("lib/plot_functions.R")
 
-# Recover types
-output_stan_model2 <- tidybayes::recover_types(output_stan_model2)
 # Draw the posterior for all parameters
-general_params <- output_stan_model2 |>
+general_params <- fit2 |>
                    tidybayes::gather_draws(mu_alpha, sd_alpha, sigma)
 
-alpha <- output_stan_model2 |> tidybayes::gather_draws(alpha[pred_id])
+alpha <- fit2 |> tidybayes::gather_draws(alpha[pred_id])
 
 # Get pred_id & habitat_type to join with the stan output
 pred_ids <- unique(dataset[, c("pred_id", "habitat_type", "trophic_guild")])
@@ -70,7 +68,7 @@ ggplot(alpha, aes(x = `.value`, y = pred_id, fill = habitat_type)) +
 # Plot the unique alphas by predator grouped by trophic_guild
 pred_ids_guild <- pred_ids |> dplyr::arrange(trophic_guild)
 
-alpha_trophic <- ggplot(alpha, aes(x = `.value`, y = pred_id, fill = trophic_guild)) +
+ggplot(alpha, aes(x = `.value`, y = pred_id, fill = trophic_guild)) +
   geom_density_ridges_gradient(scale = 5, rel_min_height = 0.01) +
     labs(title = "Predators space clearance rate by trophic guilds (log scale)") +
      theme_ipsum() +
@@ -87,14 +85,12 @@ alpha_trophic <- ggplot(alpha, aes(x = `.value`, y = pred_id, fill = trophic_gui
        xlab("Space clearance rate") +
         scale_y_discrete(guide = guide_axis(n.dodge = 2), limits = pred_ids_guild$pred_id)
 
-ggsave("figures/alpha2_trophic.png", plot = alpha_trophic, dpi = "retina", bg = "white")
-
 # Predictions vs observed data
-plot_sim_noerror(output_stan_model2)
-plot_sim_error(output_stan_model2)
+plot_sim_noerror(fit2, dataset)
+plot_sim_error(fit2, dataset)
 
 # Allometric relation between alpha and bodymass
-alpha_bodymass <- output_stan_model2 |> tidybayes::gather_rvars(alpha[pred_id]) |>
+alpha_bodymass <- fit2 |> tidybayes::gather_rvars(alpha[pred_id]) |>
                     dplyr::left_join(dataset, by = "pred_id") |>
                     dplyr::select(pred_id, .value, bodymass_mean_predator, trophic_guild, habitat_type) |>
                     dplyr::distinct() |>

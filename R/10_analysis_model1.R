@@ -6,13 +6,11 @@ library(ggdist)
 
 # Load data
 dataset <- readRDS("data/clean/new_dataset.RDS")
-output_stan_model1 <- readRDS("results/model_outputs/output_stan_model1.RDS")
+fit1 <- readRDS("results/model_outputs/stanfit_model1.RDS")
 source("lib/plot_functions.R")
 
-# Recover types
-output_stan_model1 <- tidybayes::recover_types(output_stan_model1)
 # Draw the posterior for all parameters
-general_params <- output_stan_model1 |>
+general_params <- fit1 |>
                    tidybayes::gather_draws(alpha, sigma)
 
 # Plot posterior dist. of parameters
@@ -32,7 +30,5 @@ ggplot(general_params, aes(x = `.value`, y = .variable)) +
        xlab("Parameters log-valued")
 
 # Predictions vs observed data
-plot_sim_noerror(output_stan_model1)
-plot_pred1 <- plot_sim_error(output_stan_model1)
-
-ggsave("figures/plot_pred1.png", plot = plot_pred1, dpi = "retina", bg = "white")
+plot_sim_noerror(fit1, dataset)
+plot_sim_error(fit1, dataset)

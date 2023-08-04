@@ -6,18 +6,16 @@ library(ggdist)
 
 # Load data
 dataset <- readRDS("data/clean/new_dataset.RDS")
-output_stan_model3 <- readRDS("results/model_outputs/output_stan_model3.RDS")
+fit3 <- readRDS("results/model_outputs/stanfit_model3.RDS")
 source("lib/plot_functions.R")
 
-# Recover types
-output_stan_model3 <- tidybayes::recover_types(output_stan_model3)
 # Draw the posterior for all parameters
-general_params <- output_stan_model3 |>
-                   tidybayes::gather_draws(mu_alpha, sd_alpha, sigma)
+general_params <- fit3 |>
+                   tidybayes::gather_draws(mu_alpha, sd_alpha, mu_ht, sd_ht, sigma)
 
-alpha <- output_stan_model3 |> tidybayes::gather_draws(alpha[pred_id])
+alpha <- fit3 |> tidybayes::gather_draws(alpha[pred_id])
 
-h_j <- output_stan_model3 |> tidybayes::gather_draws(h_j[pred_id])
+ht <- fit3 |> tidybayes::gather_draws(ht[pred_id])
 
 # Get pred_id & habitat_type to join with the stan output
 pred_ids <- unique(dataset[, c("pred_id", "habitat_type", "trophic_guild")])
@@ -27,8 +25,7 @@ alpha <-  dplyr::left_join(alpha, pred_ids, by = "pred_id") |>
                         habitat_type = as.factor(habitat_type),
                         trophic_guild = as.factor(trophic_guild))
 
-
-h_j <- dplyr::left_join(h_j, pred_ids, by = "pred_id") |>
+ht <- dplyr::left_join(ht, pred_ids, by = "pred_id") |>
           dplyr::mutate(pred_id = as.factor(pred_id),
                         habitat_type = as.factor(habitat_type),
                         trophic_guild = as.factor(trophic_guild))
@@ -95,8 +92,9 @@ ggplot(alpha, aes(x = `.value`, y = pred_id, fill = trophic_guild)) +
        xlab("Space clearance rate") +
         scale_y_discrete(guide = guide_axis(n.dodge = 2), limits = pred_ids_guild$pred_id)
 
+
 # Plot the unique h_j by predator
-ggplot(h_j, aes(x = `.value`, y = pred_id, fill = habitat_type)) +
+ggplot(ht, aes(x = `.value`, y = pred_id, fill = habitat_type)) +
   geom_density_ridges_gradient(scale = 5, rel_min_height = 0.01) +
     labs(title = "Predators handling time by habitat type (log scale)") +
      theme_ipsum() +
@@ -115,7 +113,7 @@ ggplot(h_j, aes(x = `.value`, y = pred_id, fill = habitat_type)) +
           "freshwater" = "sandybrown", "marine" = "deepskyblue3","marine_freshwater" = "slateblue4")) +
        scale_y_discrete(guide = guide_axis(n.dodge = 2), limits = pred_ids_habitat$pred_id)
 
-ggplot(h_j, aes(x = `.value`, y = pred_id, fill = trophic_guild)) +
+ggplot(ht, aes(x = `.value`, y = pred_id, fill = trophic_guild)) +
   geom_density_ridges_gradient(scale = 5, rel_min_height = 0.01) +
     labs(title = "Predators handling time by trophic guilds (log scale)") +
      theme_ipsum() +
@@ -133,11 +131,11 @@ ggplot(h_j, aes(x = `.value`, y = pred_id, fill = trophic_guild)) +
        scale_y_discrete(guide = guide_axis(n.dodge = 2), limits = pred_ids_guild$pred_id)
 
 # Predictions vs observed data
-plot_sim_noerror(output_stan_model3)
-plot_sim_error(output_stan_model3)
+plot_sim_noerror(fit3, dataset)
+plot_sim_error(fit3, dataset)
 
 # Allometric relation between alpha and bodymass
-alpha_bodymass <- output_stan_model3 |> tidybayes::gather_rvars(alpha[pred_id]) |>
+alpha_bodymass <- fit3 |> tidybayes::gather_rvars(alpha[pred_id]) |>
                     dplyr::left_join(dataset, by = "pred_id") |>
                     dplyr::select(pred_id, .value, bodymass_mean_predator, trophic_guild, habitat_type) |>
                     dplyr::distinct() |>
