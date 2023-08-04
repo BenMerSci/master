@@ -1,19 +1,12 @@
 # Load data
 dataset <- readRDS("data/clean/new_dataset.RDS")
-output_stan_model2 <- readRDS("results/model_outputs/output_stan_model2.RDS")
+fit2 <- readRDS("results/model_outputs/stanfit_model2.RDS")
+loo_2 <- readRDS("results/loo_outputs/loo_2.RDS")
 
 #### Post-predictive checks ####
 
-## Recover types
-output_stan_model2 <- tidybayes::recover_types(output_stan_model2)
-
-## Extract loglikelihood and compute loo
-log_lik_2 <- loo::extract_log_lik(output_stan_model2, merge_chains = FALSE)
-r_eff_2 <- loo::relative_eff(exp(log_lik_2))
-loo_2 <- loo::loo(log_lik_2, r_eff = r_eff_2, save_psis = TRUE)
-
 ## Extract predictions and compute mean
-yrep_2 <- rstan::extract(output_stan_model2, pars = "y_rep")[[1]]
+yrep_2 <- rstan::extract(fit2, pars = "y_rep")[[1]]
 
 dataset <- dataset |>
            dplyr::mutate(
