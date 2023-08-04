@@ -8,24 +8,24 @@ source("lib/plot_functions.R")
 
 # Load data
 dataset <- readRDS("data/clean/new_dataset.RDS")
-output_stan_model0 <- readRDS("results/model_outputs/output_stan_model0.RDS") |>
+fit0 <- readRDS("results/model_outputs/stanfit_model0.RDS") |>
                         tidybayes::recover_types()
-output_stan_model1 <- readRDS("results/model_outputs/output_stan_model1.RDS") |>
+fit1 <- readRDS("results/model_outputs/stanfit_model1.RDS") |>
                         tidybayes::recover_types()
-output_stan_model2 <- readRDS("results/model_outputs/output_stan_model2.RDS") |>
+fit2 <- readRDS("results/model_outputs/stanfit_model2.RDS") |>
                         tidybayes::recover_types()
-output_stan_model3 <- readRDS("results/model_outputs/output_stan_model3.RDS") |>
+fit3 <- readRDS("results/model_outputs/stanfit_model3.RDS") |>
                         tidybayes::recover_types()
-output_stan_model4 <- readRDS("results/model_outputs/output_stan_model4.RDS") |>
+fit4 <- readRDS("results/model_outputs/stanfit_model4.RDS") |>
                         tidybayes::recover_types()
 
 # Parameters ridge plots
 
-alpha_trophic_2 <- alpha_ridge_plot(output_stan_model2, dataset = dataset)
+alpha_trophic_2 <- alpha_ridge_plot(fit2, dataset = dataset)
 
-alpha_trophic_3 <- alpha_ridge_plot(output_stan_model3, dataset = dataset)
+alpha_trophic_3 <- alpha_ridge_plot(fit3, dataset = dataset)
 
-alpha_trophic_4 <- alpha_ridge_plot(output_stan_model4, dataset = dataset)
+alpha_trophic_4 <- alpha_ridge_plot(fit4, dataset = dataset)
 
 mylegend <- g_legend(alpha_trophic_2)
 
@@ -37,40 +37,40 @@ plots <- gridExtra::grid.arrange(gridExtra::arrangeGrob(alpha_trophic_2 + theme(
 ggsave("figures/alpha_comparison.png", plot = plots, dpi = "retina")
 
 # Handling time parameters
-hj3_trophic <- ht_ridge_plot(output_stan_model3, dataset = dataset)
+ht3_trophic <- ht_ridge_plot(fit3, dataset = dataset)
 
-hj4_trophic <- ht_ridge_plot(output_stan_model4, dataset = dataset)
+ht4_trophic <- ht_ridge_plot(fit4, dataset = dataset)
 
-mylegend <- g_legend(hj3_trophic)
+mylegend <- g_legend(ht3_trophic)
 
-plots <- gridExtra::grid.arrange(gridExtra::arrangeGrob(hj3_trophic + theme(legend.position = "none"),
-                         hj4_trophic + theme(legend.position = "none"),
+plots <- gridExtra::grid.arrange(gridExtra::arrangeGrob(ht3_trophic + theme(legend.position = "none"),
+                         ht4_trophic + theme(legend.position = "none"),
                          nrow = 1), mylegend, nrow = 2, heights = c(10, 1))
 
-ggsave("figures/hj_comparison.png", plot = plots, dpi = "retina")
+ggsave("figures/ht_comparison.png", plot = plots, dpi = "retina")
 
 # R square
-rsq_plot <- plot_rsq(list(output_stan_model1, output_stan_model2, output_stan_model3, output_stan_model4))
+rsq_plot <- plot_rsq(list(fit1, fit2, fit3, fit4))
 
 ggsave("figures/rsq_plot.png", plot = rsq_plot, dpi = "retina")
 
 # Predictive plots
-model0_pred <- plot_sim_error(output_stan_model0, dataset = dataset) +
+model0_pred <- plot_sim_error(fit0, dataset = dataset) +
                   theme(legend.position = "none") + labs(title = "Model 0") +
                   ylim(c(-36, 26))
 
-model1_pred <- plot_sim_error(output_stan_model1, dataset = dataset) +
+model1_pred <- plot_sim_error(fit1, dataset = dataset) +
                   theme(legend.position = "none", axis.title.y = element_blank(),
                   axis.text.y = element_blank()) + labs(title = "Model 1") + ylim(c(-36, 26))
 
-model2_pred <- plot_sim_error(output_stan_model2, dataset = dataset) +
+model2_pred <- plot_sim_error(fit2, dataset = dataset) +
                   theme(legend.position = "bottom") + labs(title = "Model 2")
 
-model3_pred <- plot_sim_error(output_stan_model3, dataset = dataset) +
+model3_pred <- plot_sim_error(fit3, dataset = dataset) +
                   theme(legend.position = "none", axis.title.y = element_blank(),
                   axis.text.y = element_blank()) + labs(title = "Model 3")
 
-model4_pred <- plot_sim_error(output_stan_model4, dataset = dataset) +
+model4_pred <- plot_sim_error(fit4, dataset = dataset) +
                   theme(legend.position = "none", axis.title.y = element_blank(),
                   axis.text.y = element_blank()) + labs(title = "Model 4")
 
@@ -84,22 +84,22 @@ plots <- gridExtra::grid.arrange(grid::nullGrob(), model0_pred, model1_pred, gri
 ggsave("figures/pred_plots.png", plot = plots, dpi = "retina")
 
 # One-one plot
-model0_oneone <- one_one_plot(output_stan_model0, dataset) +
+model0_oneone <- one_one_plot(fit0, dataset) +
                    theme(legend.position = "none") + labs(title = "Model 0") +
                    ylim(c(-36, 26))
 
-model1_oneone <- one_one_plot(output_stan_model1, dataset) + theme(legend.position = "none",
+model1_oneone <- one_one_plot(fit1, dataset) + theme(legend.position = "none",
                    axis.title.y = element_blank(), axis.text.y = element_blank()) +
                    labs(title = "Model 1") + ylim(c(-36, 26))
 
-model2_oneone <- one_one_plot(output_stan_model2, dataset) + theme(legend.position = "bottom") +
+model2_oneone <- one_one_plot(fit2, dataset) + theme(legend.position = "bottom") +
                    labs(title = "Model 2")
 
-model3_oneone <- one_one_plot(output_stan_model3, dataset) + theme(legend.position = "none",
+model3_oneone <- one_one_plot(fit3, dataset) + theme(legend.position = "none",
                    axis.title.y = element_blank(), axis.text.y = element_blank()) +
                    labs(title = "Model 3")
 
-model4_oneone <- one_one_plot(output_stan_model4, dataset) + theme(legend.position = "none",
+model4_oneone <- one_one_plot(fit4, dataset) + theme(legend.position = "none",
                    axis.title.y = element_blank(), axis.text.y = element_blank()) +
                    labs(title = "Model 4")
 
@@ -113,34 +113,32 @@ plots <- gridExtra::grid.arrange(grid::nullGrob(), model0_oneone, model1_oneone,
 ggsave("figures/oneone_plots.png", plot = plots, dpi = "retina")
 
 # allometric plot with alpha and handling time
+# Model2
 
-alpha_bm2 <- alpha_bodymass_plot(output_stan_model2, dataset = dataset) + theme(legend.position = "bottom") + labs(title = "Model 2")
+alpha_bm2 <- alpha_bodymass_plot(fit2, dataset = dataset) + theme(legend.position = "bottom") + labs(title = "Model 2")
 
-ggsave("figures/alpha_bodymass2.png", plot = alpha_bm2, dpi = "retina")
+ggsave("figures/model2_relationship.png", plot = alpha_bm2, dpi = "retina")
 
-alpha_bm3 <- alpha_bodymass_plot(output_stan_model3, dataset = dataset) + theme(legend.position = "bottom") + labs(title = "Model 3")
+# Model 3
+alpha_bm3 <- alpha_bodymass_plot(fit3, dataset = dataset) + theme(legend.position = "bottom") + ylim(c(-20, 10))
 
-alpha_bm4 <- alpha_bodymass_plot(output_stan_model4, dataset = dataset) +
-                                 theme(legend.position = "none", axis.title.y = element_blank(),
-                                 axis.text.y = element_blank()) +
-                                 labs(title = "Model 4")
+ht_bm3 <- ht_bodymass_plot(fit3, dataset = dataset) +
+                                 theme(legend.position = "none") + ylim(c(-20, 10))
+
 
 mylegend <- g_legend(alpha_bm3)
 
-plots <- gridExtra::grid.arrange(alpha_bm3 + theme(legend.position = "none"), alpha_bm4, bottom = mylegend, nrow = 1, ncol = 2)
+plots <- gridExtra::grid.arrange(alpha_bm3 + theme(legend.position = "none"), ht_bm3, bottom = mylegend, nrow = 1, ncol = 2)
 
-ggsave("figures/alpha_bodymass3_4.png", plot = plots, dpi = "retina")
+ggsave("figures/model3_relationship.png", plot = plots, dpi = "retina")
 
-# handling time
-ht_bm3 <- ht_bodymass_plot(output_stan_model3, dataset = dataset) + theme(legend.position = "bottom") + labs(title = "Model 3")
+# Model 4
+alpha_bm4 <- alpha_bodymass_plot(fit4, dataset = dataset) + theme(legend.position = "bottom") + ylim(c(-20,10))
 
-ht_bm4 <- ht_bodymass_plot(output_stan_model4, dataset = dataset) +
-                                 theme(legend.position = "none", axis.title.y = element_blank(),
-                                 axis.text.y = element_blank()) +
-                                 labs(title = "Model 4")
+ht_bm4 <- ht_bodymass_plot(fit4, dataset = dataset) + theme(legend.position = "none") + ylim(c(-20,10))
 
-mylegend <- g_legend(ht_bm3)
+mylegend <- g_legend(alpha_bm4)
 
-plots <- gridExtra::grid.arrange(ht_bm3 + theme(legend.position = "none"), ht_bm4, bottom = mylegend, nrow = 1, ncol = 2)
+plots <- gridExtra::grid.arrange(alpha_bm4 + theme(legend.position = "none"), ht_bm4, bottom = mylegend, nrow = 1, ncol = 2)
 
-ggsave("figures/ht_bodymass3_4.png", plot = plots, dpi = "retina")
+ggsave("figures/model4_relationship.png", plot = plots, dpi = "retina")
