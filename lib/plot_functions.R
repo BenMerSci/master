@@ -49,7 +49,7 @@ model_number <- gsub("\\D", "", deparse(substitute(model)))
 
  pred_ids <- unique(dataset[, c("pred_id", "habitat_type", "trophic_guild")])
 
- df <- model |> tidybayes::gather_draws(h_j[pred_id]) |>
+ df <- model |> tidybayes::gather_draws(ht[pred_id]) |>
             dplyr::left_join(pred_ids, by = "pred_id") |>
               dplyr::mutate(pred_id = as.factor(pred_id),
                         habitat_type = as.factor(habitat_type),
@@ -117,7 +117,7 @@ df |> ggplot(aes(x= log(biomass_flow), dist=.value, col=habitat_type)) +
 }
 
 # Plots with dist. posterior intervals against observations with colors
-plot_sim_noerror <- function(model,dataset = dataset) {
+plot_sim_noerror <- function(model, dataset) {
   df <- model |>
         tidybayes::gather_rvars(log_biomass_flow_hat[id]) |>
         dplyr::left_join(dataset |> dplyr::mutate(id = dplyr::row_number())) |>
@@ -151,7 +151,7 @@ plot_sim_noerror <- function(model,dataset = dataset) {
                             limits= c("Model predictions","Terrestrial","Freshwater","Marine","Marine & freshwater"))
 }
 
-plot_sim_error <- function(model, dataset = dataset) {
+plot_sim_error <- function(model, dataset) {
       
   df <- model |>
         tidybayes::gather_rvars(y_rep[id]) |>
@@ -226,7 +226,7 @@ parameter_bodymass |>
 
 ht_bodymass_plot <- function(model,  dataset = dataset) {
 
-parameter_bodymass <- model |> tidybayes::gather_rvars(h_j[pred_id]) |>
+parameter_bodymass <- model |> tidybayes::gather_rvars(ht[pred_id]) |>
                     dplyr::left_join(dataset, by = "pred_id") |>
                     dplyr::select(pred_id, .value, bodymass_mean_predator, trophic_guild, habitat_type) |>
                     dplyr::distinct() |>
