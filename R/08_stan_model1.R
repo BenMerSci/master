@@ -3,22 +3,21 @@ library(rstan)
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
-# The data
+# Load dataset
 dataset <- readRDS("data/clean/new_dataset.RDS")
 
-# Select desired variables
-dataset <- dataset |>
-            dplyr::select(biomass_flow, biomass_prey,
-              abundance_predator, predator)
+# List the needed data
+standata1 <- list(n = nrow(dataset), biomass_flow = dataset$biomass_flow, biomass_prey = dataset$biomass_prey,
+                  abundance_predator = dataset$abundance_predator)
 
-# Fit the model
-output_stan_model1 <- stan(
-  file = "stan/08_stan_model1.stan",
-  iter = 4000,
-  chains = 4,
-  cores = 3,
-  data = tidybayes::compose_data(dataset)
-)
+stancode1 <- readLines("stan/08_stan_model1.stan")
 
-# Save it RDS
-saveRDS(output_stan_model1, "results/model_outputs/output_stan_model1.RDS")
+stanmodel1 <- stan_model(model_code = stancode1)
+
+fit1 <- sampling(stanmodel1, data = standata1, iter = 4000, chains = 4)
+
+loo_1 <- loo::loo(fit1, save_psis = TRUE, moment_match = TRUE)
+
+# Saving the outputs
+saveRDS(fit1, "results/model_outputs/stanfit_model1.RDS")
+saveRDS(loo_1, "results/loo_outputs/loo_1.RDS")
