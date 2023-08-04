@@ -19,8 +19,10 @@ parameters {
   real mu_alpha; // Population-level alpha
   vector[n_predator] alpha; // Group-level effect for each predator to be added to the Population-level alpha
   real<lower = 0> sd_alpha;
-  real<lower = 0> sigma; // 
-  vector[n_predator] h_j;
+  real mu_ht; // Population-level ht
+  vector[n_predator] ht; // Group-level effect for each predator to be added to the Population-level ht
+  real<lower = 0> sd_ht;
+  real<lower = 0> sigma; //
 }
 
 model {
@@ -30,15 +32,18 @@ model {
   // Priors:
   mu_alpha ~ normal(-5,2);
   alpha ~ normal(mu_alpha, sd_alpha);
-  sd_alpha ~ exponential(3);
+  sd_alpha ~ exponential(1);
+  mu_ht ~ normal(-3,2);
+  ht ~ normal(mu_ht, sd_ht);
+  sd_ht ~ exponential(1);
   sigma ~ exponential(5);
-  h_j ~ normal(-4,2);
+
 
   // Computing predators part for the numerator and denominator
 
    pred_factor = alpha[pred_id] + log_abundance_predator;
    
-   mu_flow = pred_factor + log_biomass_prey - log1p_exp(h_j[pred_id] + pred_factor + log_biomass_prey);
+   mu_flow = pred_factor + log_biomass_prey - log1p_exp(ht[pred_id] + pred_factor + log_biomass_prey);
 
   log_biomass_flow ~ normal(mu_flow, sigma);
 
@@ -54,7 +59,7 @@ generated quantities {
   //alpha_spec = a_pop + a_grp[pred_id];
   pred_factor = alpha[pred_id] + log_abundance_predator;
 
-  log_biomass_flow_hat = pred_factor + log_biomass_prey - log1p_exp(h_j[pred_id] + pred_factor + log_biomass_prey);
+  log_biomass_flow_hat = pred_factor + log_biomass_prey - log1p_exp(ht[pred_id] + pred_factor + log_biomass_prey);
       
   for (i in 1:n) {
 
