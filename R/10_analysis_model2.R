@@ -112,3 +112,10 @@ alpha_bodymass |>
     xlab("Bodymass (g, log-scale)") +
     ylab("Space clearance rate (km²/ind*year, log-scale)") +
     geom_abline(intercept = 0, slope = 1)
+
+# Linear regression of space clearance rate with bodymass
+alpha_bodymass <- alpha_bodymass |>
+                  dplyr::mutate(mean_alpha = mean(.value))
+
+lm_alpha <- lm(mean_alpha ~ log(bodymass_mean_predator), data = alpha_bodymass)
+summary(lm_alpha)
