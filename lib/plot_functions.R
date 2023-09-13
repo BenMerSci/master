@@ -185,6 +185,43 @@ plot_sim_error <- function(model, dataset) {
                             limits=(c("Model predictions","Terrestrial","Freshwater","Marine","Marine & freshwater")))
 }
 
+alpha_bodymass_plot_lm <- function(model,  dataset = dataset) {
+
+parameter_bodymass <- model |> tidybayes::gather_rvars(alpha[pred_id]) |>
+                    dplyr::left_join(dataset, by = "pred_id") |>
+                    dplyr::select(pred_id, .value, bodymass_mean_predator, trophic_guild, habitat_type) |>
+                    dplyr::distinct() |>
+                    dplyr::mutate(trophic_guild = as.factor(trophic_guild), mean_alpha = mean(.value))
+
+parameter_bodymass[which(parameter_bodymass$habitat_type == "terrestrial"),"habitat_type"] <- "Terrestrial"
+parameter_bodymass[which(parameter_bodymass$habitat_type == "marine"),"habitat_type"] <- "Marine"
+parameter_bodymass[which(parameter_bodymass$habitat_type == "freshwater"),"habitat_type"] <- "Freshwater"
+parameter_bodymass[which(parameter_bodymass$habitat_type == "marine_freshwater"),"habitat_type"] <- "Marine & freshwater"
+
+parameter_bodymass |>
+  ggplot(aes(x = log(bodymass_mean_predator), dist = .value, col = factor(habitat_type))) +
+  stat_pointinterval() +
+  geom_smooth(aes(x = log(bodymass_mean_predator), y = mean_alpha), method = "lm", color = "black") +
+    theme_minimal() +
+    theme(
+      legend.position = "bottom",
+      legend.title = element_blank(),
+      legend.text = element_text(size = 15),
+      plot.title = element_text(size = 18),
+      axis.title.y = element_text(size = 17),
+      axis.title.x = element_text(size = 17),
+      axis.text.x = element_text(size = 15),
+      axis.text.y = element_text(size = 15)
+    ) +
+    ylim(-19,6) +
+    xlim(-19,1) +
+    xlab("Body mass (g, log-scale)") +
+    ylab("Space clearance rate (km²/ind*year, log-scale)") +
+    scale_colour_manual(values=c("Terrestrial"="olivedrab",
+                            "Freshwater" = "sandybrown", "Marine"="deepskyblue3", "Marine & freshwater"="purple"),
+                            limits=c("Terrestrial","Freshwater","Marine","Marine & freshwater")) 
+}
+
 alpha_bodymass_plot <- function(model,  dataset = dataset) {
 
 parameter_bodymass <- model |> tidybayes::gather_rvars(alpha[pred_id]) |>
@@ -218,10 +255,7 @@ parameter_bodymass |>
     ylab("Space clearance rate (km²/ind*year, log-scale)") +
     scale_colour_manual(values=c("Terrestrial"="olivedrab",
                             "Freshwater" = "sandybrown", "Marine"="deepskyblue3", "Marine & freshwater"="purple"),
-                            limits=c("Terrestrial","Freshwater","Marine","Marine & freshwater")) +
-    geom_abline(intercept = 0, slope = 1)
-
-
+                            limits=c("Terrestrial","Freshwater","Marine","Marine & freshwater"))
 }
 
 ht_bodymass_plot <- function(model,  dataset = dataset) {
@@ -257,7 +291,5 @@ parameter_bodymass |>
     ylab("Handling time (year*km²/tons, log-scale)") +
     scale_colour_manual(values=c("Terrestrial"="olivedrab",
                             "Freshwater" = "sandybrown", "Marine"="deepskyblue3", "Marine & freshwater"="purple"),
-                            limits=c("Terrestrial","Freshwater","Marine","Marine & freshwater")) +
-    geom_abline(intercept = 0, slope = 1)
-
+                            limits=c("Terrestrial","Freshwater","Marine","Marine & freshwater"))
 }

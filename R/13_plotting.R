@@ -115,22 +115,22 @@ ggsave("figures/oneone_plots.png", plot = plots, dpi = "retina")
 # allometric plot with alpha and handling time
 # Model2
 
-alpha_bm2 <- alpha_bodymass_plot(fit2, dataset = dataset) + theme(legend.position = "bottom") + labs(title = "Model 2")
-
-ggsave("figures/model2_relationship.png", plot = alpha_bm2, dpi = "retina")
+alpha_bm2 <- alpha_bodymass_plot_lm(fit2, dataset = dataset) + theme(legend.position = "none") +
+             labs(title = "A)") + ylim(c(-20, 10))
 
 # Model 3
-alpha_bm3 <- alpha_bodymass_plot(fit3, dataset = dataset) + theme(legend.position = "bottom") + ylim(c(-20, 10))
+alpha_bm3 <- alpha_bodymass_plot(fit3, dataset = dataset) + theme(legend.position = "bottom") +
+             labs(title = "B)") + ylim(c(-20, 10))
 
-ht_bm3 <- ht_bodymass_plot(fit3, dataset = dataset) +
-                                 theme(legend.position = "none") + ylim(c(-20, 10))
+ht_bm3 <- ht_bodymass_plot(fit3, dataset = dataset) + theme(legend.position = "none") +
+          labs(title = "C)") + ylim(c(-20, 10))
 
 
 mylegend <- g_legend(alpha_bm3)
 
-plots <- gridExtra::grid.arrange(alpha_bm3 + theme(legend.position = "none"), ht_bm3, bottom = mylegend, nrow = 1, ncol = 2)
+plots <- gridExtra::grid.arrange(alpha_bm2, alpha_bm3 + theme(legend.position = "none"), ht_bm3, bottom = mylegend, nrow = 1, ncol = 3)
 
-ggsave("figures/model3_relationship.png", plot = plots, dpi = "retina")
+ggsave("figures/model2_3_relationship.png", plot = plots, dpi = "retina")
 
 # Model 4
 alpha_bm4 <- alpha_bodymass_plot(fit4, dataset = dataset) + theme(legend.position = "bottom") + ylim(c(-20,10))
