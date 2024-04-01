@@ -32,13 +32,13 @@ model {
   vector[n] pred_factor;
 
   // Priors:
-  mu_alpha ~ normal(-5,2);
+  mu_alpha ~ normal(0, 1);
   alpha ~ normal(mu_alpha, sd_alpha);
-  sd_alpha ~ exponential(1);
-  mu_ht ~ normal(-3,2);
+  sd_alpha ~ exponential(3);
+  mu_ht ~ normal(0, 1);
   ht ~ normal(mu_ht, sd_ht);
-  sd_ht ~ exponential(1);
-  sigma ~ exponential(5);
+  sd_ht ~ exponential(3);
+  sigma ~ exponential(3);
 
   // Computing predators part for the numerator and denominator
 

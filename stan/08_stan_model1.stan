@@ -23,8 +23,8 @@ model {
 vector[n] mu_flow;
 
   // Priors:
-  alpha ~ normal(-4, 2);
-  sigma ~ exponential(5);
+  alpha ~ normal(0, 1);
+  sigma ~ exponential(3);
 
   // Likelihood:
   // Computing target's mean

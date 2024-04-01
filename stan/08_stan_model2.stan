@@ -26,10 +26,10 @@ model {
   vector[n] mu_flow;
   
   // Priors:
-  mu_alpha ~ normal(-4, 2);
+  mu_alpha ~ normal(0, 1);
   alpha ~ normal(mu_alpha, sd_alpha);
   sd_alpha ~ exponential(3);
-  sigma ~ exponential(5);
+  sigma ~ exponential(3);
 
   // Computing target's mean
    mu_flow = alpha[pred_id] + log_biomass_prey + log_abundance_predator;

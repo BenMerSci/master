@@ -15,8 +15,8 @@ parameters {
 model {
 
   // Prios:
-  Intercept ~ normal(0,1.5);
-  sigma ~ exponential(5);
+  Intercept ~ normal(0, 1);
+  sigma ~ exponential(3);
 
 
   log_biomass_flow ~ normal(Intercept, sigma);
