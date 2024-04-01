@@ -67,6 +67,7 @@ species_list[which(species_list$scientific_name == "Demersal shark"), c("class")
 species_list[which(species_list$scientific_name == "Oreochromis"), c("class","family")] <- c("Actinopterygii","Cichlidae")
 species_list[which(species_list$scientific_name == "Grapsid"), c("class")] <- c("Malacostraca")
 species_list[which(species_list$scientific_name == "Fishing birds"), c("class")] <- c("Aves")
+species_list[which(species_list$scientific_name == "Pleuronectiforms"), c("class")] <- c("Actinopterygii")
 
 ################################
 ## Manual entry of bodymasses ##
