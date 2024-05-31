@@ -13,24 +13,54 @@ model_number <- gsub("\\D", "", deparse(substitute(model)))
 
  pred_ids <- unique(dataset[, c("pred_id", "habitat_type", "trophic_guild")])
 
- df <- model |> tidybayes::gather_draws(alpha[pred_id]) |>
-            dplyr::left_join(pred_ids, by = "pred_id") |>
-              dplyr::mutate(pred_id = as.factor(pred_id),
-                        habitat_type = as.factor(habitat_type),
-                        trophic_guild = as.factor(trophic_guild))
-
-pred_ids <- pred_ids |> dplyr::mutate(pred_id = as.factor(pred_id),
-                                      habitat_type = as.factor(habitat_type),
-                                      trophic_guild = as.factor(trophic_guild))
-
-pred_ids_guild <- pred_ids |> dplyr::arrange(trophic_guild)
-
- ggplot(df, aes(x = `.value`, y = pred_id, fill = trophic_guild)) +
-  geom_density_ridges_gradient(scale = 5, rel_min_height = 0.01) +
+ model |>
+  tidybayes::gather_draws(alpha[pred_id]) |>
+  dplyr::left_join(pred_ids, by = "pred_id") |>
+  dplyr::mutate(pred_id = as.factor(pred_id),
+    habitat_type = as.factor(habitat_type),
+    trophic_guild = factor(trophic_guild, 
+      levels = c(
+        "Small demersal omnivore", "Medium demersal omnivore",
+        "Small demersal carnivore", "Medium demersal carnivore",
+        "Small pelagic omnivore", "Medium pelagic omnivore",
+        "Small pelagic carnivore", "Medium pelagic carnivore",
+        "Small reef-coast", "Medium reef-coast",
+        "Sharks", "Cephalopods", "Mollusc and crustacea",
+        "Shrimps", "Plankton", "Invertebrates", 
+        "Reptiles", "Non-predatory birds", "Predatory birds",
+        "Small mammal herbivore", "Large mammal herbivore",
+        "Small mammal predator", "Medium mammal predator",
+        "Large mammal predator"
+      )
+    )
+  ) |>
+  dplyr::rowwise() |>
+  dplyr::mutate(
+    pred_nb = which(trophic_guild == levels(trophic_guild))
+  ) |>
+  dplyr::ungroup() |>
+  dplyr::mutate(
+    pred_id = reorder(pred_id, pred_nb)
+  ) |>
+ ggplot() +
+ aes(x = `.value`, y = pred_id, fill = trophic_guild) +
+  geom_density_ridges(scale = 5, rel_min_height = 0.01, alpha = 0.9)  +
+  scale_fill_manual(values = c(
+        "Small demersal omnivore" = "aquamarine4", "Medium demersal omnivore" = "aquamarine2",
+        "Small demersal carnivore" = "deepskyblue4", "Medium demersal carnivore" = "deepskyblue2",
+        "Small pelagic omnivore" = "mediumpurple4", "Medium pelagic omnivore" = "mediumpurple2",
+        "Small pelagic carnivore" = "palevioletred4", "Medium pelagic carnivore" = "palevioletred2",
+        "Small reef-coast" = "lightsalmon3", "Medium reef-coast" = "lightsalmon1",
+        "Sharks" = "ivory3", "Cephalopods" = "greenyellow", "Mollusc and crustacea" = "lightseagreen",
+        "Shrimps" = "powderblue" , "Plankton" = "brown", "Invertebrates" = "violetred", 
+        "Reptiles" = "palegoldenrod", "Non-predatory birds" = "yellow4", "Predatory birds" = "yellow2",
+        "Small mammal herbivore" = "mistyrose4", "Large mammal herbivore" = "mistyrose2",
+        "Small mammal predator" = "goldenrod4", "Medium mammal predator" = "goldenrod3",
+        "Large mammal predator" = "goldenrod1")) +
      theme_hc() +
       theme(
        legend.position = "bottom",
-       legend.text = element_text(size = 9),
+       legend.text = element_text(size = 10),
        legend.title = element_text(size = 12),
        plot.title = element_text(size = 15),
        axis.title.y = element_blank(),
@@ -39,8 +69,7 @@ pred_ids_guild <- pred_ids |> dplyr::arrange(trophic_guild)
        axis.text.x = element_text(size = 15),
       ) +
        labs(title = paste0("Model ", model_number), fill = "Trophic guilds") +
-       xlim(c(-20, 10)) +
-        scale_y_discrete(guide = guide_axis(n.dodge = 2), limits = pred_ids_guild$pred_id)
+       xlim(c(-20.5, 10))
 }
 
 ht_ridge_plot <- function(model, dataset) {
@@ -49,24 +78,54 @@ model_number <- gsub("\\D", "", deparse(substitute(model)))
 
  pred_ids <- unique(dataset[, c("pred_id", "habitat_type", "trophic_guild")])
 
- df <- model |> tidybayes::gather_draws(ht[pred_id]) |>
-            dplyr::left_join(pred_ids, by = "pred_id") |>
-              dplyr::mutate(pred_id = as.factor(pred_id),
-                        habitat_type = as.factor(habitat_type),
-                        trophic_guild = as.factor(trophic_guild))
-
-pred_ids <- pred_ids |> dplyr::mutate(pred_id = as.factor(pred_id),
-                                      habitat_type = as.factor(habitat_type),
-                                      trophic_guild = as.factor(trophic_guild))
-
-pred_ids_guild <- pred_ids |> dplyr::arrange(trophic_guild)
-
- ggplot(df, aes(x = `.value`, y = pred_id, fill = trophic_guild)) +
-  geom_density_ridges_gradient(scale = 5, rel_min_height = 0.01) +
+model |>
+  tidybayes::gather_draws(ht[pred_id]) |>
+  dplyr::left_join(pred_ids, by = "pred_id") |>
+  dplyr::mutate(pred_id = as.factor(pred_id),
+    habitat_type = as.factor(habitat_type),
+    trophic_guild = factor(trophic_guild, 
+      levels = c(
+        "Small demersal omnivore", "Medium demersal omnivore",
+        "Small demersal carnivore", "Medium demersal carnivore",
+        "Small pelagic omnivore", "Medium pelagic omnivore",
+        "Small pelagic carnivore", "Medium pelagic carnivore",
+        "Small reef-coast", "Medium reef-coast",
+        "Sharks", "Cephalopods", "Mollusc and crustacea",
+        "Shrimps", "Plankton", "Invertebrates", 
+        "Reptiles", "Non-predatory birds", "Predatory birds",
+        "Small mammal herbivore", "Large mammal herbivore",
+        "Small mammal predator", "Medium mammal predator",
+        "Large mammal predator"
+      )
+    )
+  ) |>
+  dplyr::rowwise() |>
+  dplyr::mutate(
+    pred_nb = which(trophic_guild == levels(trophic_guild))
+  ) |>
+  dplyr::ungroup() |>
+  dplyr::mutate(
+    pred_id = reorder(pred_id, pred_nb)
+  ) |>
+ ggplot() +
+ aes(x = `.value`, y = pred_id, fill = trophic_guild) +
+  geom_density_ridges(scale = 5, rel_min_height = 0.01, alpha = 0.9)  +
+  scale_fill_manual(values = c(
+        "Small demersal omnivore" = "aquamarine4", "Medium demersal omnivore" = "aquamarine2",
+        "Small demersal carnivore" = "deepskyblue4", "Medium demersal carnivore" = "deepskyblue2",
+        "Small pelagic omnivore" = "mediumpurple4", "Medium pelagic omnivore" = "mediumpurple2",
+        "Small pelagic carnivore" = "palevioletred4", "Medium pelagic carnivore" = "palevioletred2",
+        "Small reef-coast" = "lightsalmon3", "Medium reef-coast" = "lightsalmon1",
+        "Sharks" = "ivory3", "Cephalopods" = "greenyellow", "Mollusc and crustacea" = "lightseagreen",
+        "Shrimps" = "powderblue" , "Plankton" = "brown", "Invertebrates" = "violetred", 
+        "Reptiles" = "palegoldenrod", "Non-predatory birds" = "yellow4", "Predatory birds" = "yellow2",
+        "Small mammal herbivore" = "mistyrose4", "Large mammal herbivore" = "mistyrose2",
+        "Small mammal predator" = "goldenrod4", "Medium mammal predator" = "goldenrod3",
+        "Large mammal predator" = "goldenrod1")) +
      theme_hc() +
       theme(
        legend.position = "bottom",
-       legend.text = element_text(size = 9),
+       legend.text = element_text(size = 10),
        legend.title = element_text(size = 12),
        plot.title = element_text(size = 15),
        axis.title.y = element_blank(),
@@ -75,10 +134,7 @@ pred_ids_guild <- pred_ids |> dplyr::arrange(trophic_guild)
        axis.text.x = element_text(size = 15),
       ) +
        labs(title = paste0("Model ", model_number), fill = "Trophic guilds") +
-       xlim(c(-20, 10)) +
-        scale_y_discrete(guide = guide_axis(n.dodge = 2), limits = pred_ids_guild$pred_id)
-
-
+       xlim(c(-20.5, 10))
 }
 
 # One-one plot for simulation and observations
@@ -95,7 +151,7 @@ one_one_plot <- function(model, dataset) {
                                          "Marine & freshwater" = "marine_freshwater")
 
 df |> ggplot(aes(x= log(biomass_flow), dist=.value, col=habitat_type)) +
-        stat_dist_pointinterval(alpha=0.8) +
+        stat_pointinterval(point_interval = "mean_qi", alpha=0.8) +
         theme_minimal() +
         theme(
          legend.position = "bottom",
@@ -107,7 +163,7 @@ df |> ggplot(aes(x= log(biomass_flow), dist=.value, col=habitat_type)) +
          axis.text.x = element_text(size = 15),
          axis.text.y = element_text(size = 15)
         ) +
-        xlab("Observed") +
+        xlab("Observed ") +
         ylab("Predicted") +
         ylim(c(-20, 20)) +
         scale_colour_manual(values=c("Terrestrial"="olivedrab",
@@ -129,7 +185,7 @@ plot_sim_noerror <- function(model, dataset) {
                                          "Marine & freshwater" = "marine_freshwater")
 
   df |> ggplot(aes(x= log(biomass_prey) + log(abundance_predator), dist=.value, col="Model predictions")) +
-        stat_dist_pointinterval() +
+        stat_pointinterval() +
         geom_point(aes(x=log(biomass_prey) + log(abundance_predator),
          y=log(biomass_flow), col=habitat_type), inherit.aes=FALSE, size=3, alpha=0.8) +
         theme_minimal() +
@@ -164,7 +220,7 @@ plot_sim_error <- function(model, dataset) {
                                          "Marine & freshwater" = "marine_freshwater")
 
   df |> ggplot(aes(x= log(biomass_prey) + log(abundance_predator), dist=.value, col="Model predictions")) +
-        stat_dist_pointinterval() +
+        stat_pointinterval() +
         geom_point(aes(x=log(biomass_prey) + log(abundance_predator),
          y=log(biomass_flow), col=habitat_type), inherit.aes=FALSE, size=3, alpha=0.8) +
         theme_minimal() +
@@ -200,7 +256,7 @@ parameter_bodymass[which(parameter_bodymass$habitat_type == "marine_freshwater")
 
 parameter_bodymass |>
   ggplot(aes(x = log(bodymass_mean_predator), dist = .value, col = factor(habitat_type))) +
-  stat_pointinterval() +
+  stat_pointinterval(point_interval = "mean_qi") +
   geom_smooth(aes(x = log(bodymass_mean_predator), y = mean_alpha), method = "lm", color = "black") +
     theme_minimal() +
     theme(
@@ -215,7 +271,7 @@ parameter_bodymass |>
     ) +
     ylim(-19,6) +
     xlim(-19,1) +
-    xlab("Body mass (g, log-scale)") +
+    xlab("Body mass (metric tons, log-scale)") +
     ylab("Space clearance rate (km²/ind*year, log-scale)") +
     scale_colour_manual(values=c("Terrestrial"="olivedrab",
                             "Freshwater" = "sandybrown", "Marine"="deepskyblue3", "Marine & freshwater"="purple"),
@@ -237,7 +293,7 @@ parameter_bodymass[which(parameter_bodymass$habitat_type == "marine_freshwater")
 
 parameter_bodymass |>
   ggplot(aes(x = log(bodymass_mean_predator), dist = .value, col = factor(habitat_type))) +
-  stat_pointinterval() +
+  stat_pointinterval(point_interval = "mean_qi") +
     theme_minimal() +
     theme(
       legend.position = "bottom",
@@ -251,7 +307,7 @@ parameter_bodymass |>
     ) +
     ylim(-19,6) +
     xlim(-19,1) +
-    xlab("Body mass (g, log-scale)") +
+    xlab("Body mass (metric tons, log-scale)") +
     ylab("Space clearance rate (km²/ind*year, log-scale)") +
     scale_colour_manual(values=c("Terrestrial"="olivedrab",
                             "Freshwater" = "sandybrown", "Marine"="deepskyblue3", "Marine & freshwater"="purple"),
@@ -273,7 +329,7 @@ parameter_bodymass[which(parameter_bodymass$habitat_type == "marine_freshwater")
 
 parameter_bodymass |>
   ggplot(aes(x = log(bodymass_mean_predator), dist = .value, col = habitat_type)) +
-    stat_dist_pointinterval() +
+    stat_pointinterval(point_interval = "mean_qi") +
     theme_minimal() +
     theme(
       legend.position = "bottom",
@@ -287,7 +343,7 @@ parameter_bodymass |>
     ) +
     ylim(-10,6) +
     xlim(-17,1) +
-    xlab("Body mass (g, log-scale)") +
+    xlab("Body mass (metric tons, log-scale)") +
     ylab("Handling time (year*km²/tons, log-scale)") +
     scale_colour_manual(values=c("Terrestrial"="olivedrab",
                             "Freshwater" = "sandybrown", "Marine"="deepskyblue3", "Marine & freshwater"="purple"),

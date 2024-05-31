@@ -3,6 +3,7 @@ library(ggridges)
 library(hrbrthemes)
 library(ggdist)
 library(ggthemes)
+library(RColorBrewer)
 source("lib/rsq.R")
 source("lib/plot_functions.R")
 
@@ -20,7 +21,6 @@ fit4 <- readRDS("results/model_outputs/stanfit_model4.RDS") |>
                         tidybayes::recover_types()
 
 # Parameters ridge plots
-
 alpha_trophic_2 <- alpha_ridge_plot(fit2, dataset = dataset)
 
 alpha_trophic_3 <- alpha_ridge_plot(fit3, dataset = dataset)
@@ -116,22 +116,21 @@ ggsave("figures/oneone_plots.png", plot = plots, dpi = "retina")
 # Model2
 
 alpha_bm2 <- alpha_bodymass_plot_lm(fit2, dataset = dataset) + theme(legend.position = "none") +
-             labs(title = "A)") + ylim(c(-20, 10))
+             labs(title = expression("Model 2 -" * " " * alpha)) + ylim(c(-20, 10))
 
 # Model 3
 alpha_bm3 <- alpha_bodymass_plot(fit3, dataset = dataset) + theme(legend.position = "bottom") +
-             labs(title = "B)") + ylim(c(-20, 10))
+             labs(title = expression("Model 3 - " * " " * alpha)) + ylim(c(-20, 10))
 
 ht_bm3 <- ht_bodymass_plot(fit3, dataset = dataset) + theme(legend.position = "none") +
-          labs(title = "C)") + ylim(c(-20, 10))
-
+          labs(title = expression("Model 3 - " * " " * h[j])) + ylim(c(-20, 10))
 
 mylegend <- g_legend(alpha_bm3)
 
 plots <- gridExtra::grid.arrange(alpha_bm2, alpha_bm3 + theme(legend.position = "none"), ht_bm3, bottom = mylegend, nrow = 1, ncol = 3)
 
 ggsave("figures/model2_3_relationship.png", plot = plots, dpi = "retina")
-
+``
 # Model 4
 alpha_bm4 <- alpha_bodymass_plot(fit4, dataset = dataset) + theme(legend.position = "bottom") + ylim(c(-20,10))
 

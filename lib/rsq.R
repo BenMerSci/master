@@ -23,8 +23,12 @@ plot_rsq <- function(list_model) {
 
         df <- do.call(cbind, df_list)
 
-        rsq_plot <- bayesplot::mcmc_areas(df, area_method = "equal height")# +
-                    #ggplot2::xlim(0, 1)
+        rsq_plot <- bayesplot::mcmc_areas(df, area_method = "equal height") +
+                     theme(
+                      axis.text = element_text(size = 15),
+                      axis.text.x = element_text(size = 15),
+                      axis.text.y = element_text(size = 15)
+                     )
 
   return(rsq_plot)
 }
