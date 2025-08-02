@@ -1,3 +1,40 @@
+test <- rvest::read_html("https://fishbase.se/summary/Bagrus_docmak.html") |>
+  rvest::html_elements(xpath = "//*[contains(@class, 'smallSpace')]")
+
+
+rfishbase::length_weight("Aristeus antennatus")
+
+get_fishbase_length <- function(species_list) {
+  test <- rfishbase::maturity(species_list = species_list) |>
+    dplyr::filter(Type1 %in% c("TL", "FL")) |>
+    dplyr::summarize(length = mean(LengthMatMin))
+}
+
+rfishbase::maturity(species_list = species_list$scientific_name[1:6])
+
+
+test_length <- get_fishbase_length(species_list$scientific_name[1:6])
+
+
+fishbase_sp <- species_list |>
+  dplyr::filter(class %in% c("Carangidae","Soleidae","Clupeidae","Engraulidae",
+                            "Trichiuridae","Chanidae","Eleotridae","Actinopterygii",
+                            "Poeciliidae","Scombridae","Clariidae","Cichlidae",
+                            "Dipneusti","Gobiidae","Gerreidae","Hemiramphidae",
+                            "Mugilidae","Clupeoidei","Leiognathidae",
+                            "Chirocentridae","Exocoetidae","Lactariidae",
+                            "Ariidae","Chondrichthyes","Lophiidae","Moridae",
+                            "Phycidae","Macrouridae","Alepocephalidae","Cyprinidae",
+                            "Haemulidae","Lutjanidae","Bagridae","Alepisauridae",
+                            "Mochokidae","Terapontidae","Sciaenidae","Latidae",
+                            "Alestidae","Tetraodontidae","Muraenesocidae",
+                            "Cynoglossidae","Sphyraenidae","Lepisosteidae",
+                            "Elasmobranchii","Coryphaenidae","Elopidae","Belonidae"))
+
+sealifebase_sp <- species_list |>
+  dplyr::filter(class %in% c("Insecta","Malacostraca","Mollusca","Polychaeta",
+                            "Invertebrate","Cephalopoda","Bivalvia","Crustacea"))
+
 # Load the interaction table to make a unique species list
 resolved_inter_table <- readRDS("data/intermediate/resolved_inter_table.RDS")
 
@@ -89,10 +126,10 @@ species_list[which(species_list$scientific_name == "Pleuronectiforms"), c("class
 # For some species with way less information, sometime the same length is used for length min,mean and max
 # but to compute the bodymass min,mean and max the respective lower-bound, mean and highest-bound of parameters   # a and b are used.
 
-# Bagrus docmak0.00933 (https://fishbase.in/summary/Bagrus-docmak.html)
+# Bagrus docmak (https://fishbase.in/summary/Bagrus-docmak.html)
 species_list[which(species_list$scientific_name == "Bagrus docmak"),
                                    c("length_min","length_mean","length_max","a_min","a_mean","a_max","b_min","b_mean","b_max")] <-
-                                   c(20,62,127,0.00730,0.00933,0.01193,2.94,3.00,3.06)
+                                   c(20,62,127,0.00789,0.010000,0.01267,2.90,2.96,3.02)
 
 # Carcharhinus melanopterus (https://fishbase.in/summary/Carcharhinus-melanopterus.html)
 species_list[which(species_list$scientific_name == "Carcharhinus melanopterus"),

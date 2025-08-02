@@ -1,4 +1,6 @@
 # Masters project
+Main repository for my masters project at the University of Sherbrooke.
+Hierarchical models to predict predation (biomass flows) in complex trophic communities
 
 ## Steps of the code
 
